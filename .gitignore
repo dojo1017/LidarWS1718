@@ -32,8 +32,17 @@
 *.AppleDouble
 *.DS_Store
 
+
 #Binary
 raumscanner
 servoManualControl
 servoTest
 lidarTest
+
+# Latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.synctex.gz
