@@ -2,20 +2,25 @@
 #include <stdio.h>
 
 #include "../includes/calculation.h"
-void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* faces);
-
+void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns);
+void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals);
+void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals);
 void one();
 
 int main(int argc, char const *argv[]) {
 
 	std::vector<glm::vec3>* points = new std::vector<glm::vec3>();
-	std::vector<glm::vec3>* faces = new std::vector<glm::vec3>();
+	std::vector<glm::vec3>* normals = new std::vector<glm::vec3>();
+	int rows = 5;
+	int columns = 5;
 
-	Calculation* calculation = new Calculation(points, faces);
+	Calculation* calculation = new Calculation(points, normals, rows, columns);
 
-	test1(calculation, points, faces);
+	test1(calculation, points, normals, rows, columns);
 	
+	calculation->addPoints();
 
+	printAll(points, normals);
 
 	printf("\n");
 	printf("\n");
@@ -23,7 +28,20 @@ int main(int argc, char const *argv[]) {
 	return 0;
 }
 
-void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* faces) {
+void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
+	int i = 1;
+	for (int row = 0; row < rows; row++)
+	{
+		for (int column = 0; column < columns; column++)
+		{
+			glm::vec3 point(i, 0.0f, 0.0f);
+			calculation->addPoint2(point);
+			i++;
+		}
+	}
+}
+
+void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	
 	position pos0; pos0.x = 0; pos0.y = 0; pos0.z = 90; // in degrees 0
 	position pos1; pos1.x = 0; pos1.y = 0; pos1.z = 45; // in degrees 45
@@ -69,21 +87,25 @@ void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector
 	printf("\n");
 	printf("\n");
 
+	
+}
+
+void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	printf("Point Array: (Size: %i)\n", points->size());
 	for (unsigned int i = 0; i < points->size(); ++i)
 	{
 		printf("Point %i: %.2f, %.2f, %.2f \n", i, points->at(i).x, points->at(i).y, points->at(i).z);
-		if (((i+1) % 5) == 0)
-		{
-			printf("\n");
-		}
+		// if (((i+1) % 5) == 0)
+		// {
+		// 	printf("\n");
+		// }
 	}
 	printf("\n");
 
-	printf("Face Array: (Size: %i)\n", faces->size());
-	for (unsigned int i = 0; i < faces->size(); ++i)
+	printf("Face Array: (Size: %i)\n", normals->size());
+	for (unsigned int i = 0; i < normals->size(); ++i)
 	{
-		printf("Face %i: %.2f, %.2f, %.2f \n", i, faces->at(i).x, faces->at(i).y, faces->at(i).z);
+		printf("Face %i: %.2f, %.2f, %.2f \n", i, normals->at(i).x, normals->at(i).y, normals->at(i).z);
 	}
 }
 

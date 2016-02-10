@@ -1,34 +1,36 @@
 #include "../includes/calculation.h"
 
 
-Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _faces) {
+Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns) {
 	this->points = _points;
-	this->faces = _faces;
+	this->normals = _normals;
 
+	this->indexRow = 0;
+	this->rows = rows;
+	this->indexColumn = 0;
+	this->columns = columns;
+
+	this->allPoints = (glm::vec3**)malloc(rows * sizeof(glm::vec3*));
+	for (int i = 0; i < rows; i++)
+	{
+		allPoints[i] = (glm::vec3*) malloc(columns * sizeof(glm::vec3));
+	}
 }
 
 Calculation::~Calculation() {
-
+	delete[] this->allPoints;
 }
 
-void Calculation::addPoint(position pos, unsigned int distance) {
+/* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
+void Calculation::addPoint(position servos, unsigned int distance) {
 
-// struct position { int x,y,z; }; // Kompasswerte
-// unsigned int distance // Lidar Distanz
+	float servo1 = servos.x; // Servo von unten (1)
+	float servo2 = servos.y; // Servo von mitte (2)
+	float servo3 = servos.z; // Servo von oben (3)
 
-// Servos von unten (1), mitte (2), oben (3)
+	glm::vec3 servos3(0.0f, 0.0f, 0.0f);
 
-	float servo1 = pos.x;
-	float servo2 = pos.y; // radians
-	float servo3 = pos.z;
-
-	// printf("Servo 1: %f\n", servo1);
-	// printf("Servo 2: %f\n", servo2);
-	// printf("Servo 3: %f\n", servo3);
-
-	glm::vec3 pos3(1.0f, 1.0f, 1.0f);
-
-	glm::vec4 hVector = glm::vec4(pos3, 1.0f); // create a homogen vector from the compass position
+	glm::vec4 hVector = glm::vec4(servos3, 1.0f); // create a homogen vector from the compass position
 
 
 	// Ergebnis: rot1(y) * trans1(y) * rot2(z) * trans2(y) * rot3(z) * trans3(y) * trans4(y->distance)
@@ -42,32 +44,119 @@ void Calculation::addPoint(position pos, unsigned int distance) {
 	glm::mat4 transMat4 = glm::translate(transMat3, glm::vec3(0.0f, distance, 0.0f)); // Translation y axis (distance)
 	glm::vec4 hResult = transMat4 * hVector; // Mulitply with Normal (1, 1, 1, 1)
 
+	glm::vec3 result(hResult); // convert from vec4 to vec3
 
 
-	// printf("\nrotMat1 = %s\n", glm::to_string(rotMat1).c_str());
+	if (((indexRow % 2) == 0) && (indexColumn < this->columns))
+	{
+		this->allPoints[this->indexRow][this->indexColumn] = result;
+		indexColumn++;
+	} else {
+		if (indexColumn == this->columns)
+		{
+			indexRow++;
+		}
+	
+		this->allPoints[this->indexRow][this->indexColumn] = result;
+		indexColumn--;
 
-	// printf("\ntransMat1 = %s\n", glm::to_string(transMat1).c_str());
+		if (indexColumn == 0)
+		{
+			indexRow++;
+		}
+	}
 
-	// printf("\nrotMat2 = %s\n", glm::to_string(rotMat2).c_str());
-
-	// printf("\ntransMat2 = %s\n", glm::to_string(transMat2).c_str());
-
-	// printf("\nrotMat3 = %s\n", glm::to_string(rotMat3).c_str());
-
-	// printf("\ntransMat3 = %s\n", glm::to_string(transMat3).c_str());
-
-	// printf("\nhResult = %s\n", glm::to_string(hResult).c_str());
-
-
-
-
-
-
-	glm::vec3 result(hResult);
-	this->points->push_back(result);
 
 }
 
-void Calculation::addFace(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3) {
-	// faces.push_back(vec3); // Dreidimensionaler Vektor. x = 1. Punkt, y = 2. Punkt, z = 3. Punkt
+void Calculation::addPoint2(glm::vec3 point) {
+	if (((indexRow % 2) == 0) && (indexColumn < this->columns))
+	{
+		this->allPoints[this->indexRow][this->indexColumn] = point;
+		indexColumn++;
+		if (indexColumn == this->columns)
+		{
+			indexRow++;
+		}
+	} else {
+		indexColumn--;
+		this->allPoints[this->indexRow][this->indexColumn] = point;
+
+		if (indexColumn == 0)
+		{
+			indexRow++;
+		}
+	}
 }
+
+void Calculation::addPoints() {
+
+	for (int i = 0; i < this->rows; ++i)
+	{
+		for (int j = 0; j < this->columns; ++j)
+		{
+			float x = this->allPoints[i][j].x;
+			float y = this->allPoints[i][j].y;
+			float z = this->allPoints[i][j].z;
+			printf("Entry: (%i,%i): %.0f, %.0f, %.0f\n", i, j, x, y, z);
+		}
+	}
+	// this->points->push_back(result);
+}
+
+// faces.push_back(vec3); // Dreidimensionaler Vektor. x = 1. Punkt, y = 2. Punkt, z = 3. Punkt
+void Calculation::addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3) {
+
+	/* calculate Vector1 and Vector2 */
+	glm::vec3 va, vb, vr;
+	float val;
+	va.x = point1.x - point2.x;
+	va.y = point1.y - point2.y;
+	va.z = point1.z - point2.z;
+	// printVec3("va", va);
+
+	vb.x = point1.x - point3.x;
+	vb.y = point1.y - point3.y;
+	vb.z = point1.z - point3.z;
+	// printVec3("vb", vb);
+
+
+	/* cross product */
+	vr.x = va.y * vb.z - vb.y * va.z;
+	vr.y = vb.x * va.z - va.x * vb.z;
+	vr.z = va.x * vb.y - vb.x * va.y;
+	// printVec3("vr", vr);
+
+
+	/* normalization factor */
+	val = sqrt( vr.x * vr.x + vr.y * vr.y + vr.z * vr.z );
+
+	// printf("%f\n", val);
+
+	glm::vec3 normal;
+	normal.x = vr.x / val;
+	normal.y = vr.y / val;
+	normal.z = vr.z / val;
+	// printVec3("norm", norm);
+
+	// push_back three times, because it is needed for all three points of the triangle
+	this->normals->push_back(normal);
+	this->normals->push_back(normal);
+	this->normals->push_back(normal);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

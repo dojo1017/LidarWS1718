@@ -5,6 +5,7 @@
 #include "../../compass/includes/compassController.h"
 #include <vector>
 #include <GLES2/gl2.h>
+#include <stdlib.h>
 
 
 /* BEGIN GL MATH INCLUDES */
@@ -22,14 +23,23 @@
 
 class Calculation {
 	// point* points;
-	std::vector<glm::vec3>* points;
-	std::vector<glm::vec3>* faces;
+	std::vector<glm::vec3>* points; // Reihenfolge bestimmt Flaechen 1.2.3
+	glm::vec3** allPoints;
+	int indexRow;
+	int rows;
+	int indexColumn;
+	int columns;
+
+	std::vector<glm::vec3>* normals; // Normalen
+
 public:
-	Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _faces);
+	Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns);
 	~Calculation();
 
-	void addPoint(position pos, unsigned int distance);
-	void addFace(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
+	void addPoint(position servos, unsigned int distance);
+	void addPoint2(glm::vec3 point);
+	void addPoints();
+	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
 };
 
 #endif /* Calculation_H_ */
