@@ -31,192 +31,127 @@
 Da wir drei Servo Motoren verwenden um das Lidar Lite Modul im Raum zu positionieren, benötigen wir für diese drei verschiedene Rotationsmatrizen. Außerdem brauchen wir drei Translationsmatrizen, da die Servo Motoren nicht alle an derselben Stelle im Raum sind, sondern im 3D gedruckten Gerüst verbaut sind. Um den Punkt im Raum zu bestimmen, benötigen wir zusätzlich noch eine vierte Translationsmatrix, welche die Distanz in die Gesamtrechnung einfließen lässt.
 
 \begin{itemize}
-\item $\bm{RotMatServo1}$ sei die homogene Rotationsmatrix des ersten Servo Motors um die y-Achse des Raumscanners,
-\item $\bm{RotMatServo2}$ sei die homogene Rotationsmatrix des zweiten Servo Motors um die z-Achse des Raumscanners,
-\item $\bm{RotMatServo3}$ sei die homogene Rotationsmatrix des dritten Servo Motors um die z-Achse des Raumscanners,
-\item $\bm{TransMatServo1}$ sei die homogene Translationsmatrix des ersten Servo Motors um die y-Achse des Raumscanners,
-\item $\bm{TransMatServo2}$ sei die homogene Translationsmatrix des zweiten Servo Motors um die y-Achse des Raumscanners,
-\item $\bm{TransMatServo3}$ sei die homogene Translationsmatrix des dritten Servo Motors um die y-Achse des Raumscanners,
-\item $\bm{TransMatServo4}$ sei die homogene Translationsmatrix in y-Richtung, welche die gemessene Distanz des Lidar Lite Moduls darstellt.
-
+\item $\bm{RotMatS1}$ sei die homogene Rotationsmatrix des ersten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{RotMatS2}$ sei die homogene Rotationsmatrix des zweiten Servo Motors um die z-Achse des Raumscanners,
+\item $\bm{RotMatS3}$ sei die homogene Rotationsmatrix des dritten Servo Motors um die z-Achse des Raumscanners,
+\item $\bm{TransMatS1}$ sei die homogene Translationsmatrix des ersten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{TransMatS2}$ sei die homogene Translationsmatrix des zweiten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{TransMatS3}$ sei die homogene Translationsmatrix des dritten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{TransMatS4}$ sei die homogene Translationsmatrix in y-Richtung, welche die gemessene Distanz des Lidar Lite Moduls darstellt.
 \end{itemize}
 
+Die Servo Motoren liefern Werte im Bereich von 0 bis 180 Grad.
 
-
-
-\subsection{Rotation um die eigene Achse}
-Die Sonne dreht sich alle $25,38$ Tage um sich selbst, daraus kann man folgende Rotationsmatrix aufstellen:
+\subsection{Homogene 4x4 Matrizen}
+\subsubsection*{Rotation um die y-Achse}
 \begin{equation}
-\bm{S}_{Drehung} = 
+\bm{RotMat}_{y} = 
 \begin{pmatrix}
-\cos(\alpha * t) & 0 &-\sin(\alpha * t) & 0 \\
+\cos(\alpha) & 0 &-\sin(\alpha) & 0 \\
 0 & 1 & 0 & 0 \\
-\sin(\alpha * t) & 0 & \cos(\alpha * t) & 0 \\
+\sin(\alpha) & 0 & \cos(\alpha) & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix}
-, \alpha = \frac{2 \pi}{25,38 \text{ Tage}}
-\end{equation}
-Die Erde dreht sich alle $0,997$ Tage um sich selbst, daraus kann man folgende Rotationsmatrix aufstellen:
-\begin{equation}
-\bm{E}_{Drehung} = 
-\begin{pmatrix}
-\cos(\beta * t) & 0 &-\sin(\beta * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(\beta * t) & 0 & \cos(\beta * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix}
-, \beta = \frac{2 \pi}{0,997 \text{ Tage}}
-\end{equation}
-Der Mond dreht sich alle $27,322$ Tage um sich selbst, daraus kann man folgende Rotationsmatrix aufstellen:
-\begin{equation}
-\bm{M}_{Drehung} = 
-\begin{pmatrix}
-\cos(\gamma * t) & 0 &-\sin(\gamma * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(\gamma * t) & 0 & \cos(\gamma * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix}
-, \gamma = \frac{2 \pi}{27,322 \text{ Tage}}
 \end{equation}
 
-\subsection{Translation}
-Die Sonne bildet den Mittelpunkt unseres Planetensystems und muss daher nicht weiter verschoben werden. Die Erde muss jedoch mit folgender Translationsmatrix um $1 AE$ verschoben werden: 
+\subsubsection*{Rotation um die z-Achse}
 \begin{equation}
-\bm{E}_{Verschiebung} = 
+\bm{RotMat}_{y} = 
+\begin{pmatrix}
+ \cos(\alpha) & \sin(\alpha) & 0 & 0 \\
+-\sin(\alpha) & \cos(\alpha) & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+\end{equation}
+
+\subsubsection*{Translation in y Richtung}
+\begin{equation}
+\bm{RotMat}_{y} = 
 \begin{pmatrix}
 1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0 \\
+0 & 1 & 0 & y \\
 0 & 0 & 1 & 0 \\
-b & 0 & 0 & 1 \\
-\end{pmatrix}
-, b = 1 \text{ AE}
-\end{equation}
-Und auch der Mond muss bzgl. der Erde um $0,00257 AE$ verschoben werden:
-\begin{equation}
-\bm{M}_{Verschiebung} = 
-\begin{pmatrix}
-1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0 \\
-0 & 0 & 1 & 0 \\
-c & 0 & 0 & 1 \\
-\end{pmatrix}
-, c = 0,00257 \text{ AE}
-\end{equation}
-
-\subsection{Rotation um die Sonne (s. Umlaufzeiten)}
-Die Sonne ist im Zentrum, daher keine Matrix. Die Erde hingegen benötigt $365,256$ Tage um die Sonne zu umrunden.
-\begin{equation}
-\bm{E}_{Umlaufbahn} = 
-\begin{pmatrix}
-\cos(\varphi * t) & 0 & -\sin(\varphi * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(\varphi * t) & 0 & \cos(\varphi * t) & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix}
-, \varphi = \frac{2\pi}{365,256 \text{ Tage}}
 \end{equation}
 
-Der Mond benötigt $27,322$ Tage um die Erde zu umrunden.
+\subsubsection*{Basis}
+Die Basis ist als (0,0,0) definiert.
 
-\begin{equation}
-\bm{M}_{Umlaufbahn} = 
-\begin{pmatrix}
-\cos(\varrho * t) & 0 & -\sin(\varrho * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(\varrho * t) & 0 & \cos(\varrho * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix}
-, \varrho = \frac{2\pi}{27,322 \text{ Tage}}
-\end{equation}
-
-
-\section{Berechnung der Homogenen Matrizen}
-Für Sonne, Erde und Mond gelten folgende Berechnungen
+\subsection{Aufbau des Raumscanners}
+Wenn der Raumscanner eine gerade Linie an die Decke bildet, dann
 \begin{itemize}
-\item $\bm{S}_H = \bm{S}_{Drehung}$
-\item $\bm{E}_H = \bm{E}_{Drehung} * \bm{E}_{Verschiebung} * \bm{E}_{Umlaufbahn}$
-\item $\bm{M}_H = \bm{E}_{H} * \bm{M}_{Drehung} * \bm{M}_{Verschiebung} * \bm{M}_{Umlaufbahn}$
+\item ist der erste Servo ist 8.5 cm über der Basis
+\item ist der zweite Servo 7.5 cm über dem ersten Servo
+\item und der dritte Servor 3.5 cm über dem zweiten Servo
 \end{itemize}
+
+\subsubsection*{Matrixmultiplikation}
+Um nun einen Punkt im Raum zu berechnen müssen wir die Matrizen in der richtigen Reihenfolge aneinandermultiplizieren.
+
+\begin{itemize}
+\item $\bm{Servo1} = \bm{RotMat}_{S1} * \bm{TransMat}_{y = 8.5} $
+\item $\bm{Servo2} = \bm{RotMat}_{S2} * \bm{TransMat}_{y = 7.5} $
+\item $\bm{Servo3} = \bm{RotMat}_{S3} * \bm{TransMat}_{y = 3.5} $
+\item $\bm{Lidar}  = \bm{TransMat}_{y} $
+\end{itemize}
+Daraus folgt für den Punkt im Raum:
+\begin{equation}
+\bm{Punkt} = \bm{Servo1} * \bm{Servo2} * \bm{Servo3} * \bm{Lidar} * \bm{Basis}
+\end{equation}
+
 Also: \\
 \begin{align}
-\bm{S}_{H} = &
+\bm{Point} =
 \begin{pmatrix}
-\cos(0,2476 * t) & 0 &-\sin(0,2476 * t) & 0 \\
+\cos(\alpha) & 0 &-\sin(\alpha) & 0 \\
 0 & 1 & 0 & 0 \\
-\sin(0,2476 * t) & 0 & \cos(0,2476 * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix}
-\end{align}
-
-\begin{align}
-\bm{E}_{H} = &
-\begin{pmatrix}
-\cos(0,0063 * t) & 0 &-\sin(0,0063 * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(0,0063 * t) & 0 & \cos(0,0063 * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix} * 
-\\ &
-\begin{pmatrix}
-1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0 \\
-0 & 0 & 1 & 0 \\
-\textbf{1} & 0 & 0 & 1 \\
-\end{pmatrix} * 
-\\ &
-\begin{pmatrix}
-\cos(0,00002 * t) & 0 & -\sin(0,00002 * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(0,00002 * t) & 0 & \cos(0,00002 * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix}
-\end{align}
-
-\begin{align}
-\bm{M}_{H} = &
-\begin{pmatrix} % E1
-\cos(0,0063 * t) & 0 &-\sin(0,0063 * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(0,0063 * t) & 0 & \cos(0,0063 * t) & 0 \\
+\sin(\alpha) & 0 & \cos(\alpha) & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix} *
-\\ &
-\begin{pmatrix} % E2
+\begin{pmatrix}
 1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 8.5 \\
 0 & 0 & 1 & 0 \\
-\textbf{1} & 0 & 0 & 1 \\
-\end{pmatrix} * 
-\\ &
-\begin{pmatrix} % E3
-\cos(0,00002 * t) & 0 & -\sin(0,00002 * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(0,00002 * t) & 0 & \cos(0,00002 * t) & 0 \\
 0 & 0 & 0 & 1 \\
-\end{pmatrix} *
-\\ & 
-\begin{pmatrix} % M1
-\cos(0,00023 * t) & 0 &-\sin(0,00023 * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(0,00023 * t) & 0 & \cos(0,00023 * t) & 0 \\
-0 & 0 & 0 & 1 \\
-\end{pmatrix} * 
-\\ & 
-\begin{pmatrix} % M2
-1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0 \\
+\end{pmatrix} 
+* \\
+\begin{pmatrix}
+ \cos(\alpha) & \sin(\alpha) & 0 & 0 \\
+-\sin(\alpha) & \cos(\alpha) & 0 & 0 \\
 0 & 0 & 1 & 0 \\
-\textbf{0,00257} & 0 & 0 & 1 \\
-\end{pmatrix} * 
-\\ &
-\begin{pmatrix} % M3
-\cos(0,00023 * t) & 0 & -\sin(0,00023 * t) & 0 \\
-0 & 1 & 0 & 0 \\
-\sin(0,00023 * t) & 0 & \cos(0,00023 * t) & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix}
+*
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 7.5 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix} 
+* \\
+\begin{pmatrix}
+ \cos(\alpha) & \sin(\alpha) & 0 & 0 \\
+-\sin(\alpha) & \cos(\alpha) & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+*
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 3.5 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+*
+\begin{pmatrix}
+0 \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}
 \end{align}
-
 
 \end{document}
 
