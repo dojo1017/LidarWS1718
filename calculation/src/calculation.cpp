@@ -35,11 +35,11 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance) {
 
 	// Ergebnis: rot1(y) * trans1(y) * rot2(z) * trans2(y) * rot3(z) * trans3(y) * trans4(y->distance)
 	glm::mat4 idMat = glm::mat4(1.0f);
-	glm::mat4 rotMat1 = glm::rotate(idMat, glm::radians(servo1), glm::vec3(0.0f, -1.0f, 0.0f)); // Rotation y axis
+	glm::mat4 rotMat1 = glm::rotate(idMat, glm::radians(servo1-90), glm::vec3(0.0f, -1.0f, 0.0f)); // Rotation y axis
 	glm::mat4 transMat1	= glm::translate(rotMat1, glm::vec3(0.0f, 8.5f, 0.0f)); // Translation y axis
-	glm::mat4 rotMat2 = glm::rotate(transMat1, glm::radians(servo2), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
+	glm::mat4 rotMat2 = glm::rotate(transMat1, glm::radians(servo2-90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
 	glm::mat4 transMat2 = glm::translate(rotMat2, glm::vec3(0.0f, 7.5f, 0.0f)); // Translation y axis
-	glm::mat4 rotMat3 = glm::rotate(transMat2, glm::radians(servo3), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis (2)
+	glm::mat4 rotMat3 = glm::rotate(transMat2, glm::radians(servo3-90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis (2)
 	glm::mat4 transMat3 = glm::translate(rotMat3, glm::vec3(0.0f, 3.5f, 0.0f)); // Translation y axis (2)
 	glm::mat4 transMat4 = glm::translate(transMat3, glm::vec3(0.0f, distance, 0.0f)); // Translation y axis (distance)
 	glm::vec4 hResult = transMat4 * hVector; // Mulitply with Normal (1, 1, 1, 1)

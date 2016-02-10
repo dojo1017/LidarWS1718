@@ -4,24 +4,30 @@
 #include "../includes/calculation.h"
 void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns);
 void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals);
+void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns);
 void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals);
-void one();
 
 int main(int argc, char const *argv[]) {
 
 	std::vector<glm::vec3>* points = new std::vector<glm::vec3>();
 	std::vector<glm::vec3>* normals = new std::vector<glm::vec3>();
-	int rows = 5;
-	int columns = 5;
+	int rows = 1;
+	int columns = 180;
 
 	Calculation* calculation = new Calculation(points, normals, rows, columns);
 
-	// test1(calculation, points, normals, rows, columns);
-	test2(calculation, points, normals);
-	
+	test3(calculation, points, normals, rows, columns);
 	calculation->addPoints();
-
 	printAll(points, normals);
+
+
+	// float a = 0;
+	// float b = 90;
+	// float c = 180;
+
+	// printf("%s\n", glm::to_string(glm::radians(a-90)).c_str());
+	// printf("%s\n", glm::to_string(glm::radians(b-90)).c_str());
+	// printf("%s\n", glm::to_string(glm::radians(c-90)).c_str());
 
 	printf("\n");
 	printf("\n");
@@ -29,21 +35,22 @@ int main(int argc, char const *argv[]) {
 	return 0;
 }
 
-void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
-	int i = 1;
-	for (int row = 0; row < rows; row++)
-	{
-		for (int column = 0; column < columns; column++)
+void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
+		int degrees = 270;
+	// for (int row = 0; row < rows; ++row)
+	// {
+		for (int column = 0; column < columns; ++column)
 		{
-			glm::vec3 point(i, 0.0f, 0.0f);
-			calculation->addPoint2(point);
-			i++;
+			servoPosition pos; pos.s1 = column; pos.s2 = degrees; pos.s3 = 0; // in degrees 0
+			unsigned int distance = 10;
+			calculation->addPoint(pos, distance);
 		}
-	}
+	// }
 }
 
+
 void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
-	
+
 	servoPosition pos0; pos0.s1 = 0; pos0.s2 = 0; pos0.s3 = 90; // in degrees 0
 	servoPosition pos1; pos1.s1 = 0; pos1.s2 = 0; pos1.s3 = 45; // in degrees 45
 	servoPosition pos2; pos2.s1 = 0; pos2.s2 = 0; pos2.s3 = 0; // in degrees 90
@@ -87,8 +94,19 @@ void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector
 
 	printf("\n");
 	printf("\n");
+}
 
-	
+void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
+	int i = 1;
+	for (int row = 0; row < rows; row++)
+	{
+		for (int column = 0; column < columns; column++)
+		{
+			glm::vec3 point(i, 0.0f, 0.0f);
+			calculation->addPoint2(point);
+			i++;
+		}
+	}
 }
 
 void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
@@ -96,10 +114,6 @@ void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	for (unsigned int i = 0; i < points->size(); ++i)
 	{
 		printf("Point %i: %.2f, %.2f, %.2f \n", i, points->at(i).x, points->at(i).y, points->at(i).z);
-		// if (((i+1) % 5) == 0)
-		// {
-		// 	printf("\n");
-		// }
 	}
 	printf("\n");
 
@@ -108,13 +122,5 @@ void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	{
 		printf("Face %i: %.2f, %.2f, %.2f \n", i, normals->at(i).x, normals->at(i).y, normals->at(i).z);
 	}
-}
-
-
-void one() {
-	glm::mat4 trans;
-	trans = glm::rotate(trans, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::vec4 result = trans * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	printf("%f, %f, %f\n", result.x, result.y, result.z);
 }
 
