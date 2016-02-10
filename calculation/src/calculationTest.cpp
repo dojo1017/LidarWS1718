@@ -119,7 +119,7 @@ void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	printf("Point Array: (Size: %i)\n", points->size());
 	for (unsigned int i = 0; i < points->size(); ++i)
 	{
-		// printf("Point %i: %.2f, %.2f, %.2f \n", i, points->at(i).x, points->at(i).y, points->at(i).z);
+		printf("Point %i: %.2f, %.2f, %.2f \n", i, points->at(i).x, points->at(i).y, points->at(i).z);
 	}
 	printf("\n");
 

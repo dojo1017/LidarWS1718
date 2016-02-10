@@ -11,6 +11,7 @@ Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>
 	this->rows = rows;
 	this->indexColumn = 0;
 	this->columns = columns;
+	this->maxDistance = 0;
 
 	this->allPoints = (glm::vec3**)malloc(rows * sizeof(glm::vec3*));
 	for (int i = 0; i < rows; i++)
@@ -51,9 +52,26 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned
 
 	glm::vec3 result(hResult); // convert from vec4 to vec3
 	this->allPoints[currentRow][currentColumn] = result;
+
+
+
+	if (this->maxDistance < result.x)
+	{
+		this->maxDistance = result.x;
+	}
+	if (this->maxDistance < result.y)
+	{
+		this->maxDistance = result.y;
+	}
+	if (this->maxDistance < result.z)
+	{
+		this->maxDistance = result.z;
+	}
 }
 
 void Calculation::addPoints() {
+
+
 
 	printf("Rows: %i\n", this->rows);
 	printf("Columns: %i\n", this->columns);
@@ -65,6 +83,10 @@ void Calculation::addPoints() {
 			glm::vec3 point2(this->allPoints[row - 1][column - 1]);
 			glm::vec3 point3(this->allPoints[row - 1][column]);
 
+			point1 = point1 * (1 / maxDistance);
+			point2 = point2 * (1 / maxDistance);
+			point3 = point3 * (1 / maxDistance);
+
 			if (checkAnyEmptyPoint(point1, point2, point3)) {
 				printf("Missing point at row %d column %d\n", row, column);
 			} else {
@@ -75,6 +97,7 @@ void Calculation::addPoints() {
 				fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
 				fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
 				fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
+				
 				addNormal(point1, point2, point3);
 			}
 
@@ -83,12 +106,18 @@ void Calculation::addPoints() {
 				glm::vec3 point4(this->allPoints[row][column]);
 				glm::vec3 point5(this->allPoints[row - 1][column]);
 				glm::vec3 point6(this->allPoints[row][column + 1]);
+
+				point4 = point4 * (1 / maxDistance);
+				point5 = point5 * (1 / maxDistance);
+				point6 = point6 * (1 / maxDistance);
+
 				if (checkAnyEmptyPoint(point4, point5, point6)) {
 					printf("Missing point at row %d column %d\n", row, column);
 				} else {
 					this->points->push_back(point4);
 					this->points->push_back(point5);
 					this->points->push_back(point6);
+					
 					addNormal(point4, point5, point6);
 					fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
 					fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
