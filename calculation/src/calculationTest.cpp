@@ -17,19 +17,33 @@ int main(int argc, char const *argv[]) {
 
 	Calculation* calculation = new Calculation(points, faces);
 
-	position pos1; pos1.x = 0; pos1.y = 0; pos1.z = 0;
-	position pos2; pos2.x = 0; pos2.y = 1; pos2.z = 0;
-	position pos3; pos3.x = 1; pos3.y = 0; pos3.z = 0;
-	position pos4; pos4.x = 1; pos4.y = 1; pos4.z = 0;
+	position pos0; pos0.x = 0; pos0.y = 0; pos0.z = 0; // in degrees
+	position pos1; pos1.x = 0; pos1.y = 0; pos1.z = 45; // in degrees
+	position pos2; pos2.x = 0; pos2.y = 0; pos2.z = 90; // in degrees
+	position pos3; pos3.x = 0; pos3.y = 0; pos3.z = 135; // in degrees
+	position pos4; pos4.x = 0; pos4.y = 0; pos4.z = 180; // in degrees
 
-	unsigned int distance = 100;
+	position pos01; pos01.x = 0; pos01.y = 0; pos01.z = 0; // in degrees
+	position pos11; pos11.x = 45; pos11.y = 0; pos11.z = 0; // in degrees
+	position pos21; pos21.x = 90; pos21.y = 0; pos21.z = 0; // in degrees
+	position pos31; pos31.x = 135; pos31.y = 0; pos31.z = 0; // in degrees
+	position pos41; pos41.x = 180; pos41.y = 0; pos41.z = 0; // in degrees
+
+	unsigned int distance = 10;
 
 
 
-	calculation->addPoint(pos1, distance);
-	calculation->addPoint(pos2, distance);
-	calculation->addPoint(pos3, distance);
-	calculation->addPoint(pos4, distance);
+	// calculation->addPoint(pos0, distance);
+	// calculation->addPoint(pos1, distance);
+	// calculation->addPoint(pos2, distance);
+	// calculation->addPoint(pos3, distance);
+	// calculation->addPoint(pos4, distance);
+
+	calculation->addPoint(pos01, distance);
+	calculation->addPoint(pos11, distance);
+	calculation->addPoint(pos21, distance);
+	calculation->addPoint(pos31, distance);
+	calculation->addPoint(pos41, distance);
 
 
 	printf("\n");
