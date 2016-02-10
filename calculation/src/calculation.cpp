@@ -59,17 +59,17 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned
 
 
 
-	if (this->maxDistance < result.x)
+	if (this->maxDistance < abs(result.x))
 	{
-		this->maxDistance = result.x;
+		this->maxDistance = abs(result.x);
 	}
-	if (this->maxDistance < result.y)
+	if (this->maxDistance < abs(result.y))
 	{
-		this->maxDistance = result.y;
+		this->maxDistance = abs(result.y);
 	}
-	if (this->maxDistance < result.z)
+	if (this->maxDistance < abs(result.z))
 	{
-		this->maxDistance = result.z;
+		this->maxDistance = abs(result.z);
 	}
 	}
 }
