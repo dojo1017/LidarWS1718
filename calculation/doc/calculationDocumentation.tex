@@ -56,7 +56,7 @@ Die Servo Motoren liefern Werte im Bereich von 0 bis 180 Grad.
 
 \subsubsection*{Rotation um die z-Achse}
 \begin{equation}
-\bm{RotMat}_{y} = 
+\bm{RotMat}_{z} = 
 \begin{pmatrix}
  \cos(\alpha) & \sin(\alpha) & 0 & 0 \\
 -\sin(\alpha) & \cos(\alpha) & 0 & 0 \\
@@ -67,7 +67,7 @@ Die Servo Motoren liefern Werte im Bereich von 0 bis 180 Grad.
 
 \subsubsection*{Translation in y Richtung}
 \begin{equation}
-\bm{RotMat}_{y} = 
+\bm{TransMat}_{y} = 
 \begin{pmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & y \\
@@ -103,7 +103,7 @@ Daraus folgt für den Punkt im Raum:
 
 Also: \\
 \begin{align}
-\bm{Point} =
+\bm{Point} = &
 \begin{pmatrix}
 \cos(\alpha) & 0 &-\sin(\alpha) & 0 \\
 0 & 1 & 0 & 0 \\
@@ -116,7 +116,7 @@ Also: \\
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix} 
-* \\
+* \\ &
 \begin{pmatrix}
  \cos(\alpha) & \sin(\alpha) & 0 & 0 \\
 -\sin(\alpha) & \cos(\alpha) & 0 & 0 \\
@@ -130,7 +130,7 @@ Also: \\
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix} 
-* \\
+* \\ &
 \begin{pmatrix}
  \cos(\alpha) & \sin(\alpha) & 0 & 0 \\
 -\sin(\alpha) & \cos(\alpha) & 0 & 0 \\
@@ -141,6 +141,13 @@ Also: \\
 \begin{pmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 3.5 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+* \\ &
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & distanz \\
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 1 \\
 \end{pmatrix}
