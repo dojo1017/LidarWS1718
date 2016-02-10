@@ -2,7 +2,6 @@
 #define Calculation_H_
 
 #include "../../master/includes/master.h"
-#include "../../compass/includes/compassController.h"
 #include <vector>
 #include <GLES2/gl2.h>
 #include <stdlib.h>
@@ -36,7 +35,7 @@ public:
 	Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns);
 	~Calculation();
 
-	void addPoint(position servos, unsigned int distance);
+	void addPoint(servoPosition servos, unsigned int distance);
 	void addPoint2(glm::vec3 point);
 	void addPoints();
 	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);

@@ -16,7 +16,8 @@ int main(int argc, char const *argv[]) {
 
 	Calculation* calculation = new Calculation(points, normals, rows, columns);
 
-	test1(calculation, points, normals, rows, columns);
+	// test1(calculation, points, normals, rows, columns);
+	test2(calculation, points, normals);
 	
 	calculation->addPoints();
 
@@ -43,23 +44,23 @@ void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector
 
 void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	
-	position pos0; pos0.x = 0; pos0.y = 0; pos0.z = 90; // in degrees 0
-	position pos1; pos1.x = 0; pos1.y = 0; pos1.z = 45; // in degrees 45
-	position pos2; pos2.x = 0; pos2.y = 0; pos2.z = 0; // in degrees 90
-	position pos3; pos3.x = 0; pos3.y = 0; pos3.z = 315; // in degrees 135
-	position pos4; pos4.x = 0; pos4.y = 0; pos4.z = 270; // in degrees 180
+	servoPosition pos0; pos0.s1 = 0; pos0.s2 = 0; pos0.s3 = 90; // in degrees 0
+	servoPosition pos1; pos1.s1 = 0; pos1.s2 = 0; pos1.s3 = 45; // in degrees 45
+	servoPosition pos2; pos2.s1 = 0; pos2.s2 = 0; pos2.s3 = 0; // in degrees 90
+	servoPosition pos3; pos3.s1 = 0; pos3.s2 = 0; pos3.s3 = 315; // in degrees 135
+	servoPosition pos4; pos4.s1 = 0; pos4.s2 = 0; pos4.s3 = 270; // in degrees 180
 
-	position pos01; pos01.x = 90; pos01.y = 0; pos01.z = 0; // in degrees
-	position pos11; pos11.x = 45; pos11.y = 0; pos11.z = 0; // in degrees
-	position pos21; pos21.x = 0; pos21.y = 0; pos21.z = 0; // in degrees
-	position pos31; pos31.x = 315; pos31.y = 0; pos31.z = 0; // in degrees
-	position pos41; pos41.x = 270; pos41.y = 0; pos41.z = 0; // in degrees
+	servoPosition pos01; pos01.s1 = 90; pos01.s2 = 0; pos01.s3 = 0; // in degrees
+	servoPosition pos11; pos11.s1 = 45; pos11.s2 = 0; pos11.s3 = 0; // in degrees
+	servoPosition pos21; pos21.s1 = 0; pos21.s2 = 0; pos21.s3 = 0; // in degrees
+	servoPosition pos31; pos31.s1 = 315; pos31.s2 = 0; pos31.s3 = 0; // in degrees
+	servoPosition pos41; pos41.s1 = 270; pos41.s2 = 0; pos41.s3 = 0; // in degrees
 
-	position pos02; pos02.x = 0; pos02.y = 90; pos02.z = 0; // in degrees
-	position pos12; pos12.x = 0; pos12.y = 45; pos12.z = 0; // in degrees
-	position pos22; pos22.x = 0; pos22.y = 0; pos22.z = 0; // in degrees
-	position pos32; pos32.x = 0; pos32.y = 315; pos32.z = 0; // in degrees
-	position pos42; pos42.x = 0; pos42.y = 270; pos42.z = 0; // in degrees
+	servoPosition pos02; pos02.s1 = 0; pos02.s2 = 90; pos02.s3 = 0; // in degrees
+	servoPosition pos12; pos12.s1 = 0; pos12.s2 = 45; pos12.s3 = 0; // in degrees
+	servoPosition pos22; pos22.s1 = 0; pos22.s2 = 0; pos22.s3 = 0; // in degrees
+	servoPosition pos32; pos32.s1 = 0; pos32.s2 = 315; pos32.s3 = 0; // in degrees
+	servoPosition pos42; pos42.s1 = 0; pos42.s2 = 270; pos42.s3 = 0; // in degrees
 
 
 	unsigned int distance = 10;

@@ -9,8 +9,11 @@
 struct point {
     float x, y, z;
 };
-struct face {
+struct normals {
     int p1, p2, p3;
+};
+struct servoPosition {
+	int s1, s2, s3;
 };
 class master {
 public:
@@ -22,7 +25,7 @@ private:
 	servoController* servos;
 //	Calculation* calculation;
 //	View* view;
-	unsigned int currentRow = 0, currentColumn = 0;
+	unsigned int currentRow, currentColumn;
 	unsigned int rows, columns;
 };
 

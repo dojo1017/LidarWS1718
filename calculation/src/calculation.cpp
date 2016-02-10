@@ -22,11 +22,11 @@ Calculation::~Calculation() {
 }
 
 /* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
-void Calculation::addPoint(position servos, unsigned int distance) {
+void Calculation::addPoint(servoPosition servos, unsigned int distance) {
 
-	float servo1 = servos.x; // Servo von unten (1)
-	float servo2 = servos.y; // Servo von mitte (2)
-	float servo3 = servos.z; // Servo von oben (3)
+	float servo1 = servos.s1; // Servo von unten (1)
+	float servo2 = servos.s2; // Servo von mitte (2)
+	float servo3 = servos.s3; // Servo von oben (3)
 
 	glm::vec3 servos3(0.0f, 0.0f, 0.0f);
 
@@ -51,14 +51,13 @@ void Calculation::addPoint(position servos, unsigned int distance) {
 	{
 		this->allPoints[this->indexRow][this->indexColumn] = result;
 		indexColumn++;
-	} else {
 		if (indexColumn == this->columns)
 		{
 			indexRow++;
 		}
-	
-		this->allPoints[this->indexRow][this->indexColumn] = result;
+	} else {
 		indexColumn--;
+		this->allPoints[this->indexRow][this->indexColumn] = result;
 
 		if (indexColumn == 0)
 		{
