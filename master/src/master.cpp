@@ -89,7 +89,7 @@ void master::readDistance(int s1, int s2, int s3, int row, int column) {
                         if (status & STAT_EYE) printf("eye safety\n");
                 }*/
 	struct servoPosition pos = {s1, s2, s3};
-	this->calc->addPoint(pos, dis);
+	this->calc->addPoint(pos, dis, row, column);
 	#ifdef OUTPUT
 		fprintf(this->outputfd, "%d %d %d %d %d %d\n", pos.s1, pos.s2, pos.s3, dis, row, column);
 	#endif

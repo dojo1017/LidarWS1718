@@ -27,7 +27,7 @@ Calculation::~Calculation() {
 }
 
 /* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
-void Calculation::addPoint(servoPosition servos, unsigned int distance) {
+void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned int currentRow, unsigned int currentColumn) {
 
 	float servo1 = servos.s1; // Servo von unten (1)
 	float servo2 = servos.s2; // Servo von mitte (2)
@@ -50,32 +50,13 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance) {
 	glm::vec4 hResult = transMat4 * hVector; // Mulitply with Normal (1, 1, 1, 1)
 
 	glm::vec3 result(hResult); // convert from vec4 to vec3
-
-
-	if (((indexRow % 2) == 0) && (indexColumn < this->columns))
-	{
-		this->allPoints[this->indexRow][this->indexColumn] = result;
-		indexColumn++;
-		if (indexColumn == this->columns)
-		{
-			indexRow++;
-		}
-	} else {
-		indexColumn--;
-		this->allPoints[this->indexRow][this->indexColumn] = result;
-
-		if (indexColumn == 0)
-		{
-			indexRow++;
-		}
-	}
+	this->allPoints[currentRow][currentColumn] = result;
 }
 
 void Calculation::addPoints() {
 
 	printf("Rows: %i\n", this->rows);
 	printf("Columns: %i\n", this->columns);
-
 	for (int row = 1; row < this->rows; row++)
 	{
 		for (int column = this->columns; column >= 0; column--)
@@ -84,29 +65,46 @@ void Calculation::addPoints() {
 			glm::vec3 point2(this->allPoints[row - 1][column - 1]);
 			glm::vec3 point3(this->allPoints[row - 1][column]);
 
-			// printf("Entry: (%i,%i): %s\n", row, column, glm::to_string(point).c_str());
-			this->points->push_back(point1);
-			this->points->push_back(point2);
-			this->points->push_back(point3);
-			addNormal(point1, point2, point3);
-			fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
-			fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
-			fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
+			if (checkAnyEmptyPoint(point1, point2, point3)) {
+				printf("Missing point at row %d column %d\n", row, column);
+			} else {
+				// printf("Entry: (%i,%i): %s\n", row, column, glm::to_string(point).c_str());
+				this->points->push_back(point1);
+				this->points->push_back(point2);
+				this->points->push_back(point3);
+				fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
+				fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
+				fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
+				addNormal(point1, point2, point3);
+			}
+
 			if (column <= (this->columns - 1))
 			{
 				glm::vec3 point4(this->allPoints[row][column]);
 				glm::vec3 point5(this->allPoints[row - 1][column]);
-				glm::vec3 point6(this->allPoints[row][column - 1]);
-				this->points->push_back(point4);
-				this->points->push_back(point5);
-				this->points->push_back(point6);
-				fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
-				fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
-				fprintf(this->file, "v %f %f %f\n", point6.x, point6.y, point6.z);
-				addNormal(point4, point5, point6);
+				glm::vec3 point6(this->allPoints[row][column + 1]);
+				if (checkAnyEmptyPoint(point4, point5, point6)) {
+					printf("Missing point at row %d column %d\n", row, column);
+				} else {
+					this->points->push_back(point4);
+					this->points->push_back(point5);
+					this->points->push_back(point6);
+					addNormal(point4, point5, point6);
+					fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
+					fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
+					fprintf(this->file, "v %f %f %f\n", point6.x, point6.y, point6.z);
+				}
 			}
 		}
 	}
+}
+
+bool Calculation::checkAnyEmptyPoint(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
+	bool result = false;
+	result |= p1.x == 0.0f && p1.y == 0.0f && p1.z == 0.0f;
+	result |= p2.x == 0.0f && p2.y == 0.0f && p2.z == 0.0f;
+	result |= p3.x == 0.0f && p3.y == 0.0f && p3.z == 0.0f;
+	return result;
 }
 
 // faces.push_back(vec3); // Dreidimensionaler Vektor. x = 1. Punkt, y = 2. Punkt, z = 3. Punkt

@@ -43,61 +43,64 @@ void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector
 	{
 		for (int column = 0; column < columns; ++column)
 		{
-			servoPosition pos; pos.s1 = column; pos.s2 = row; pos.s3 = 0; // in degrees 0
-			unsigned int distance = 10;
-			calculation->addPoint(pos, distance);
+			if (row == 40 && column == 40) {
+				printf("Missing Point at row: %d column %d\n", row, column);
+			} else {
+				servoPosition pos; pos.s1 = column; pos.s2 = row; pos.s3 = 0; // in degrees 0
+				unsigned int distance = 10;
+				calculation->addPoint(pos, distance, row, column);
+			}
 		}
 	}
-		calculation->addPoints();
 }
 
 
-void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
+// void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 
-	servoPosition pos0; pos0.s1 = 0; pos0.s2 = 0; pos0.s3 = 90; // in degrees 0
-	servoPosition pos1; pos1.s1 = 0; pos1.s2 = 0; pos1.s3 = 45; // in degrees 45
-	servoPosition pos2; pos2.s1 = 0; pos2.s2 = 0; pos2.s3 = 0; // in degrees 90
-	servoPosition pos3; pos3.s1 = 0; pos3.s2 = 0; pos3.s3 = 315; // in degrees 135
-	servoPosition pos4; pos4.s1 = 0; pos4.s2 = 0; pos4.s3 = 270; // in degrees 180
+// 	servoPosition pos0; pos0.s1 = 0; pos0.s2 = 0; pos0.s3 = 90; // in degrees 0
+// 	servoPosition pos1; pos1.s1 = 0; pos1.s2 = 0; pos1.s3 = 45; // in degrees 45
+// 	servoPosition pos2; pos2.s1 = 0; pos2.s2 = 0; pos2.s3 = 0; // in degrees 90
+// 	servoPosition pos3; pos3.s1 = 0; pos3.s2 = 0; pos3.s3 = 315; // in degrees 135
+// 	servoPosition pos4; pos4.s1 = 0; pos4.s2 = 0; pos4.s3 = 270; // in degrees 180
 
-	servoPosition pos01; pos01.s1 = 90; pos01.s2 = 0; pos01.s3 = 0; // in degrees
-	servoPosition pos11; pos11.s1 = 45; pos11.s2 = 0; pos11.s3 = 0; // in degrees
-	servoPosition pos21; pos21.s1 = 0; pos21.s2 = 0; pos21.s3 = 0; // in degrees
-	servoPosition pos31; pos31.s1 = 315; pos31.s2 = 0; pos31.s3 = 0; // in degrees
-	servoPosition pos41; pos41.s1 = 270; pos41.s2 = 0; pos41.s3 = 0; // in degrees
+// 	servoPosition pos01; pos01.s1 = 90; pos01.s2 = 0; pos01.s3 = 0; // in degrees
+// 	servoPosition pos11; pos11.s1 = 45; pos11.s2 = 0; pos11.s3 = 0; // in degrees
+// 	servoPosition pos21; pos21.s1 = 0; pos21.s2 = 0; pos21.s3 = 0; // in degrees
+// 	servoPosition pos31; pos31.s1 = 315; pos31.s2 = 0; pos31.s3 = 0; // in degrees
+// 	servoPosition pos41; pos41.s1 = 270; pos41.s2 = 0; pos41.s3 = 0; // in degrees
 
-	servoPosition pos02; pos02.s1 = 0; pos02.s2 = 90; pos02.s3 = 0; // in degrees
-	servoPosition pos12; pos12.s1 = 0; pos12.s2 = 45; pos12.s3 = 0; // in degrees
-	servoPosition pos22; pos22.s1 = 0; pos22.s2 = 0; pos22.s3 = 0; // in degrees
-	servoPosition pos32; pos32.s1 = 0; pos32.s2 = 315; pos32.s3 = 0; // in degrees
-	servoPosition pos42; pos42.s1 = 0; pos42.s2 = 270; pos42.s3 = 0; // in degrees
-
-
-	unsigned int distance = 10;
+// 	servoPosition pos02; pos02.s1 = 0; pos02.s2 = 90; pos02.s3 = 0; // in degrees
+// 	servoPosition pos12; pos12.s1 = 0; pos12.s2 = 45; pos12.s3 = 0; // in degrees
+// 	servoPosition pos22; pos22.s1 = 0; pos22.s2 = 0; pos22.s3 = 0; // in degrees
+// 	servoPosition pos32; pos32.s1 = 0; pos32.s2 = 315; pos32.s3 = 0; // in degrees
+// 	servoPosition pos42; pos42.s1 = 0; pos42.s2 = 270; pos42.s3 = 0; // in degrees
 
 
+// 	unsigned int distance = 10;
 
-	calculation->addPoint(pos0, distance);
-	calculation->addPoint(pos1, distance);
-	calculation->addPoint(pos2, distance);
-	calculation->addPoint(pos3, distance);
-	calculation->addPoint(pos4, distance);
 
-	calculation->addPoint(pos01, distance);
-	calculation->addPoint(pos11, distance);
-	calculation->addPoint(pos21, distance);
-	calculation->addPoint(pos31, distance);
-	calculation->addPoint(pos41, distance);
 
-	calculation->addPoint(pos02, distance);
-	calculation->addPoint(pos12, distance);
-	calculation->addPoint(pos22, distance);
-	calculation->addPoint(pos32, distance);
-	calculation->addPoint(pos42, distance);
+// 	calculation->addPoint(pos0, distance);
+// 	calculation->addPoint(pos1, distance);
+// 	calculation->addPoint(pos2, distance);
+// 	calculation->addPoint(pos3, distance);
+// 	calculation->addPoint(pos4, distance);
 
-	printf("\n");
-	printf("\n");
-}
+// 	calculation->addPoint(pos01, distance);
+// 	calculation->addPoint(pos11, distance);
+// 	calculation->addPoint(pos21, distance);
+// 	calculation->addPoint(pos31, distance);
+// 	calculation->addPoint(pos41, distance);
+
+// 	calculation->addPoint(pos02, distance);
+// 	calculation->addPoint(pos12, distance);
+// 	calculation->addPoint(pos22, distance);
+// 	calculation->addPoint(pos32, distance);
+// 	calculation->addPoint(pos42, distance);
+
+// 	printf("\n");
+// 	printf("\n");
+// }
 
 void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
 	int i = 1;

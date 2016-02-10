@@ -32,11 +32,13 @@ class Calculation {
 
 	std::vector<glm::vec3>* normals; // Normalen
 
+	bool checkAnyEmptyPoint(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
+
 public:
 	Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns);
 	~Calculation();
 
-	void addPoint(servoPosition servos, unsigned int distance);
+	void addPoint(servoPosition servos, unsigned int distance, unsigned int currentRow, unsigned int currentColumn);
 	void addPoint2(glm::vec3 point);
 	void addPoints();
 	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
