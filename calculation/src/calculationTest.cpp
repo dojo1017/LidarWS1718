@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "../includes/calculation.h"
-void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns);
+// void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns);
 void test2(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals);
 void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns);
 void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals);
@@ -11,13 +11,23 @@ int main(int argc, char const *argv[]) {
 
 	std::vector<glm::vec3>* points = new std::vector<glm::vec3>();
 	std::vector<glm::vec3>* normals = new std::vector<glm::vec3>();
-	int rows = 180;
-	int columns = 180;
+	int rows = 10;
+	int columns = 10;
 
 	Calculation* calculation = new Calculation(points, normals, rows, columns);
 
 	printf("Running test3:\n");
 	test3(calculation, points, normals, rows, columns);
+	
+	// printf("Hier sind die Array werte:\n");
+	// for (int i = 0; i < rows; ++i)
+	// {
+	// 	for (int j = 0; j < columns; ++j)
+	// 	{
+	// 		printf("Entry: (%i,%i): %s\n", i, j, glm::to_string(calculation->allPoints[i][j]).c_str());
+	// 	}
+	// }
+
 	printf("Adding Points:\n");
 	calculation->addPoints();
 	printf("PrintAll:\n");
@@ -43,13 +53,13 @@ void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector
 	{
 		for (int column = 0; column < columns; ++column)
 		{
-			if (row == 40 && column == 40) {
-				printf("Missing Point at row: %d column %d\n", row, column);
-			} else {
+			// if (row == 40 && column == 40) {
+				// printf("Missing Point at row: %d column %d\n", row, column);
+			// } else {
 				servoPosition pos; pos.s1 = column; pos.s2 = row; pos.s3 = 0; // in degrees 0
 				unsigned int distance = 10;
 				calculation->addPoint(pos, distance, row, column);
-			}
+			// }
 		}
 	}
 }
@@ -102,18 +112,18 @@ void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector
 // 	printf("\n");
 // }
 
-void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
-	int i = 1;
-	for (int row = 0; row < rows; row++)
-	{
-		for (int column = 0; column < columns; column++)
-		{
-			glm::vec3 point(i, 0.0f, 0.0f);
-			calculation->addPoint2(point);
-			i++;
-		}
-	}
-}
+// void test1(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
+// 	int i = 1;
+// 	for (int row = 0; row < rows; row++)
+// 	{
+// 		for (int column = 0; column < columns; column++)
+// 		{
+// 			glm::vec3 point(i, 0.0f, 0.0f);
+// 			calculation->addPoint2(point);
+// 			i++;
+// 		}
+// 	}
+// }
 
 void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	printf("Point Array: (Size: %i)\n", points->size());
