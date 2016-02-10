@@ -1,7 +1,7 @@
 #ifndef Calculation_H_
 #define Calculation_H_
 
-#include "../../master/includes/master.h"
+#include "../../master/includes/structs.h"
 #include <vector>
 #include <GLES2/gl2.h>
 #include <stdlib.h>
