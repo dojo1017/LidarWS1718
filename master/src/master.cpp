@@ -13,13 +13,13 @@ master::master(unsigned int rows, unsigned int columns) {
 	this->rows = rows;
 	this->columns = columns;
 
-	#ifdef OUTPUT
-		this->outputfd = fopen("measure.log", "w");
-		fprintf(this->outputfd, "servo1 servo2 servo3 distance row column\n");
-	#endif
+#ifdef OUTPUT
+	this->outputfd = fopen("measure.log", "w");
+	fprintf(this->outputfd, "servo1 servo2 servo3 distance row column\n");
+#endif
 
 	servos->toStartPosition();
-	usleep(2000*1000); //Wait for debounce on start position
+	usleep(2000 * 1000); //Wait for debounce on start position
 
 }
 
@@ -28,14 +28,14 @@ master::~master() {
 	delete servos;
 	delete calc;
 	delete view;
-	#ifdef OUTPUT
-		fclose(this->outputfd);
-	#endif
+#ifdef OUTPUT
+	fclose(this->outputfd);
+#endif
 }
 
 void master::run() {
-	float servosteprow = (float)servos->getSteps()/(float)this->rows;
-	float servostepcolumn = (float)servos->getSteps()/(float)this->columns;
+	float servosteprow = (float)servos->getSteps() / (float)this->rows;
+	float servostepcolumn = (float)servos->getSteps() / (float)this->columns;
 	unsigned int spos0, spos1, spos2 = 90;
 
 	//scan row by row
@@ -43,7 +43,7 @@ void master::run() {
 		spos1 = (unsigned int)((float)currentRow * servosteprow);
 
 		servos->moveServo(1, spos1);
-		usleep(1000*1000); //next row, wait for debounce
+		usleep(1000 * 1000); //next row, wait for debounce
 		printf("r.moved servo 1 to %d (calculated by row %d * step %f\n", spos1, currentRow, servosteprow);
 
 		if ((currentRow % 2) == 0) { //Even row, scan from left to right
@@ -76,28 +76,45 @@ void master::run() {
 
 void master::readDistance(int s1, int s2, int s3, int row, int column) {
 	unsigned int dis = this->lidar->getDistance();
-/*	unsigned int status = this->lidar->getStatus();
-                if (status != 0) {
-                        printf("Status Byte: 0x%x ", status);
-                        if (status & STAT_BUSY) printf("busy\n");
-                        if (status & STAT_REF_OVER) printf("reference overflow\n");
-                        if (status & STAT_SIG_OVER) printf("signal overflow\n");
-                        if (status & STAT_PIN) printf("mode select pin\n");
-                        if (status & STAT_SECOND_PEAK) printf("second peak\n");
-                        if (status & STAT_TIME) printf("active between pairs\n");
-                        if (status & STAT_INVALID) printf("no signal\n");
-                        if (status & STAT_EYE) printf("eye safety\n");
-                }*/
+	/*	unsigned int status = this->lidar->getStatus();
+	                if (status != 0) {
+	                        printf("Status Byte: 0x%x ", status);
+	                        if (status & STAT_BUSY) printf("busy\n");
+	                        if (status & STAT_REF_OVER) printf("reference overflow\n");
+	                        if (status & STAT_SIG_OVER) printf("signal overflow\n");
+	                        if (status & STAT_PIN) printf("mode select pin\n");
+	                        if (status & STAT_SECOND_PEAK) printf("second peak\n");
+	                        if (status & STAT_TIME) printf("active between pairs\n");
+	                        if (status & STAT_INVALID) printf("no signal\n");
+	                        if (status & STAT_EYE) printf("eye safety\n");
+	                }*/
 	struct servoPosition pos = {s1, s2, s3};
 	this->calc->addPoint(pos, dis, row, column);
-	#ifdef OUTPUT
-		fprintf(this->outputfd, "%d %d %d %d %d %d\n", pos.s1, pos.s2, pos.s3, dis, row, column);
-	#endif
+#ifdef OUTPUT
+	fprintf(this->outputfd, "%d %d %d %d %d %d\n", pos.s1, pos.s2, pos.s3, dis, row, column);
+#endif
 //	fprintf(stderr, "%d %d %d %d\n", pos.s1, pos.s2, pos.s3, dis);
 }
 
 int main(int argc, char* argv[]) {
-	master* m = new master(3, 180);
-	m->run();
-	delete m;
+	int row = 40, column = 80, delayMil = 50;
+	if (argc == 2) {
+		printf("2 oder 3 Paramter möglich, wobei der erste die Zeilenanzahl, der zweite die Spaltenanzahl und der dritte optionale das Delay ist\n");
+	}
+	if (argc == 3) {
+		row = atoi(argv[1]);
+		column = atoi(argv[2]);
+	}
+	if (argc == 4) {
+		row = atoi(argv[1]);
+		column = atoi(argv[2]);
+		delayMil = atoi(argv[3])
+	}
+	if (row > 180 || row < 0 || column > 180 || column < 0) {
+		printf("Zeile bzw. Spalte dürfen nur zwischen 0 bis 180 liegen.\n");
+	} else  {
+		master* m = new master(row, column);
+		m->run();
+		delete m;
+	}
 }
