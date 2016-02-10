@@ -1,0 +1,222 @@
+% Computergrafiklabor
+% Wintersemester 2015/2016
+% Übung 4b
+% Bearbeitet durch Nils Bott und Constantin Eisinger
+
+\documentclass[a4paper,11pt,DIV11]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,bm} 
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage{pdfpages}
+
+\title{Berechnung der Punkte im Raum}
+\author{Eisinger, Constantin}
+\date{\today}
+
+ \usepackage[babel,german=guillemets]{csquotes}
+
+\begin{document}
+\maketitle
+
+
+
+
+\section{Aufstellen der Matrizen}
+Da wir drei Servo Motoren verwenden um das Lidar Lite Modul im Raum zu positionieren, benötigen wir für diese drei verschiedene Rotationsmatrizen. Außerdem brauchen wir drei Translationsmatrizen, da die Servo Motoren nicht alle an derselben Stelle im Raum sind, sondern im 3D gedruckten Gerüst verbaut sind. Um den Punkt im Raum zu bestimmen, benötigen wir zusätzlich noch eine vierte Translationsmatrix, welche die Distanz in die Gesamtrechnung einfließen lässt.
+
+\begin{itemize}
+\item $\bm{RotMatServo1}$ sei die homogene Rotationsmatrix des ersten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{RotMatServo2}$ sei die homogene Rotationsmatrix des zweiten Servo Motors um die z-Achse des Raumscanners,
+\item $\bm{RotMatServo3}$ sei die homogene Rotationsmatrix des dritten Servo Motors um die z-Achse des Raumscanners,
+\item $\bm{TransMatServo1}$ sei die homogene Translationsmatrix des ersten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{TransMatServo2}$ sei die homogene Translationsmatrix des zweiten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{TransMatServo3}$ sei die homogene Translationsmatrix des dritten Servo Motors um die y-Achse des Raumscanners,
+\item $\bm{TransMatServo4}$ sei die homogene Translationsmatrix in y-Richtung, welche die gemessene Distanz des Lidar Lite Moduls darstellt.
+
+\end{itemize}
+
+
+
+
+\subsection{Rotation um die eigene Achse}
+Die Sonne dreht sich alle $25,38$ Tage um sich selbst, daraus kann man folgende Rotationsmatrix aufstellen:
+\begin{equation}
+\bm{S}_{Drehung} = 
+\begin{pmatrix}
+\cos(\alpha * t) & 0 &-\sin(\alpha * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(\alpha * t) & 0 & \cos(\alpha * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+, \alpha = \frac{2 \pi}{25,38 \text{ Tage}}
+\end{equation}
+Die Erde dreht sich alle $0,997$ Tage um sich selbst, daraus kann man folgende Rotationsmatrix aufstellen:
+\begin{equation}
+\bm{E}_{Drehung} = 
+\begin{pmatrix}
+\cos(\beta * t) & 0 &-\sin(\beta * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(\beta * t) & 0 & \cos(\beta * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+, \beta = \frac{2 \pi}{0,997 \text{ Tage}}
+\end{equation}
+Der Mond dreht sich alle $27,322$ Tage um sich selbst, daraus kann man folgende Rotationsmatrix aufstellen:
+\begin{equation}
+\bm{M}_{Drehung} = 
+\begin{pmatrix}
+\cos(\gamma * t) & 0 &-\sin(\gamma * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(\gamma * t) & 0 & \cos(\gamma * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+, \gamma = \frac{2 \pi}{27,322 \text{ Tage}}
+\end{equation}
+
+\subsection{Translation}
+Die Sonne bildet den Mittelpunkt unseres Planetensystems und muss daher nicht weiter verschoben werden. Die Erde muss jedoch mit folgender Translationsmatrix um $1 AE$ verschoben werden: 
+\begin{equation}
+\bm{E}_{Verschiebung} = 
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+b & 0 & 0 & 1 \\
+\end{pmatrix}
+, b = 1 \text{ AE}
+\end{equation}
+Und auch der Mond muss bzgl. der Erde um $0,00257 AE$ verschoben werden:
+\begin{equation}
+\bm{M}_{Verschiebung} = 
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+c & 0 & 0 & 1 \\
+\end{pmatrix}
+, c = 0,00257 \text{ AE}
+\end{equation}
+
+\subsection{Rotation um die Sonne (s. Umlaufzeiten)}
+Die Sonne ist im Zentrum, daher keine Matrix. Die Erde hingegen benötigt $365,256$ Tage um die Sonne zu umrunden.
+\begin{equation}
+\bm{E}_{Umlaufbahn} = 
+\begin{pmatrix}
+\cos(\varphi * t) & 0 & -\sin(\varphi * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(\varphi * t) & 0 & \cos(\varphi * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+, \varphi = \frac{2\pi}{365,256 \text{ Tage}}
+\end{equation}
+
+Der Mond benötigt $27,322$ Tage um die Erde zu umrunden.
+
+\begin{equation}
+\bm{M}_{Umlaufbahn} = 
+\begin{pmatrix}
+\cos(\varrho * t) & 0 & -\sin(\varrho * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(\varrho * t) & 0 & \cos(\varrho * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+, \varrho = \frac{2\pi}{27,322 \text{ Tage}}
+\end{equation}
+
+
+\section{Berechnung der Homogenen Matrizen}
+Für Sonne, Erde und Mond gelten folgende Berechnungen
+\begin{itemize}
+\item $\bm{S}_H = \bm{S}_{Drehung}$
+\item $\bm{E}_H = \bm{E}_{Drehung} * \bm{E}_{Verschiebung} * \bm{E}_{Umlaufbahn}$
+\item $\bm{M}_H = \bm{E}_{H} * \bm{M}_{Drehung} * \bm{M}_{Verschiebung} * \bm{M}_{Umlaufbahn}$
+\end{itemize}
+Also: \\
+\begin{align}
+\bm{S}_{H} = &
+\begin{pmatrix}
+\cos(0,2476 * t) & 0 &-\sin(0,2476 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,2476 * t) & 0 & \cos(0,2476 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+\end{align}
+
+\begin{align}
+\bm{E}_{H} = &
+\begin{pmatrix}
+\cos(0,0063 * t) & 0 &-\sin(0,0063 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,0063 * t) & 0 & \cos(0,0063 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix} * 
+\\ &
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+\textbf{1} & 0 & 0 & 1 \\
+\end{pmatrix} * 
+\\ &
+\begin{pmatrix}
+\cos(0,00002 * t) & 0 & -\sin(0,00002 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,00002 * t) & 0 & \cos(0,00002 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+\end{align}
+
+\begin{align}
+\bm{M}_{H} = &
+\begin{pmatrix} % E1
+\cos(0,0063 * t) & 0 &-\sin(0,0063 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,0063 * t) & 0 & \cos(0,0063 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix} *
+\\ &
+\begin{pmatrix} % E2
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+\textbf{1} & 0 & 0 & 1 \\
+\end{pmatrix} * 
+\\ &
+\begin{pmatrix} % E3
+\cos(0,00002 * t) & 0 & -\sin(0,00002 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,00002 * t) & 0 & \cos(0,00002 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix} *
+\\ & 
+\begin{pmatrix} % M1
+\cos(0,00023 * t) & 0 &-\sin(0,00023 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,00023 * t) & 0 & \cos(0,00023 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix} * 
+\\ & 
+\begin{pmatrix} % M2
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+\textbf{0,00257} & 0 & 0 & 1 \\
+\end{pmatrix} * 
+\\ &
+\begin{pmatrix} % M3
+\cos(0,00023 * t) & 0 & -\sin(0,00023 * t) & 0 \\
+0 & 1 & 0 & 0 \\
+\sin(0,00023 * t) & 0 & \cos(0,00023 * t) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{pmatrix}
+\end{align}
+
+
+\end{document}
+
