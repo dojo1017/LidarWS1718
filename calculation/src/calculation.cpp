@@ -108,31 +108,23 @@ void Calculation::addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3
 	va.x = point1.x - point2.x;
 	va.y = point1.y - point2.y;
 	va.z = point1.z - point2.z;
-	// printVec3("va", va);
 
 	vb.x = point1.x - point3.x;
 	vb.y = point1.y - point3.y;
 	vb.z = point1.z - point3.z;
-	// printVec3("vb", vb);
-
 
 	/* cross product */
 	vr.x = va.y * vb.z - vb.y * va.z;
 	vr.y = vb.x * va.z - va.x * vb.z;
 	vr.z = va.x * vb.y - vb.x * va.y;
-	// printVec3("vr", vr);
-
 
 	/* normalization factor */
 	val = sqrt( vr.x * vr.x + vr.y * vr.y + vr.z * vr.z );
-
-	// printf("%f\n", val);
 
 	glm::vec3 normal;
 	normal.x = vr.x / val;
 	normal.y = vr.y / val;
 	normal.z = vr.z / val;
-	// printVec3("norm", norm);
 
 	// push_back three times, because it is needed for all three points of the triangle
 	this->normals->push_back(normal);
