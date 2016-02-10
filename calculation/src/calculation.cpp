@@ -8,17 +8,21 @@ Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>
 	this->normals = _normals;
 
 	this->indexRow = 0;
-	this->rows = rows;
 	this->indexColumn = 0;
+	
+	this->rows = rows;
 	this->columns = columns;
+
 	this->maxDistance = 0;
 
+	// Create the array, where all measured data will be stored
 	this->allPoints = (glm::vec3**)malloc(rows * sizeof(glm::vec3*));
 	for (int i = 0; i < rows; i++)
 	{
 		allPoints[i] = (glm::vec3*) malloc(columns * sizeof(glm::vec3));
 	}
 
+	// Open log file
 	this->file = fopen("points.log", "w");
 }
 

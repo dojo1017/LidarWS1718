@@ -22,29 +22,45 @@
 /* END GL MATH INCLUDES */
 
 class Calculation {
-	// point* points;
-	std::vector<glm::vec3>* points; // Reihenfolge bestimmt Flaechen 1.2.3
+	/* Array of vectors for the view */
+	// The view expects the points to be ordered for triangles.
+	// The first three points make one triangle the second three points make another etc.
+	std::vector<glm::vec3>* points;
+
+	/* Array of normals for the view */
+	// The view expects the normals to be ordered for triangles (exactly the same way as the points).
+	std::vector<glm::vec3>* normals;
+
+	// Two dimensional array with all measured points of the roomscanner (servo+lidar)
+	glm::vec3** allPoints;
+
+	// Counters
 	int indexRow;
 	int rows;
 	int indexColumn;
 	int columns;
 	float maxDistance;
-	std::vector<glm::vec3>* normals; // Normalen
 
+	// Checks the points and if invalid returns false.
 	bool checkAnyEmptyPoint(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
 
+	// This method receives the three points, that form a triangle and calculates the normals.
+	// These normals are then passed to the normal array for the view.
+	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
+
+	// Log file
 	FILE* file;
 
 public:
-	glm::vec3** allPoints;
-	
 	Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns);
 	~Calculation();
 
+	// This method is called by the master and receives the positions of each servo, the measured distance of the Lidar Lite module, 
+	// as well as the current row and column from the measurement unit.
 	void addPoint(servoPosition servos, unsigned int distance, unsigned int currentRow, unsigned int currentColumn);
-	// void addPoint2(glm::vec3 point);
+
+	// Once all the points have been calculated, the master calls this method to duplicate and reorder all points for the view.
 	void addPoints();
-	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
 };
 
 #endif /* Calculation_H_ */
