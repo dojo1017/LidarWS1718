@@ -12,6 +12,7 @@ test: all
 objs/view.o: src/view.cpp includes/view.h
 	mkdir -p objs
 	g++ -g -c -Wall src/view.cpp -o objs/view.o $(GL_FLAGS)
+	cp src/*.glsl objs/
 
 clean:
 	rm -f objs/*
