@@ -11,13 +11,16 @@ int main(int argc, char const *argv[]) {
 
 	std::vector<glm::vec3>* points = new std::vector<glm::vec3>();
 	std::vector<glm::vec3>* normals = new std::vector<glm::vec3>();
-	int rows = 1;
+	int rows = 180;
 	int columns = 180;
 
 	Calculation* calculation = new Calculation(points, normals, rows, columns);
 
+	printf("Running test3:\n");
 	test3(calculation, points, normals, rows, columns);
+	printf("Adding Points:\n");
 	calculation->addPoints();
+	printf("PrintAll:\n");
 	printAll(points, normals);
 
 
@@ -36,16 +39,16 @@ int main(int argc, char const *argv[]) {
 }
 
 void test3(Calculation* calculation, std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals, int rows, int columns) {
-		int degrees = 270;
-	// for (int row = 0; row < rows; ++row)
-	// {
+	for (int row = 0; row < rows; ++row)
+	{
 		for (int column = 0; column < columns; ++column)
 		{
-			servoPosition pos; pos.s1 = column; pos.s2 = degrees; pos.s3 = 0; // in degrees 0
+			servoPosition pos; pos.s1 = column; pos.s2 = row; pos.s3 = 0; // in degrees 0
 			unsigned int distance = 10;
 			calculation->addPoint(pos, distance);
 		}
-	// }
+	}
+		calculation->addPoints();
 }
 
 
@@ -113,14 +116,14 @@ void printAll(std::vector<glm::vec3>* points, std::vector<glm::vec3>* normals) {
 	printf("Point Array: (Size: %i)\n", points->size());
 	for (unsigned int i = 0; i < points->size(); ++i)
 	{
-		printf("Point %i: %.2f, %.2f, %.2f \n", i, points->at(i).x, points->at(i).y, points->at(i).z);
+		// printf("Point %i: %.2f, %.2f, %.2f \n", i, points->at(i).x, points->at(i).y, points->at(i).z);
 	}
 	printf("\n");
 
-	printf("Face Array: (Size: %i)\n", normals->size());
+	printf("Normal Array: (Size: %i)\n", normals->size());
 	for (unsigned int i = 0; i < normals->size(); ++i)
 	{
-		printf("Face %i: %.2f, %.2f, %.2f \n", i, normals->at(i).x, normals->at(i).y, normals->at(i).z);
+		// printf("Normal %i: %.2f, %.2f, %.2f \n", i, normals->at(i).x, normals->at(i).y, normals->at(i).z);
 	}
 }
 

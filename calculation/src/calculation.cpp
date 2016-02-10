@@ -35,11 +35,11 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance) {
 
 	// Ergebnis: rot1(y) * trans1(y) * rot2(z) * trans2(y) * rot3(z) * trans3(y) * trans4(y->distance)
 	glm::mat4 idMat = glm::mat4(1.0f);
-	glm::mat4 rotMat1 = glm::rotate(idMat, glm::radians(servo1-90), glm::vec3(0.0f, -1.0f, 0.0f)); // Rotation y axis
+	glm::mat4 rotMat1 = glm::rotate(idMat, glm::radians(servo1 - 90), glm::vec3(0.0f, -1.0f, 0.0f)); // Rotation y axis
 	glm::mat4 transMat1	= glm::translate(rotMat1, glm::vec3(0.0f, 8.5f, 0.0f)); // Translation y axis
-	glm::mat4 rotMat2 = glm::rotate(transMat1, glm::radians(servo2-90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
+	glm::mat4 rotMat2 = glm::rotate(transMat1, glm::radians(servo2 - 90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
 	glm::mat4 transMat2 = glm::translate(rotMat2, glm::vec3(0.0f, 7.5f, 0.0f)); // Translation y axis
-	glm::mat4 rotMat3 = glm::rotate(transMat2, glm::radians(servo3-90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis (2)
+	glm::mat4 rotMat3 = glm::rotate(transMat2, glm::radians(servo3 - 90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis (2)
 	glm::mat4 transMat3 = glm::translate(rotMat3, glm::vec3(0.0f, 3.5f, 0.0f)); // Translation y axis (2)
 	glm::mat4 transMat4 = glm::translate(transMat3, glm::vec3(0.0f, distance, 0.0f)); // Translation y axis (distance)
 	glm::vec4 hResult = transMat4 * hVector; // Mulitply with Normal (1, 1, 1, 1)
@@ -64,43 +64,39 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance) {
 			indexRow++;
 		}
 	}
-
-
-}
-
-void Calculation::addPoint2(glm::vec3 point) {
-	if (((indexRow % 2) == 0) && (indexColumn < this->columns))
-	{
-		this->allPoints[this->indexRow][this->indexColumn] = point;
-		indexColumn++;
-		if (indexColumn == this->columns)
-		{
-			indexRow++;
-		}
-	} else {
-		indexColumn--;
-		this->allPoints[this->indexRow][this->indexColumn] = point;
-
-		if (indexColumn == 0)
-		{
-			indexRow++;
-		}
-	}
 }
 
 void Calculation::addPoints() {
 
-	for (int i = 0; i < this->rows; ++i)
+	printf("Rows: %i\n", this->rows);
+	printf("Columns: %i\n", this->columns);
+
+	for (int row = 1; row < this->rows; row++)
 	{
-		for (int j = 0; j < this->columns; ++j)
+		for (int column = this->columns; column >= 0; column--)
 		{
-			float x = this->allPoints[i][j].x;
-			float y = this->allPoints[i][j].y;
-			float z = this->allPoints[i][j].z;
-			printf("Entry: (%i,%i): %.0f, %.0f, %.0f\n", i, j, x, y, z);
+			glm::vec3 point1(this->allPoints[row][column]);
+			glm::vec3 point2(this->allPoints[row - 1][column - 1]);
+			glm::vec3 point3(this->allPoints[row - 1][column]);
+
+			// printf("Entry: (%i,%i): %s\n", row, column, glm::to_string(point).c_str());
+			this->points->push_back(point1);
+			this->points->push_back(point2);
+			this->points->push_back(point3);
+			addNormal(point1, point2, point3);
+
+			if (column <= (this->columns - 1))
+			{
+				glm::vec3 point4(this->allPoints[row][column]);
+				glm::vec3 point5(this->allPoints[row - 1][column]);
+				glm::vec3 point6(this->allPoints[row][column - 1]);
+				this->points->push_back(point4);
+				this->points->push_back(point5);
+				this->points->push_back(point6);
+				addNormal(point4, point5, point6);
+			}
 		}
 	}
-	// this->points->push_back(result);
 }
 
 // faces.push_back(vec3); // Dreidimensionaler Vektor. x = 1. Punkt, y = 2. Punkt, z = 3. Punkt
@@ -143,6 +139,26 @@ void Calculation::addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3
 	this->normals->push_back(normal);
 	this->normals->push_back(normal);
 
+}
+
+void Calculation::addPoint2(glm::vec3 point) {
+	if (((indexRow % 2) == 0) && (indexColumn < this->columns))
+	{
+		this->allPoints[this->indexRow][this->indexColumn] = point;
+		indexColumn++;
+		if (indexColumn == this->columns)
+		{
+			indexRow++;
+		}
+	} else {
+		indexColumn--;
+		this->allPoints[this->indexRow][this->indexColumn] = point;
+
+		if (indexColumn == 0)
+		{
+			indexRow++;
+		}
+	}
 }
 
 
