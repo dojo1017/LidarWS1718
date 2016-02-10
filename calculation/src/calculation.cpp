@@ -2,14 +2,14 @@
 
 #include <stdio.h>
 
-
+// Constructor
 Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns) {
 	this->points = _points;
 	this->normals = _normals;
 
 	this->indexRow = 0;
 	this->indexColumn = 0;
-	
+
 	this->rows = rows;
 	this->columns = columns;
 
@@ -26,55 +26,62 @@ Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>
 	this->file = fopen("points.log", "w");
 }
 
+// Destructor
 Calculation::~Calculation() {
 	delete[] this->allPoints;
 }
 
-/* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
+
 void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned int currentRow, unsigned int currentColumn) {
 
 	if (distance < 1000 && distance > 0) {
 
-	float servo1 = servos.s1; // Servo von unten (1)
-	float servo2 = servos.s2; // Servo von mitte (2)
-	float servo3 = servos.s3; // Servo von oben (3)
+		float servo1 = servos.s1; // Servo von unten (1)
+		float servo2 = servos.s2; // Servo von mitte (2)
+		float servo3 = servos.s3; // Servo von oben (3)
 
-	glm::vec3 servos3(0.0f, 0.0f, 0.0f);
+		glm::vec3 servos3(0.0f, 0.0f, 0.0f);
 
-	glm::vec4 hVector = glm::vec4(servos3, 1.0f); // create a homogen vector from the compass position
-
-
-	// Ergebnis: rot1(y) * trans1(y) * rot2(z) * trans2(y) * rot3(z) * trans3(y) * trans4(y->distance)
-	glm::mat4 idMat = glm::mat4(1.0f);
-	glm::mat4 rotMat1 = glm::rotate(idMat, glm::radians(servo1 - 90), glm::vec3(0.0f, -1.0f, 0.0f)); // Rotation y axis
-	glm::mat4 transMat1	= glm::translate(rotMat1, glm::vec3(0.0f, 8.5f, 0.0f)); // Translation y axis
-	glm::mat4 rotMat2 = glm::rotate(transMat1, glm::radians(servo2 - 90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
-	glm::mat4 transMat2 = glm::translate(rotMat2, glm::vec3(0.0f, 7.5f, 0.0f)); // Translation y axis
-	glm::mat4 rotMat3 = glm::rotate(transMat2, glm::radians(servo3 - 90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis (2)
-	glm::mat4 transMat3 = glm::translate(rotMat3, glm::vec3(0.0f, 3.5f, 0.0f)); // Translation y axis (2)
-	glm::mat4 transMat4 = glm::translate(transMat3, glm::vec3(0.0f, distance, 0.0f)); // Translation y axis (distance)
-	glm::vec4 hResult = transMat4 * hVector; // Mulitply with Normal (1, 1, 1, 1)
-
-	glm::vec3 result(hResult); // convert from vec4 to vec3
-	this->allPoints[currentRow][currentColumn] = result;
-
-	// printf("Entry: (%u,%u):%i %i %i %u %s\n", currentRow, currentColumn, servos.s1, servos.s2, servos.s3, distance, glm::to_string(result).c_str());
+		glm::vec4 hVector = glm::vec4(servos3, 1.0f); // create a homogen vector from the compass position
 
 
+		// Result: rot1(y) * trans1(y) * rot2(z) * trans2(y) * rot3(z) * trans3(y) * trans4(y->distance) * base
+		glm::mat4 idMat = glm::mat4(1.0f);
+		// rot1(y)
+		glm::mat4 rotMat1 = glm::rotate(idMat, glm::radians(servo1 - 90), glm::vec3(0.0f, -1.0f, 0.0f)); // Rotation y axis
+		// trans1(y)
+		glm::mat4 transMat1	= glm::translate(rotMat1, glm::vec3(0.0f, 8.5f, 0.0f)); // Translation y axis
+		// rot2(z)
+		glm::mat4 rotMat2 = glm::rotate(transMat1, glm::radians(servo2 - 90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
+		// trans2(y)
+		glm::mat4 transMat2 = glm::translate(rotMat2, glm::vec3(0.0f, 7.5f, 0.0f)); // Translation y axis
+		// rot3(z)
+		glm::mat4 rotMat3 = glm::rotate(transMat2, glm::radians(servo3 - 90), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis (2)
+		// trans3(y)
+		glm::mat4 transMat3 = glm::translate(rotMat3, glm::vec3(0.0f, 3.5f, 0.0f)); // Translation y axis (2)
+		// trans4(y->distance)
+		glm::mat4 transMat4 = glm::translate(transMat3, glm::vec3(0.0f, distance, 0.0f)); // Translation y axis (distance)
+		// base
+		glm::vec4 hResult = transMat4 * hVector; // Mulitply with Normal (1, 1, 1, 1)
+
+		// homogene to three dimensional vector
+		glm::vec3 result(hResult);
+		// add point to array
+		this->allPoints[currentRow][currentColumn] = result;
 
 
-	if (this->maxDistance < abs(result.x))
-	{
-		this->maxDistance = abs(result.x);
-	}
-	if (this->maxDistance < abs(result.y))
-	{
-		this->maxDistance = abs(result.y);
-	}
-	if (this->maxDistance < abs(result.z))
-	{
-		this->maxDistance = abs(result.z);
-	}
+		if (this->maxDistance < abs(result.x))
+		{
+			this->maxDistance = abs(result.x);
+		}
+		if (this->maxDistance < abs(result.y))
+		{
+			this->maxDistance = abs(result.y);
+		}
+		if (this->maxDistance < abs(result.z))
+		{
+			this->maxDistance = abs(result.z);
+		}
 	}
 }
 
