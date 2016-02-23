@@ -76,7 +76,7 @@ void Calculation::addPoints() {
 	printf("Columns: %i\n", this->columns);
 	for (int row = 1; row < this->rows; row++)
 	{
-		for (int column = this->columns; column >= 0; column--)
+		for (int column = this->columns - 1; column >= 0; column--)
 		{
 			glm::vec3 point1(this->allPoints[row][column]);
 			glm::vec3 point2(this->allPoints[row - 1][column - 1]);
