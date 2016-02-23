@@ -1,3 +1,6 @@
+#ifndef _structs_h
+#define _structs_h
+
 struct point {
     float x, y, z;
 };
@@ -7,3 +10,5 @@ struct normals {
 struct servoPosition {
 	int s1, s2, s3;
 };
+
+#endif

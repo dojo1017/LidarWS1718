@@ -12,7 +12,7 @@ viewDir = ../view
 
 Binary=raumscanner
 
-all: init clean $(Binary)
+all: init $(Binary)
 
 init:
 	mkdir -p $(ObjsDir)

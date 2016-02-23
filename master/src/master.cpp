@@ -14,7 +14,7 @@ master::master(unsigned int rows, unsigned int columns) {
 	this->servos = new servoController();
 	std::vector<glm::vec3> points, normals;
 	this->view = new View(points, normals);
-	this->calc = new Calc(points, normals, rows, columns);
+	this->calc = new Calculation(&points, &normals, rows, columns);
 	this->rows = rows;
 	this->columns = columns;
 
