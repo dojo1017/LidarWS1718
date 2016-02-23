@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O0 -g -Wall -Wextra
+CXXFLAGS = -O0 -g -Wall -Wextra -DDEBUG=1
 
 ObjsDir = objs
 SrcDir = src

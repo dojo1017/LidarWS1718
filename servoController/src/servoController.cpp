@@ -8,7 +8,7 @@
 servoController::servoController() {
 	this->pwm = new PCA9685();
 	this->pwm->init(I2C_BUS, PWM_I2C_ADR);
-	this->pwm->setPWMFreq(PWM_FREQ); //evtl delay einfügen, hmmm
+	this->pwm->setPWMFreq(PWM_FREQ); //evtl delay einfügen, hmmm //nö, geht ohne
 
 	servo* servo1 = new servo(0, 115, 510, this->pwm, 0);
 	servo* servo2 = new servo(1, 120, 515, this->pwm, 1);
@@ -47,7 +47,7 @@ void servoController::moveServo(int id, unsigned int value) {
 		printf("calculated rotation: %d\n", rotation);
 	#endif
 
-	if (inRestrictedArea(id, value)) fprintf(stderr, "Move to restricted area requestet! This incident will be reported!\n");
+	if (inRestrictedArea(id, rotation)) fprintf(stderr, "Move to restricted area requestet! This incident will be reported!\n");
 	else current->moveTo(rotation);
 }
 
@@ -64,8 +64,8 @@ bool servoController::inRestrictedArea(int servoId, unsigned int value) {
 	int rot1 = this->servos[1]->getCurrentRotation(),
 	    rot2 = this->servos[2]->getCurrentRotation();
 
-	if (servoId == 2 && rot1 > 330 && value > 300) return true;
-	if (servoId == 1 && rot2 > 300 && value > 330) return true;
+	if (servoId == 2 && rot1 > 330 && value < 300) return true;
+	if (servoId == 1 && rot2 < 300 && value > 330) return true;
 	if (servoId >= 3) return true;
 	return false;
 }
