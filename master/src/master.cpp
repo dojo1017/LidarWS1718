@@ -9,7 +9,7 @@ master::master(unsigned int rows, unsigned int columns, int delay) {
 	this->calc = new Calculation(&points, &normals, rows, columns);
 	this->rows = rows;
 	this->columns = columns;
-	this->delay = delay*1000;
+	this->delay = delay * 1000;
 
 #ifdef OUTPUT
 	this->outputfd = fopen("measure.log", "w");
@@ -26,9 +26,6 @@ master::~master() {
 	delete servos;
 	delete calc;
 	delete view;
-#ifdef OUTPUT
-	fclose(this->outputfd);
-#endif
 }
 
 void master::run() {
@@ -66,6 +63,9 @@ void master::run() {
 
 	//all done, back to rest
 	servos->toRestPosition();
+#ifdef OUTPUT
+	fclose(this->outputfd);
+#endif
 	this->calc->addPoints();
 	this->view = new View(points, normals);
 	this->view->startScreen();

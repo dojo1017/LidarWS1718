@@ -24,7 +24,6 @@ Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>
 
 Calculation::~Calculation() {
 	delete[] this->allPoints;
-	fclose(this->file);
 }
 
 /* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
@@ -129,6 +128,7 @@ void Calculation::addPoints() {
 			}
 		}
 	}
+	fclose(this->file);
 }
 
 bool Calculation::checkAnyEmptyPoint(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
