@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 // Delay between servo movements in usec
-#define DELAY (25*1000)
+#define DELAY (50*1000)
 
 master::master(unsigned int rows, unsigned int columns) {
 	this->lidar = new lidarController();
@@ -13,8 +13,13 @@ master::master(unsigned int rows, unsigned int columns) {
 	this->rows = rows;
 	this->columns = columns;
 
+	#ifdef OUTPUT
+		this->outputfd = fopen("measure.log", "w");
+		fprintf(this->outputfd, "servo1 servo2 servo3 distance row column\n");
+	#endif
+
 	servos->toStartPosition();
-	usleep(2000*1000);
+	usleep(2000*1000); //Wait for debounce on start position
 
 }
 
@@ -23,33 +28,42 @@ master::~master() {
 	delete servos;
 	delete calc;
 	delete view;
+	#ifdef OUTPUT
+		fclose(this->outputfd);
+	#endif
 }
 
 void master::run() {
-	unsigned int servosteprow = servos->getSteps()/this->rows;
-	unsigned int servostepcolumn = servos->getSteps()/this->columns;
+	float servosteprow = (float)servos->getSteps()/(float)this->rows;
+	float servostepcolumn = (float)servos->getSteps()/(float)this->columns;
 	unsigned int spos0, spos1, spos2 = 90;
 
 	//scan row by row
-	for (currentRow = 0; currentRow < this->rows; currentRow++) {
-		spos1 = currentRow * servosteprow;
-		if ((currentRow % 2) == 0) {
-			for (currentColumn = 0; currentColumn < this->columns; currentColumn++) {
-				spos0 = currentColumn * servostepcolumn;
-				servos->moveServo(0, spos0);
-				usleep(DELAY);
-				readDistance(spos0, spos1, spos2);
-			}
-		} else {
-			for (currentColumn = this->columns ; currentColumn > 0; currentColumn--) {
-				spos0 = currentColumn * servostepcolumn;
-				servos->moveServo(0, spos0);
-				usleep(DELAY);
-				readDistance(spos0, spos1, spos2);
-			}
-		}
+	for (currentRow = 0; (unsigned int)currentRow < this->rows; currentRow++) {
+		spos1 = (unsigned int)((float)currentRow * servosteprow);
+
 		servos->moveServo(1, spos1);
-		usleep(1000*1000);
+		usleep(1000*1000); //next row, wait for debounce
+		printf("r.moved servo 1 to %d (calculated by row %d * step %f\n", spos1, currentRow, servosteprow);
+
+		if ((currentRow % 2) == 0) { //Even row, scan from left to right
+			for (currentColumn = 0; (unsigned int)currentColumn < this->columns; currentColumn++) {
+				spos0 = (unsigned int)((float)currentColumn * servostepcolumn);
+				servos->moveServo(0, spos0);
+				usleep(DELAY);
+				readDistance(spos0, spos1, spos2, currentRow, currentColumn);
+				printf("e.moved servo 0 to %d (calculated by row %d * step %f\n", spos0, currentColumn, servostepcolumn);
+			}
+		} else { //odd row, scan from right to left
+			for (currentColumn--; currentColumn >= 0; currentColumn--) {
+				spos0 = (unsigned int)((float)currentColumn * servostepcolumn);
+				servos->moveServo(0, spos0);
+				usleep(DELAY);
+				readDistance(spos0, spos1, spos2, currentRow, currentColumn);
+				printf("o.moved servo 0 to %d (calculated by row %d * step %f\n", spos0, currentColumn, servostepcolumn);
+			}
+			currentColumn++;
+		}
 	} //for rows
 
 	//all done, back to rest
@@ -60,7 +74,7 @@ void master::run() {
 
 }
 
-void master::readDistance(int s1, int s2, int s3) {
+void master::readDistance(int s1, int s2, int s3, int row, int column) {
 	unsigned int dis = this->lidar->getDistance();
 /*	unsigned int status = this->lidar->getStatus();
                 if (status != 0) {
@@ -76,11 +90,14 @@ void master::readDistance(int s1, int s2, int s3) {
                 }*/
 	struct servoPosition pos = {s1, s2, s3};
 	this->calc->addPoint(pos, dis);
-//	printf("S0: %d S1: %d S2: %d Distanz: %d\n", pos.s1, pos.s2, pos.s3, dis);
+	#ifdef OUTPUT
+		fprintf(this->outputfd, "%d %d %d %d %d %d\n", pos.s1, pos.s2, pos.s3, dis, row, column);
+	#endif
+//	fprintf(stderr, "%d %d %d %d\n", pos.s1, pos.s2, pos.s3, dis);
 }
 
 int main(int argc, char* argv[]) {
-	master* m = new master(20, 20);
+	master* m = new master(3, 180);
 	m->run();
 	delete m;
 }

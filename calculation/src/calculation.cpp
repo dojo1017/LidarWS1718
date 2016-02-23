@@ -1,5 +1,7 @@
 #include "../includes/calculation.h"
 
+#include <stdio.h>
+
 
 Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns) {
 	this->points = _points;
@@ -15,10 +17,13 @@ Calculation::Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>
 	{
 		allPoints[i] = (glm::vec3*) malloc(columns * sizeof(glm::vec3));
 	}
+
+	this->file = fopen("points.log", "w");
 }
 
 Calculation::~Calculation() {
 	delete[] this->allPoints;
+	fclose(this->file);
 }
 
 /* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
@@ -84,7 +89,9 @@ void Calculation::addPoints() {
 			this->points->push_back(point2);
 			this->points->push_back(point3);
 			addNormal(point1, point2, point3);
-
+			fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
+			fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
+			fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
 			if (column <= (this->columns - 1))
 			{
 				glm::vec3 point4(this->allPoints[row][column]);
@@ -93,6 +100,9 @@ void Calculation::addPoints() {
 				this->points->push_back(point4);
 				this->points->push_back(point5);
 				this->points->push_back(point6);
+				fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
+				fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
+				fprintf(this->file, "v %f %f %f\n", point6.x, point6.y, point6.z);
 				addNormal(point4, point5, point6);
 			}
 		}
@@ -130,6 +140,9 @@ void Calculation::addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3
 	this->normals->push_back(normal);
 	this->normals->push_back(normal);
 	this->normals->push_back(normal);
+	fprintf(this->file, "f %f %f %f\n", normal.x, normal.y, normal.z);
+	fprintf(this->file, "f %f %f %f\n", normal.x, normal.y, normal.z);
+	fprintf(this->file, "f %f %f %f\n", normal.x, normal.y, normal.z);
 
 }
 

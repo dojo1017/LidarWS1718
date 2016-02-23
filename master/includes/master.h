@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <stdio.h>
 
 class master {
 public:
@@ -15,14 +16,17 @@ public:
 	virtual ~master();
 	void run();
 private:
-	void readDistance(int s0, int s1, int s2);
+	void readDistance(int s0, int s1, int s2, int row, int column);
 	std::vector<glm::vec3> points, normals;
 	lidarController* lidar;
 	servoController* servos;
 	Calculation* calc;
 	View* view;
-	unsigned int currentRow, currentColumn;
+	int currentRow, currentColumn;
 	unsigned int rows, columns;
+	#ifdef OUTPUT
+		FILE* outputfd;
+	#endif
 };
 
 #endif

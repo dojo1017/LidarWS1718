@@ -5,6 +5,7 @@
 #include <vector>
 #include <GLES2/gl2.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 
 /* BEGIN GL MATH INCLUDES */
@@ -39,6 +40,9 @@ public:
 	void addPoint2(glm::vec3 point);
 	void addPoints();
 	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
+
+private:
+	FILE* file;
 };
 
 #endif /* Calculation_H_ */

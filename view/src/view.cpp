@@ -8,15 +8,16 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     initScreen();
     // Create and compile our GLSL program from the shaders
     //TODO fix path!!!!
-    GLuint vertexShaderId =  loadSchader("src/TransformVertexShader.glsl", GL_VERTEX_SHADER);
-    GLuint fragmentShaderId =  loadSchader("src/TextureFragmentShader.glsl", GL_FRAGMENT_SHADER);
+    printf("foo1\n");
+    GLuint vertexShaderId =  loadSchader("objs/TransformVertexShader.glsl", GL_VERTEX_SHADER);
+    GLuint fragmentShaderId =  loadSchader("objs/TextureFragmentShader.glsl", GL_FRAGMENT_SHADER);
     programID = glCreateProgram();
     glAttachShader(programID, vertexShaderId);
     glAttachShader(programID, fragmentShaderId);
     glLinkProgram(programID);
     glUseProgram(programID);
     // programID = LoadShaders( "src/TransformVertexShader.glsl", "src/TextureFragmentShader.glsl" );
-
+    printf("foo2\n");
     // Get a handle for our "MVP" uniform
     MatrixID = glGetUniformLocation(programID, "MVP");
     ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -209,6 +210,7 @@ void View::initScreen() {
 }
 
 GLuint loadSchader(const char* path, GLenum type) {
+    printf("path %s\n", path);
     FILE* f = fopen(path, "rb");
     fseek(f, 0, SEEK_END);
     int sz = ftell(f);

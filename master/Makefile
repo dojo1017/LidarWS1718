@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O0 -g -Wall -Wextra -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -L/opt/vc/lib -lGLESv2 -lEGL -lbcm_host
+CXXFLAGS = -O0 -g -Wall -Wextra -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -L/opt/vc/lib -lGLESv2 -lEGL -lbcm_host -DOUTPUT=1
  
 
 SrcDir = src
@@ -26,7 +26,7 @@ clean:
 	$(MAKE) -C $(lidarDir)/ clean
 
 $(Binary): lidar servo view calc
-	$(CXX) $(CXXFLAGS) -o $(Binary) src/master.cpp $(ObjsDir)/*
+	$(CXX) $(CXXFLAGS) -o $(Binary) src/master.cpp $(ObjsDir)/*.o
 
 
 view:
