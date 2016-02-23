@@ -5,6 +5,11 @@
 #include <vector>
 #include <stdio.h>
 
+//Rausnehmen!
+#ifdef DEBUG
+	#undef DEBUG
+#endif
+
 servoController::servoController() {
 	this->pwm = new PCA9685();
 	this->pwm->init(I2C_BUS, PWM_I2C_ADR);
