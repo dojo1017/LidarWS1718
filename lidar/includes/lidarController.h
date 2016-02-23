@@ -1,7 +1,12 @@
 class lidarController {
 public:
-    lidarController();
-    ~lidarController();
+	lidarController();
+	~lidarController();
 
-    unsigned int getDistance();
+	unsigned int getDistance();
+	unsigned char getStatus();
+	unsigned char getVersion();
+
+private:
+	int fd;
 };
