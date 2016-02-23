@@ -4,6 +4,7 @@
 *.o
 *.obj
 */debug/*
+*/obj/*
 
 # Precompiled Headers
 *.gch
