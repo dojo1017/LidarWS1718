@@ -21,7 +21,7 @@ int main(int argc, char const *argv[]) {
 	position pos2; pos2.x = 0; pos2.y = 1; pos2.z = 0;
 	position pos3; pos3.x = 1; pos3.y = 0; pos3.z = 0;
 	position pos4; pos4.x = 1; pos4.y = 1; pos4.z = 0;
-	
+
 	unsigned int distance = 3;
 
 
@@ -30,18 +30,6 @@ int main(int argc, char const *argv[]) {
 	calculation->addPoint(pos2, distance);
 	calculation->addPoint(pos3, distance);
 	calculation->addPoint(pos4, distance);
-
-	// printf("\n");
-	// printf("Test Ergebnis:\n");
-	// one();
-	// printf("\n");
-	// printf("\n");
-
-	// glm::vec4 v1(1, 2, 3, 4);
-	// glm::vec3 v2(v1);
-	// printf("Vector: %s\n", glm::to_string(v2).c_str());
-	// printf("%f, %f, %f\n", v2.x, v2.y, v2.z);
-
 
 
 	printf("\n");
@@ -54,7 +42,11 @@ int main(int argc, char const *argv[]) {
 	}
 	printf("\n");
 
-	printf("Face Array: \n");
+	printf("Face Array: (Size: %i)\n", faces->size());
+	for (unsigned int i = 0; i < faces->size(); ++i)
+	{
+		printf("Face %i: %f, %f, %f \n", i, faces->at(i).x, faces->at(i).y, faces->at(i).z);
+	}
 
 
 	printf("\n");

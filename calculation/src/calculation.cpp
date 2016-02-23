@@ -16,28 +16,33 @@ void Calculation::addPoint(position pos, unsigned int distance) {
 // struct position { int x,y,z; }; // Kompasswerte
 // unsigned int distance // Lidar Distanz
 
+// result = rot(y) * trans(y) * rot(z) * trans(y) * rot(z) * trans(y) * trans(y->distance)
+// Servos von unten (1), mitte (2), oben (3)
+	
 	glm::vec3 pos3(pos.x, pos.y, pos.z);
 
-	glm::vec4 hVector = glm::vec4(pos3, 1.0); // create a homogen vector from the compass position
+	glm::vec4 hVector = glm::vec4(pos3, 1.0f); // create a homogen vector from the compass position
 
 	// printf("addPoint() = %s\n", glm::to_string(homogeneVector).c_str());
 
 	// Einheitsmatrix 4x4
 	glm::mat4 idMat4 = glm::mat4(1.0f);
+	// printf("\nidMat4 = %s\n", glm::to_string(idMat4).c_str());
 	
 	/* Translation */
 	// Translationsmatrix auf der y-Achse in +8.5 cm
-	glm::mat4 transMat4 = glm::translate(0.0f, 8.5f, 0.0f);
-	
+	glm::mat4 transMat4 = glm::translate(idMat4, glm::vec3(0.0f, 8.5f, 0.0f));
+	// printf("\ntransMat4 = %s\n", glm::to_string(transMat4).c_str());
+
 
 	/* Rotation */
 	// Rotationsachse ist die y-Achse
-	glm::vec3 rotAxis(0,1,0);
+	glm::vec3 rotAxis(0, 1, 0);
 	// Rotation glm::rotate( angle_in_degrees , myRotationAxis )
-	glm::rotate(90, rotAxis)
+	glm::mat4 rotMatrix = glm::rotate(transMat4, 90, rotAxis);
 
 	// printf("addPoint() = %s\n", glm::to_string(myMatrix).c_str());
-	glm::vec4 transformedVector = myMatrix * hVector;
+	// glm::vec4 transformedVector = myMatrix * hVector;
 
 
 
