@@ -11,16 +11,19 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
 
     // Get a handle for our "MVP" uniform
     MatrixID = glGetUniformLocation(programID, "MVP");
+    ViewMatrixID = glGetUniformLocation(programID, "V");
+    ModelMatrixID = glGetUniformLocation(programID, "M");
 
 
     // Get a handle for our buffers
     vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
-    vertexUVID = glGetAttribLocation(programID, "vertexUV");
+    vertexNormal_modelspaceID = glGetAttribLocation(programID, "vertexNormal_modelspace");
+
     Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     ViewLookAt = glm::lookAt(
                      // glm::vec3(0, 0, 0), // Camera is at (4,1,3), in World Space
                      glm::vec3(4, 1, 3), // Camera is at (4,1,3), in World Space
-                     glm::vec3(1, 0, 0), // and looks at the origin
+                     glm::vec3(0, 0, 0), // and looks at the origin
                      glm::vec3(0, 1, 0) // Head is up (set to 0,-1,0 to look upside-down)
                  );
     // Model matrix : an identity matrix (model will be at the origin)
@@ -36,10 +39,12 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), &points[0], GL_STATIC_DRAW);
 
-    // glGenBuffers(1, &uvbuffer);
-    // glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    // glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+    glGenBuffers(1, &normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ARRAY_BUFFER, faces.size() * sizeof(glm::vec3), &faces[0], GL_STATIC_DRAW);
 
+    glUseProgram(programID);
+    LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 }
 
 View::~View() {
@@ -47,9 +52,11 @@ View::~View() {
 }
 
 void View::startScreen() {
+    printf("%d\n", points.size());
+    printf("%d\n", faces.size());
     do {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(this->programID);
+        glUseProgram(programID);
 
         // Rebuild the Model matrix
         rotation.y += 0.01f;
@@ -63,6 +70,11 @@ void View::startScreen() {
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &Model[0][0]);
+        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewLookAt[0][0]);
+
+        glm::vec3 lightPos = glm::vec3(4, 4, 4);
+        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
         // 1rst attribute buffer : points
         glEnableVertexAttribArray(vertexPosition_modelspaceID);
@@ -76,26 +88,24 @@ void View::startScreen() {
             (void*)0                      // array buffer offset
         );
 
-        glNormalPointer(GL_FLOAT, 0, vertexbuffer);
-
-        // // 2nd attribute buffer : UVs
-        // glEnableVertexAttribArray(vertexUVID);
-        // glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-        // glVertexAttribPointer(
-        //     vertexUVID,                   // The attribute we want to configure
-        //     2,                            // size : U+V => 2
-        //     GL_FLOAT,                     // type
-        //     GL_FALSE,                     // normalized?
-        //     0,                            // stride
-        //     (void*)0                      // array buffer offset
-        // );
+        // 3rd attribute buffer : normals
+        glEnableVertexAttribArray(vertexNormal_modelspaceID);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+        glVertexAttribPointer(
+            vertexNormal_modelspaceID, // The attribute we want to configure
+            3, // size
+            GL_FLOAT, // type
+            GL_FALSE, // normalized?
+            0, // stride
+            (void*)0 // array buffer offset
+        );
 
         // Draw the triangles !
-        glDrawArrays(GL_TRIANGLES, 0, points.size());
+        glDrawArrays(GL_TRIANGLES, 0, points.size() );
+
         glDisableVertexAttribArray(vertexPosition_modelspaceID);
-        // glDisableVertexAttribArray(vertexUVID);
-
-
+        glDisableVertexAttribArray(vertexUVID);
+        glDisableVertexAttribArray(vertexNormal_modelspaceID);
 
         updateScreen();
 

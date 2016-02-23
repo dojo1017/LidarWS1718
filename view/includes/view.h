@@ -42,7 +42,12 @@ private:
     GLuint vertexPosition_modelspaceID;
     glm::mat4 ViewLookAt;
     GLuint vertexbuffer;
-    GLuint uvbuffer;
+    GLuint normalbuffer;
+    GLuint ViewMatrixID;
+    GLuint ModelMatrixID;
+    GLuint LightID;
+    GLuint vertexNormal_modelspaceID;
+
 
     std::vector<glm::vec3> points;
     std::vector<glm::vec3> faces;

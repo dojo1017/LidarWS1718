@@ -4,7 +4,7 @@
 #include "../includes/view.h"
 
 bool loadObj(const char* path, std::vector<glm::vec3> &points, std::vector<glm::vec3> &faces);
-
+glm::vec3 calculateNormal( glm::vec3 coord1, glm::vec3 coord2, glm::vec3 coord3 );
 int main(int argc, char const *argv[]) {
     std::vector<glm::vec3> points;
     std::vector<glm::vec3> faces;
@@ -42,12 +42,59 @@ bool loadObj(const char* path, std::vector<glm::vec3> &points, std::vector<glm::
                 printf("File can't be read by our simple parser :-( Try exporting with other options\n");
                 return false;
             }
+            glm::vec3 coord1 = points.at(normalIndex[0] - 1);
+            glm::vec3 coord2 = points.at(normalIndex[1] - 1);
+            glm::vec3 coord3 = points.at(normalIndex[2] - 1);
+
+            glm::vec3 normal = calculateNormal(coord1, coord2, coord3);
+            faces.push_back(normal);
         } else {
             // Probably a comment, eat up the rest of the line
             char stupidBuffer[1000];
             fgets(stupidBuffer, 1000, file);
         }
     }
-
     return true;
+}
+
+void printVec3(const char * name, glm::vec3 vec) {
+    printf("%s x: %f y: %f z: %f\n", name, vec.x, vec.y, vec.z);
+}
+
+// float* calculateNormal( float *coord1, float *coord2, float *coord3 )
+glm::vec3 calculateNormal( glm::vec3 coord1, glm::vec3 coord2, glm::vec3 coord3 ) {
+    /* calculate Vector1 and Vector2 */
+    glm::vec3 va, vb, vr;
+    float val;
+    va.x = coord1.x - coord2.x;
+    va.y = coord1.y - coord2.y;
+    va.z = coord1.z - coord2.z;
+    // printVec3("va", va);
+
+    vb.x = coord1.x - coord3.x;
+    vb.y = coord1.y - coord3.y;
+    vb.z = coord1.z - coord3.z;
+    // printVec3("vb", vb);
+
+
+    /* cross product */
+    vr.x = va.y * vb.z - vb.y * va.z;
+    vr.y = vb.x * va.z - va.x * vb.z;
+    vr.z = va.x * vb.y - vb.x * va.y;
+    // printVec3("vr", vr);
+
+
+    /* normalization factor */
+    val = sqrt( vr.x * vr.x + vr.y * vr.y + vr.z * vr.z );
+
+    // printf("%f\n", val);
+
+    glm::vec3 norm;
+    norm.x = vr.x / val;
+    norm.y = vr.y / val;
+    norm.z = vr.z / val;
+    printVec3("norm", norm);
+
+
+    return norm;
 }
