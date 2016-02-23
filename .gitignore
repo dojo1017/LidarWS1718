@@ -31,3 +31,9 @@
 # Apple
 *.AppleDouble
 *.DS_Store
+
+#Binary
+raumscanner
+servoManualControl
+servoTest
+lidarTest

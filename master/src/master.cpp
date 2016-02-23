@@ -2,9 +2,6 @@
 
 #include <unistd.h>
 #include <stdio.h>
-#include <vector>
-
-#include <glm/glm.hpp>
 
 // Delay between servo movements in usec
 #define DELAY (25*1000)
@@ -12,8 +9,6 @@
 master::master(unsigned int rows, unsigned int columns) {
 	this->lidar = new lidarController();
 	this->servos = new servoController();
-	std::vector<glm::vec3> points, normals;
-	this->view = new View(points, normals);
 	this->calc = new Calculation(&points, &normals, rows, columns);
 	this->rows = rows;
 	this->columns = columns;
@@ -24,7 +19,10 @@ master::master(unsigned int rows, unsigned int columns) {
 }
 
 master::~master() {
-
+	delete lidar;
+	delete servos;
+	delete calc;
+	delete view;
 }
 
 void master::run() {
@@ -56,6 +54,9 @@ void master::run() {
 
 	//all done, back to rest
 	servos->toRestPosition();
+	this->calc->addPoints();
+	this->view = new View(points, normals);
+	this->view->startScreen();
 
 }
 
@@ -74,12 +75,12 @@ void master::readDistance(int s1, int s2, int s3) {
                         if (status & STAT_EYE) printf("eye safety\n");
                 }*/
 	struct servoPosition pos = {s1, s2, s3};
-	//call addPoint(pos, dis);
-	printf("S0: %d S1: %d S2: %d Distanz: %d\n", pos.s1, pos.s2, pos.s3, dis);
+	this->calc->addPoint(pos, dis);
+//	printf("S0: %d S1: %d S2: %d Distanz: %d\n", pos.s1, pos.s2, pos.s3, dis);
 }
 
 int main(int argc, char* argv[]) {
-	master* m = new master(45, 45);
+	master* m = new master(20, 20);
 	m->run();
 	delete m;
 }

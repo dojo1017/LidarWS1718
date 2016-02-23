@@ -6,6 +6,9 @@
 #include "../../servoController/includes/servoController.h"
 #include "../../calculation/includes/calculation.h"
 
+#include <vector>
+#include <glm/glm.hpp>
+
 class master {
 public:
 	master(unsigned int rows, unsigned int columns);
@@ -13,7 +16,7 @@ public:
 	void run();
 private:
 	void readDistance(int s0, int s1, int s2);
-
+	std::vector<glm::vec3> points, normals;
 	lidarController* lidar;
 	servoController* servos;
 	Calculation* calc;
