@@ -28,7 +28,6 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     ViewLookAt = glm::lookAt(
                      glm::vec3(1, -1, 1), // Camera is at origin in World Space
-                     // glm::vec3(4, 1, 3), // Camera is at (4,1,3), in World Space
                      glm::vec3(0, 0, 0), // and looks at direction x
                      glm::vec3(0, 1, 0) // Head is up (set to 0,-1,0 to look upside-down)
                  );
@@ -51,6 +50,7 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
 
     glUseProgram(programID);
     LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+    glDisable(GL_CULL_FACE);
     printf("Screen started\n");
     updateScreen();
 }
