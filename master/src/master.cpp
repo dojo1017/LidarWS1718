@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
 	if (argc == 4) {
 		row = atoi(argv[1]);
 		column = atoi(argv[2]);
-		delayMil = atoi(argv[3])
+		delayMil = atoi(argv[3]);
 	}
 	if (row > 180 || row < 0 || column > 180 || column < 0) {
 		printf("Zeile bzw. Spalte dürfen nur zwischen 0 bis 180 liegen.\n");
