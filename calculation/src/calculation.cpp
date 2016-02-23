@@ -16,40 +16,40 @@ void Calculation::addPoint(position pos, unsigned int distance) {
 // struct position { int x,y,z; }; // Kompasswerte
 // unsigned int distance // Lidar Distanz
 
-// result = rot(y) * trans(y) * rot(z) * trans(y) * rot(z) * trans(y) * trans(y->distance)
+// result = rot1(y) * trans1(y) * rot2(z) * trans2(y) * rot3(z) * trans3(y) * trans4(y->distance)
 // Servos von unten (1), mitte (2), oben (3)
-	
+
+	float servo1 = 90.0f;
+	float servo2 = 90.0f;
+	float servo3 = 90.0f;
+
+
 	glm::vec3 pos3(pos.x, pos.y, pos.z);
 
 	glm::vec4 hVector = glm::vec4(pos3, 1.0f); // create a homogen vector from the compass position
 
-	// printf("addPoint() = %s\n", glm::to_string(homogeneVector).c_str());
 
-	// Einheitsmatrix 4x4
-	glm::mat4 idMat4 = glm::mat4(1.0f);
-	// printf("\nidMat4 = %s\n", glm::to_string(idMat4).c_str());
-	
-	/* Translation */
-	// Translationsmatrix auf der y-Achse in +8.5 cm
-	glm::mat4 transMat4 = glm::translate(idMat4, glm::vec3(0.0f, 8.5f, 0.0f));
-	// printf("\ntransMat4 = %s\n", glm::to_string(transMat4).c_str());
+	glm::mat4 idMat = glm::mat4(1.0f);
+	glm::mat4 rotMat1 = glm::rotate(idMat, servo1, glm::vec3(0.0f, 1.0f, 0.0f)); // Rotation y axis
+	glm::mat4 transMat1	= glm::translate(rotMat1, glm::vec3(0.0f, 8.5f, 0.0f)); // Translation y axis
+	glm::mat4 rotMat2 = glm::rotate(transMat1, servo2, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotation z axis
+	glm::mat4 transMat2 = glm::translate(rotMat2, glm::vec3(0.0f, 7.5f, 0.0f)); // Translation y axis
+	glm::mat4 rotMat3 = glm::rotate(transMat2, servo3, glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 transMat3 = glm::translate(rotMat3, glm::vec3(0.0f, 3.5f, 0.0f));
+
+	glm::vec4 hResult = transMat3 * glm::vec4(0.0f, (float)distance, 0.0f, 1.0f);
+
+	printf("\ntransMat3 = %s\n", glm::to_string(transMat3).c_str());
 
 
-	/* Rotation */
-	// Rotationsachse ist die y-Achse
-	glm::vec3 rotAxis(0, 1, 0);
-	// Rotation glm::rotate( angle_in_degrees , myRotationAxis )
-	glm::mat4 rotMatrix = glm::rotate(transMat4, 90, rotAxis);
-
-	// printf("addPoint() = %s\n", glm::to_string(myMatrix).c_str());
-	// glm::vec4 transformedVector = myMatrix * hVector;
+	printf("\nhResult = %s\n", glm::to_string(hResult).c_str());
 
 
 
 
 
 
-	glm::vec3 result(hVector);
+	glm::vec3 result(hResult);
 	this->points->push_back(result);
 
 }

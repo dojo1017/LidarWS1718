@@ -22,7 +22,7 @@ int main(int argc, char const *argv[]) {
 	position pos3; pos3.x = 1; pos3.y = 0; pos3.z = 0;
 	position pos4; pos4.x = 1; pos4.y = 1; pos4.z = 0;
 
-	unsigned int distance = 3;
+	unsigned int distance = 100;
 
 
 
