@@ -1,3 +1,11 @@
+#ifndef _master_h_
+#define _master_h_
+
+#include "../../lidar/includes/lidarController.h"
+#include "../../servoController/includes/servoController.h"
+#include "../../calculation/includes/calculation.h"
+#include "../../view/includes/view.h"
+
 struct point {
     float x, y, z;
 };
@@ -7,6 +15,12 @@ struct face {
 class master {
 public:
     master();
-    ~master();
-    int main(int argc, char const *argv[]);
+    virtual ~master();
+private:
+	lidarController* lidar;
+	servoController* servos;
+	Calculation* calculation;
+	View* view;
 };
+
+#endif
