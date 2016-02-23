@@ -3,8 +3,8 @@
 
 #include "../../lidar/includes/lidarController.h"
 #include "../../servoController/includes/servoController.h"
-#include "../../calculation/includes/calculation.h"
-#include "../../view/includes/view.h"
+//#include "../../calculation/includes/calculation.h"
+//#include "../../view/includes/view.h"
 
 struct point {
     float x, y, z;
@@ -14,13 +14,16 @@ struct face {
 };
 class master {
 public:
-    master();
-    virtual ~master();
+	master(unsigned int rows, unsigned int columns);
+	virtual ~master();
+	void run();
 private:
 	lidarController* lidar;
 	servoController* servos;
-	Calculation* calculation;
-	View* view;
+//	Calculation* calculation;
+//	View* view;
+	unsigned int currentRow = 0, currentColumn = 0;
+	unsigned int rows, columns;
 };
 
 #endif

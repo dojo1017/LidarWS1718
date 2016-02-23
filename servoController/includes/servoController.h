@@ -21,6 +21,7 @@ public:
 	void moveServo(int id, unsigned int value);
 	unsigned int getRotation(int id);
 	void toStartPosition();
+	void toRestPosition();
 private:
 	std::vector<servo*> servos;
 	PCA9685* pwm;

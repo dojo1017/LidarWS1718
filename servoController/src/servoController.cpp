@@ -51,10 +51,16 @@ void servoController::moveServo(int id, unsigned int value) {
 	else current->moveTo(rotation);
 }
 
-void servoController::toStartPosition() {
+void servoController::toRestPosition() {
 	for (unsigned int i = 0; i < servos.size(); i++) {
 		moveServo(i, (STEPS/2));
 	}
+}
+
+void servoController::toStartPosition() {
+	moveServo(0, 0);
+	moveServo(1, 0);
+	moveServo(2, (STEPS/2));
 }
 
 bool servoController::inRestrictedArea(int servoId, unsigned int value) {
