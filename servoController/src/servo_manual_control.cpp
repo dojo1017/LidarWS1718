@@ -11,20 +11,20 @@ int main (int argc, char* argv[]) {
 	PCA9685 pwm;
 	pwm.init(1,0x40);
 	sleep(1);
-	printf("1\n");
+	printf("PWM Init done.\n");
 	pwm.setPWMFreq (50);
 	sleep(1);
-	printf("2\n");
+	printf("PWM freq set to 50 Hz.\n");
+	printf("Any value you type now will be set as on-time PWM channel %d\n", channel);
 
 	bool running = true;
 	std::string input = "";
 	int current = 0;
 	while (running) {
 		std::getline(std::cin, input);
-		const char *pt = input.c_str();
-		current = atoi(pt);
+		current = atoi(input.c_str());
 		if (current < 0) return 0;
-		printf("Setting PWM to %d on-time\n", current);
+		printf("Setting PWM(%d) to %d on-time\n", channel, current);
 		pwm.setPWM(channel, current);
 		usleep(1000);
 	}

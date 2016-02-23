@@ -8,12 +8,15 @@ IncludesDir = includes
 TestBin = servoTest
 ManualBin = servoManualControl
 
-all: $(ObjsDir)/servoController.o $(ObjsDir)/servo.o $(ObjsDir)/PCAlib.o
+all: init $(ObjsDir)/servoController.o $(ObjsDir)/servo.o $(ObjsDir)/PCAlib.o
 
 clean:
 	rm -rfv $(ObjsDir)/*
 	rm -rfv $(TestBin)
 	rm -rfv $(ManualBin)
+
+init:
+	mkdir -p $(ObjsDir)
 
 test: $(TestBin)
 

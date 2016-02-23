@@ -1,0 +1,5 @@
+Mit make manual kann eine Binary zur manuellen Steuerung der Servos erzeugt werden.
+Der Aufruf ./servoManualControl [channel] startet die Steuerung des eingegebenen Channels. Wird kein channel angegeben, so wird standardmäßig Channel 0 angesteuert.
+Achtung: Die Werte, die hier eingegeben werden, werden direkt an die PWM-Steuerung übergeben. Die Werte müssen im Bereich zwischen 0 und 4095 liegen, damit ein entsprechendes PWM-Signal erzeugt werden kann. 
+Die von uns verwendeten Motoren haben ihre Extremwerte circa bei 150 und 480. Diese Werte müssen aber individuell für jeden Servo herausgefunden werden. Mit einem Wert von 300 sollte man aber ungefähr in Mittelstellung landen.
+
