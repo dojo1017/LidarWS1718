@@ -67,58 +67,58 @@ void View::startScreen() {
 
 void View::updateScreen() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(programID);
+    glUseProgram(programID);
 
-        // Rebuild the Model matrix
-        rotation.y += 0.01f;
-        glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
-        glm::mat4 rotationMatrix    = glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
-        glm::mat4 scalingMatrix     = glm::scale(glm::mat4(1.0f), scale);
+    // Rebuild the Model matrix
+    rotation.y += 0.01f;
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
+    glm::mat4 rotationMatrix    = glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
+    glm::mat4 scalingMatrix     = glm::scale(glm::mat4(1.0f), scale);
 
-        Model = translationMatrix * rotationMatrix * scalingMatrix;
-        glm::mat4 MVP = Projection * ViewLookAt * Model; // Remember, matrix multiplication is the other way around
+    Model = translationMatrix * rotationMatrix * scalingMatrix;
+    glm::mat4 MVP = Projection * ViewLookAt * Model; // Remember, matrix multiplication is the other way around
 
-        // Send our transformation to the currently bound shader,
-        // in the "MVP" uniform
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &Model[0][0]);
-        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewLookAt[0][0]);
+    // Send our transformation to the currently bound shader,
+    // in the "MVP" uniform
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &Model[0][0]);
+    glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewLookAt[0][0]);
 
-        glm::vec3 lightPos = glm::vec3(0, 0.5f, 0);
-        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+    glm::vec3 lightPos = glm::vec3(0, 0.5f, 0);
+    glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
-        // 1rst attribute buffer : points
-        glEnableVertexAttribArray(vertexPosition_modelspaceID);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(
-            vertexPosition_modelspaceID,  // The attribute we want to configure
-            3,                            // size
-            GL_FLOAT,                     // type
-            GL_FALSE,                     // normalized?
-            0,                            // stride
-            (void*)0                      // array buffer offset
-        );
+    // 1rst attribute buffer : points
+    glEnableVertexAttribArray(vertexPosition_modelspaceID);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(
+        vertexPosition_modelspaceID,  // The attribute we want to configure
+        3,                            // size
+        GL_FLOAT,                     // type
+        GL_FALSE,                     // normalized?
+        0,                            // stride
+        (void*)0                      // array buffer offset
+    );
 
-        // 3rd attribute buffer : normals
-        glEnableVertexAttribArray(vertexNormal_modelspaceID);
-        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        glVertexAttribPointer(
-            vertexNormal_modelspaceID, // The attribute we want to configure
-            3, // size
-            GL_FLOAT, // type
-            GL_FALSE, // normalized?
-            0, // stride
-            (void*)0 // array buffer offset
-        );
+    // 3rd attribute buffer : normals
+    glEnableVertexAttribArray(vertexNormal_modelspaceID);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glVertexAttribPointer(
+        vertexNormal_modelspaceID, // The attribute we want to configure
+        3, // size
+        GL_FLOAT, // type
+        GL_FALSE, // normalized?
+        0, // stride
+        (void*)0 // array buffer offset
+    );
 
-        // Draw the triangles !
-        glDrawArrays(GL_TRIANGLES, 0, points.size() );
+    // Draw the triangles !
+    glDrawArrays(GL_TRIANGLES, 0, points.size() );
 
-        glDisableVertexAttribArray(vertexPosition_modelspaceID);
-        glDisableVertexAttribArray(vertexUVID);
-        glDisableVertexAttribArray(vertexNormal_modelspaceID);
+    glDisableVertexAttribArray(vertexPosition_modelspaceID);
+    glDisableVertexAttribArray(vertexUVID);
+    glDisableVertexAttribArray(vertexNormal_modelspaceID);
 
-        drawScreen();
+    drawScreen();
 }
 
 void View::drawScreen() {
