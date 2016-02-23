@@ -51,6 +51,8 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
 
     glUseProgram(programID);
     LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+    printf("Screen started\n");
+    updateScreen();
 }
 
 View::~View() {
@@ -192,9 +194,6 @@ void View::initScreen() {
     glClear( GL_COLOR_BUFFER_BIT );
 
     glViewport ( 0, 0, GScreenWidth, GScreenHeight );
-
-    printf("Screen started\n");
-
     // Dark blue background
     // glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
@@ -208,7 +207,6 @@ void View::initScreen() {
 }
 
 GLuint loadSchader(const char* path, GLenum type) {
-    printf("path %s\n", path);
     FILE* f = fopen(path, "rb");
     fseek(f, 0, SEEK_END);
     int sz = ftell(f);
