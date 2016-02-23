@@ -29,6 +29,8 @@ Calculation::~Calculation() {
 /* pos = Servostellungen(x, y, z), distance = Lidar Lite Distanz */
 void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned int currentRow, unsigned int currentColumn) {
 
+	if (distance < 1000 && distance > 0) {
+
 	float servo1 = servos.s1; // Servo von unten (1)
 	float servo2 = servos.s2; // Servo von mitte (2)
 	float servo3 = servos.s3; // Servo von oben (3)
@@ -65,6 +67,7 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned
 	if (this->maxDistance < result.z)
 	{
 		this->maxDistance = result.z;
+	}
 	}
 }
 
