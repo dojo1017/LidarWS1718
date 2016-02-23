@@ -97,7 +97,8 @@ void Calculation::addPoints() {
 				fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
 				fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
 				fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
-				
+				int indexPoints = points->size();
+				fprintf(this->file, "t %d %d %d\n", indexPoints - 2, indexPoints -1, indexPoints);
 				addNormal(point1, point2, point3);
 			}
 
@@ -122,6 +123,8 @@ void Calculation::addPoints() {
 					fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
 					fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
 					fprintf(this->file, "v %f %f %f\n", point6.x, point6.y, point6.z);
+					int indexPoints = points->size();
+					fprintf(this->file, "t %d %d %d\n", indexPoints - 2, indexPoints -1, indexPoints);
 				}
 			}
 		}

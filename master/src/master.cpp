@@ -3,15 +3,13 @@
 #include <unistd.h>
 #include <stdio.h>
 
-// Delay between servo movements in usec
-#define DELAY (50*1000)
-
-master::master(unsigned int rows, unsigned int columns) {
+master::master(unsigned int rows, unsigned int columns, int delay) {
 	this->lidar = new lidarController();
 	this->servos = new servoController();
 	this->calc = new Calculation(&points, &normals, rows, columns);
 	this->rows = rows;
 	this->columns = columns;
+	this->delay = delay*1000;
 
 #ifdef OUTPUT
 	this->outputfd = fopen("measure.log", "w");
@@ -44,23 +42,23 @@ void master::run() {
 
 		servos->moveServo(1, spos1);
 		usleep(1000 * 1000); //next row, wait for debounce
-		printf("r.moved servo 1 to %d (calculated by row %d * step %f\n", spos1, currentRow, servosteprow);
+		//printf("r.moved servo 1 to %d (calculated by row %d * step %f\n", spos1, currentRow, servosteprow);
 
 		if ((currentRow % 2) == 0) { //Even row, scan from left to right
 			for (currentColumn = 0; (unsigned int)currentColumn < this->columns; currentColumn++) {
 				spos0 = (unsigned int)((float)currentColumn * servostepcolumn);
 				servos->moveServo(0, spos0);
-				usleep(DELAY);
+				usleep(this->delay);
 				readDistance(spos0, spos1, spos2, currentRow, currentColumn);
-				printf("e.moved servo 0 to %d (calculated by row %d * step %f\n", spos0, currentColumn, servostepcolumn);
+				//printf("e.moved servo 0 to %d (calculated by row %d * step %f\n", spos0, currentColumn, servostepcolumn);
 			}
 		} else { //odd row, scan from right to left
 			for (currentColumn--; currentColumn >= 0; currentColumn--) {
 				spos0 = (unsigned int)((float)currentColumn * servostepcolumn);
 				servos->moveServo(0, spos0);
-				usleep(DELAY);
+				usleep(this->delay);
 				readDistance(spos0, spos1, spos2, currentRow, currentColumn);
-				printf("o.moved servo 0 to %d (calculated by row %d * step %f\n", spos0, currentColumn, servostepcolumn);
+				//printf("o.moved servo 0 to %d (calculated by row %d * step %f\n", spos0, currentColumn, servostepcolumn);
 			}
 			currentColumn++;
 		}
@@ -100,6 +98,7 @@ int main(int argc, char* argv[]) {
 	int row = 40, column = 80, delayMil = 50;
 	if (argc == 2) {
 		printf("2 oder 3 Paramter möglich, wobei der erste die Zeilenanzahl, der zweite die Spaltenanzahl und der dritte optionale das Delay ist\n");
+		exit(0);
 	}
 	if (argc == 3) {
 		row = atoi(argv[1]);
@@ -110,10 +109,10 @@ int main(int argc, char* argv[]) {
 		column = atoi(argv[2]);
 		delayMil = atoi(argv[3]);
 	}
-	if (row > 180 || row < 0 || column > 180 || column < 0) {
+	if (row > 180 || row < 0 || column > 180 || column < 0 || delayMil < 0) {
 		printf("Zeile bzw. Spalte dürfen nur zwischen 0 bis 180 liegen.\n");
 	} else  {
-		master* m = new master(row, column);
+		master* m = new master(row, column, delayMil);
 		m->run();
 		delete m;
 	}

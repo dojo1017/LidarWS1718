@@ -12,11 +12,12 @@
 
 class master {
 public:
-	master(unsigned int rows, unsigned int columns);
+	master(unsigned int rows, unsigned int columns, int delay);
 	virtual ~master();
 	void run();
 private:
 	void readDistance(int s0, int s1, int s2, int row, int column);
+	int delay;
 	std::vector<glm::vec3> points, normals;
 	lidarController* lidar;
 	servoController* servos;

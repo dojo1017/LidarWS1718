@@ -8,7 +8,7 @@ glm::vec3 calculateNormal( glm::vec3 coord1, glm::vec3 coord2, glm::vec3 coord3 
 int main(int argc, char const *argv[]) {
     std::vector<glm::vec3> points;
     std::vector<glm::vec3> faces;
-    const char* path = "testFiles/monkey.obj";
+    const char* path = "testFiles/realData.log";
     loadObj(path, points, faces);
 
     View* view = new View(points, faces);
@@ -36,17 +36,18 @@ bool loadObj(const char* path, std::vector<glm::vec3> &points, std::vector<glm::
             points.push_back(tmp_point);
         } else if ( strcmp( lineHeader, "f" ) == 0 ) {
             std::string vertex1, vertex2, vertex3;
-            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
-            if (matches != 9) {
+            float normalIndex[3];
+            int matches = fscanf(file, "%f %f %f\n", &normalIndex[0], &normalIndex[1], &normalIndex[2] );
+            if (matches != 3) {
                 printf("File can't be read by our simple parser :-( Try exporting with other options\n");
                 return false;
             }
-            glm::vec3 coord1 = points.at(normalIndex[0] - 1);
-            glm::vec3 coord2 = points.at(normalIndex[1] - 1);
-            glm::vec3 coord3 = points.at(normalIndex[2] - 1);
+            // glm::vec3 coord1 = points.at(normalIndex[0] - 1);
+            // glm::vec3 coord2 = points.at(normalIndex[1] - 1);
+            // glm::vec3 coord3 = points.at(normalIndex[2] - 1);
 
-            glm::vec3 normal = calculateNormal(coord1, coord2, coord3);
+            // glm::vec3 normal = calculateNormal(coord1, coord2, coord3);
+            glm::vec3 normal = glm::vec3(normalIndex[0], normalIndex[1], normalIndex[2]);
             faces.push_back(normal);
         } else {
             // Probably a comment, eat up the rest of the line
