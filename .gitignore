@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+
+# Apple
+*.AppleDouble
+*.DS_Store
