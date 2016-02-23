@@ -24,7 +24,6 @@
 class Calculation {
 	// point* points;
 	std::vector<glm::vec3>* points; // Reihenfolge bestimmt Flaechen 1.2.3
-	glm::vec3** allPoints;
 	int indexRow;
 	int rows;
 	int indexColumn;
@@ -37,11 +36,13 @@ class Calculation {
 	FILE* file;
 
 public:
+	glm::vec3** allPoints;
+	
 	Calculation(std::vector<glm::vec3>* _points, std::vector<glm::vec3>* _normals, int rows, int columns);
 	~Calculation();
 
 	void addPoint(servoPosition servos, unsigned int distance, unsigned int currentRow, unsigned int currentColumn);
-	void addPoint2(glm::vec3 point);
+	// void addPoint2(glm::vec3 point);
 	void addPoints();
 	void addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
 };
