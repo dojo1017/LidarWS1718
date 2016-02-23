@@ -21,6 +21,8 @@ public:
 	virtual ~master();
 	void run();
 private:
+	void readDistance(int s0, int s1, int s2);
+
 	lidarController* lidar;
 	servoController* servos;
 //	Calculation* calculation;
