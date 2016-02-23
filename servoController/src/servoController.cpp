@@ -26,8 +26,10 @@ servoController::~servoController() {
 }
 
 void servoController::moveServo(int id, unsigned int value) {
-//	if (value < 0) value = 0; //d'oh... unsigned < 0
-	printf("Move Servo %d to %d ", id, value);
+	#ifdef DEBUG
+		printf("Move Servo %d to %d ", id, value);
+	#endif
+
 	if (value > STEPS) value = STEPS;
 
 	servo* current = this->servos[id];
@@ -41,9 +43,31 @@ void servoController::moveServo(int id, unsigned int value) {
 	if (rotation > max) rotation = max;
 	if (rotation < min) rotation = min;
 
-	printf("calculated rotation: %d\n", rotation);
+	#ifdef DEBUG
+		printf("calculated rotation: %d\n", rotation);
+	#endif
 
-	current->moveTo(rotation);
+	if (inRestrictedArea(id, value)) fprintf(stderr, "Move to restricted area requestet! This incident will be reported!\n");
+	else current->moveTo(rotation);
+}
+
+void servoController::toStartPosition() {
+	for (unsigned int i = 0; i < servos.size(); i++) {
+		moveServo(i, (STEPS/2));
+	}
+}
+
+bool servoController::inRestrictedArea(int servoId, unsigned int value) {
+	//MODIFY FOR YOUR SCENARIO!
+	if (servoId == 0) return false;
+
+	int rot1 = this->servos[1]->getCurrentRotation(),
+	    rot2 = this->servos[2]->getCurrentRotation();
+
+	if (servoId == 2 && rot1 > 330 && value > 300) return true;
+	if (servoId == 1 && rot2 > 300 && value > 330) return true;
+	if (servoId >= 3) return true;
+	return false;
 }
 
 unsigned int servoController::getRotation(int id) {

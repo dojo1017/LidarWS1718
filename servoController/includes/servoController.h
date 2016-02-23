@@ -20,9 +20,11 @@ public:
 	virtual ~servoController();
 	void moveServo(int id, unsigned int value);
 	unsigned int getRotation(int id);
+	void toStartPosition();
 private:
 	std::vector<servo*> servos;
 	PCA9685* pwm;
+	bool inRestrictedArea(int servoId, unsigned int value);
 };
 
 #endif
