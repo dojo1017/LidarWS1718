@@ -2,9 +2,8 @@
 *.slo
 *.lo
 *.o
-*.obj
 */debug/*
-*/obj/*
+*/objs/*
 
 # Precompiled Headers
 *.gch
