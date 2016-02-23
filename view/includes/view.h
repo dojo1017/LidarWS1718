@@ -54,6 +54,7 @@ private:
 
     void setViewport();
     void initScreen();
+    void drawScreen();
 public:
     void startScreen();
     void updateScreen();

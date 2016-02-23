@@ -7,8 +7,6 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     this->faces = _faces;
     initScreen();
     // Create and compile our GLSL program from the shaders
-    //TODO fix path!!!!
-    printf("foo1\n");
     GLuint vertexShaderId =  loadSchader("objs/TransformVertexShader.glsl", GL_VERTEX_SHADER);
     GLuint fragmentShaderId =  loadSchader("objs/TextureFragmentShader.glsl", GL_FRAGMENT_SHADER);
     programID = glCreateProgram();
@@ -16,8 +14,7 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     glAttachShader(programID, fragmentShaderId);
     glLinkProgram(programID);
     glUseProgram(programID);
-    // programID = LoadShaders( "src/TransformVertexShader.glsl", "src/TextureFragmentShader.glsl" );
-    printf("foo2\n");
+
     // Get a handle for our "MVP" uniform
     MatrixID = glGetUniformLocation(programID, "MVP");
     ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -30,9 +27,9 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
 
     Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
     ViewLookAt = glm::lookAt(
-                     glm::vec3(0, 0.5f, 0), // Camera is at origin in World Space
+                     glm::vec3(1, -1, 1), // Camera is at origin in World Space
                      // glm::vec3(4, 1, 3), // Camera is at (4,1,3), in World Space
-                     glm::vec3(1, 0.5f, 0), // and looks at direction x
+                     glm::vec3(0, 0, 0), // and looks at direction x
                      glm::vec3(0, 1, 0) // Head is up (set to 0,-1,0 to look upside-down)
                  );
     // Model matrix : an identity matrix (model will be at the origin)
@@ -61,10 +58,13 @@ View::~View() {
 }
 
 void View::startScreen() {
-    printf("%d\n", points.size());
-    printf("%d\n", faces.size());
     do {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        updateScreen();
+    } while (1);
+}
+
+void View::updateScreen() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(programID);
 
         // Rebuild the Model matrix
@@ -116,12 +116,10 @@ void View::startScreen() {
         glDisableVertexAttribArray(vertexUVID);
         glDisableVertexAttribArray(vertexNormal_modelspaceID);
 
-        updateScreen();
-
-    } while (1);
+        drawScreen();
 }
 
-void View::updateScreen() {
+void View::drawScreen() {
     eglSwapBuffers(this->GDisplay, GSurface);
 }
 
