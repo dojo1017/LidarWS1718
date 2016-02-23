@@ -25,7 +25,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#define delay(x) usleep(x*1000)
+/*
+ * Modified by Tobias Harms, 2016 (info@tobiasharms.com)
+ * - delay redefined
+ * - now uses i2c_smbus instead of WiringPi for i2c-communication
+ */
+
+#define delay(x) usleep((x)*1000)
 
     #include "../includes/lidarLite.h"
 	#include <unistd.h>
@@ -36,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	#include <fcntl.h>
 	#include <linux/i2c-dev.h>
 	#include <stdlib.h>
-    
+
     bool _dbg;
 
 	int openI2C(int adr) {
@@ -51,7 +57,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		}
 		return file;
 	}
-   
+
     // Initialize wiring I2C interface to LidarLite
     int lidar_init(bool dbg) {
             int fd;

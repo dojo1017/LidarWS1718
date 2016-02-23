@@ -3,28 +3,33 @@ CXXFLAGS = -O0 -g -Wall -Wextra -DDEBUG=1
 
 ObjsDir = objs
 SrcDir = src
+IncludesDir = includes
 
 TestBin = servoTest
 ManualBin = servoManualControl
 
-all: clean servoController.o
+all: $(ObjsDir)/servoController.o $(ObjsDir)/servo.o $(ObjsDir)/PCAlib.o
 
 clean:
 	rm -rfv $(ObjsDir)/*
 	rm -rfv $(TestBin)
 	rm -rfv $(ManualBin)
 
-test: all
+test: $(TestBin)
+
+manual: $(ManualBin)
+
+$(TestBin): all
 	$(CXX) $(CXXFLAGS) -o $(TestBin) $(SrcDir)/servoTest.cpp $(ObjsDir)/*
 
-servoController.o: servo.o PCAlib.o
+$(ObjsDir)/servoController.o: $(SrcDir)/servoController.cpp $(IncludesDir)/servoController.h
 	$(CXX) $(CXXFLAGS) -c -o $(ObjsDir)/servoController.o $(SrcDir)/servoController.cpp
 
-servo.o: PCAlib.o
+$(ObjsDir)/servo.o: $(SrcDir)/servo.cpp $(IncludesDir)/servo.h
 	$(CXX) $(CXXFLAGS) -c -o $(ObjsDir)/servo.o $(SrcDir)/servo.cpp
 
-PCAlib.o:
+$(ObjsDir)/PCAlib.o: $(SrcDir)/PCA9685.cpp $(IncludesDir)/PCA9685.h
 	$(CXX) $(CXXFLAGS) -c -o $(ObjsDir)/PCAlib.o $(SrcDir)/PCA9685.cpp
 
-manual: all
+$(ManualBin): all
 	$(CXX) $(CXXFLAGS) -o $(ManualBin) $(SrcDir)/servo_manual_control.cpp $(ObjsDir)/*

@@ -6,13 +6,13 @@
 
 #include <vector>
 
-#define I2C_BUS 1
+#define I2C_BUS (1)
 
 // PWM-Platine hört auf I2C Adresse 0x40
-#define PWM_I2C_ADR 0x40
-#define PWM_FREQ 50 /* 50 Hz */
+#define PWM_I2C_ADR (0x40)
+#define PWM_FREQ (50) /* 50 Hz */
 
-#define STEPS 180
+#define STEPS (180)
 
 class servoController {
 public:

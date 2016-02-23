@@ -1,3 +1,6 @@
+#ifndef _lidar_controller_h
+#define _lidar_controller_h
+
 class lidarController {
 public:
 	lidarController();
@@ -10,3 +13,5 @@ public:
 private:
 	int fd;
 };
+
+#endif

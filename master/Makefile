@@ -20,6 +20,10 @@ init:
 clean:
 	rm -rfv $(ObjsDir)/*
 	rm -rfv $(Binary)
+	$(MAKE) -C $(viewDir)/ clean
+	$(MAKE) -C $(calcDir)/ clean
+	$(MAKE) -C $(servoDir)/ clean
+	$(MAKE) -C $(lidarDir)/ clean
 
 $(Binary): lidar servo view calc
 	$(CXX) $(CXXFLAGS) -o $(Binary) src/master.cpp $(ObjsDir)/*
