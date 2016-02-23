@@ -78,7 +78,7 @@ void master::readDistance(int s1, int s2, int s3) {
 }
 
 int main(int argc, char* argv[]) {
-	master* m = new master(90, 180);
+	master* m = new master(45, 45);
 	m->run();
 	delete m;
 }
