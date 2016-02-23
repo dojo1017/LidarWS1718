@@ -5,7 +5,6 @@
 #define GLM_FORCE_RADIANS
 
 #include <vector>
-#include "../../master/includes/master.h"
 #include "stdio.h"
 #include <fcntl.h>
 #include <stdlib.h>

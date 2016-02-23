@@ -1,9 +1,10 @@
 #include "../includes/master.h"
 
-#include "../../lidar/includes/lidarLite.h" //Unbedingt wieder rausnehmen, nur für Test
-
 #include <unistd.h>
 #include <stdio.h>
+#include <vector>
+
+#include <glm/glm.hpp>
 
 // Delay between servo movements in usec
 #define DELAY (25*1000)
@@ -11,9 +12,9 @@
 master::master(unsigned int rows, unsigned int columns) {
 	this->lidar = new lidarController();
 	this->servos = new servoController();
-//	this->calculation = new Calculation(0, 0);
-//	this->view = new View(0, 0);
-
+	std::vector<glm::vec3> points, normals;
+	this->view = new View(points, normals);
+	this->calc = new Calc(points, normals, rows, columns);
 	this->rows = rows;
 	this->columns = columns;
 

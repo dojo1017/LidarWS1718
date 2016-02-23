@@ -1,10 +1,10 @@
 #ifndef _master_h_
 #define _master_h_
 
+#include "../../view/includes/view.h"
 #include "../../lidar/includes/lidarController.h"
 #include "../../servoController/includes/servoController.h"
-//#include "../../calculation/includes/calculation.h"
-//#include "../../view/includes/view.h"
+#include "../../calculation/includes/calculation.h"
 
 struct point {
     float x, y, z;
@@ -25,8 +25,8 @@ private:
 
 	lidarController* lidar;
 	servoController* servos;
-//	Calculation* calculation;
-//	View* view;
+	Calculation* calculation;
+	View* view;
 	unsigned int currentRow, currentColumn;
 	unsigned int rows, columns;
 };

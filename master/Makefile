@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -O0 -g -Wall -Wextra 
+CXXFLAGS = -O0 -g -Wall -Wextra -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -L/opt/vc/lib -lGLESv2 -lEGL -lbcm_host
+ 
 
 SrcDir = src
 ObjsDir = objs
@@ -20,7 +21,7 @@ clean:
 	rm -rfv $(ObjsDir)/*
 	rm -rfv $(Binary)
 
-$(Binary): lidar servo 
+$(Binary): lidar servo view calc
 	$(CXX) $(CXXFLAGS) -o $(Binary) src/master.cpp $(ObjsDir)/*
 
 
