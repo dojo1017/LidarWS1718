@@ -1,5 +1,6 @@
 #include "../includes/view.h"
 void startScreen();
+GLuint loadSchader(const char* path, GLenum type);
 
 View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     this->points = _points;
@@ -7,7 +8,14 @@ View::View(std::vector<glm::vec3> &_points, std::vector<glm::vec3> &_faces) {
     initScreen();
     // Create and compile our GLSL program from the shaders
     //TODO fix path!!!!
-    programID = LoadShaders( "src/TransformVertexShader.glsl", "src/TextureFragmentShader.glsl" );
+    GLuint vertexShaderId =  loadSchader("src/TransformVertexShader.glsl", GL_VERTEX_SHADER);
+    GLuint fragmentShaderId =  loadSchader("src/TextureFragmentShader.glsl", GL_FRAGMENT_SHADER);
+    programID = glCreateProgram();
+    glAttachShader(programID, vertexShaderId);
+    glAttachShader(programID, fragmentShaderId);
+    glLinkProgram(programID);
+    glUseProgram(programID);
+    // programID = LoadShaders( "src/TransformVertexShader.glsl", "src/TextureFragmentShader.glsl" );
 
     // Get a handle for our "MVP" uniform
     MatrixID = glGetUniformLocation(programID, "MVP");
@@ -198,4 +206,21 @@ void View::initScreen() {
 
     // Cull triangles which normal is not towards the camera
     glEnable(GL_CULL_FACE);
+}
+
+GLuint loadSchader(const char* path, GLenum type) {
+    FILE* f = fopen(path, "rb");
+    fseek(f, 0, SEEK_END);
+    int sz = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    GLchar* Src = new GLchar[sz + 1];
+    fread(Src, 1, sz, f);
+    Src[sz] = 0; //null terminate it!
+    fclose(f);
+
+    GLuint result = glCreateShader(type);
+    glShaderSource(result, 1, (const GLchar**)&Src, 0);
+    glCompileShader(result);
+
+    return result;
 }
