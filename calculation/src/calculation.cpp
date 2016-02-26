@@ -69,19 +69,10 @@ void Calculation::addPoint(servoPosition servos, unsigned int distance, unsigned
 		// add point to array
 		this->allPoints[currentRow][currentColumn] = result;
 
-
-		if (this->maxDistance < abs(result.x))
-		{
-			this->maxDistance = abs(result.x);
-		}
-		if (this->maxDistance < abs(result.y))
-		{
-			this->maxDistance = abs(result.y);
-		}
-		if (this->maxDistance < abs(result.z))
-		{
-			this->maxDistance = abs(result.z);
-		}
+		// find the value of the farthest coordinate, it will later be used to normalize all vectors
+		if (this->maxDistance < abs(result.x)) { this->maxDistance = abs(result.x);	}
+		if (this->maxDistance < abs(result.y)) { this->maxDistance = abs(result.y); }
+		if (this->maxDistance < abs(result.z)) { this->maxDistance = abs(result.z); }
 	}
 }
 
@@ -100,33 +91,33 @@ void Calculation::addPoints() {
 				glm::vec3 point2(this->allPoints[row - 1][column - 1]);
 				glm::vec3 point3(this->allPoints[row - 1][column]);
 
+				// normalize all vectors
 				point1 = point1 * (1 / maxDistance);
 				point2 = point2 * (1 / maxDistance);
 				point3 = point3 * (1 / maxDistance);
 
-				// if (checkAnyEmptyPoint(point1, point2, point3)) {
-				// printf("Missing point at row %d column %d\n", row, column);
-				// } else {
-				// printf("Entry: (%i,%i): %s\n", row, column, glm::to_string(point).c_str());
-				this->points->push_back(point1);
-				this->points->push_back(point2);
-				this->points->push_back(point3);
+				if (checkAnyEmptyPoint(point1, point2, point3)) {
+					printf("Missing point at row %d column %d\n", row, column);
+				} else {
+					// push points in correct order to the points array for the view
+					this->points->push_back(point1);
+					this->points->push_back(point2);
+					this->points->push_back(point3);
 
-				// printf("FOO Entry: (%i,%i): %s\n", row, column, glm::to_string(point1).c_str());
-				// printf("FOO Entry: (%i,%i): %s\n", row - 1, column - 1, glm::to_string(point2).c_str());
-				// printf("FOO Entry: (%i,%i): %s\n", row - 1, column, glm::to_string(point3).c_str());
+					// add the normals for these three points
+					addNormal(point1, point2, point3);
 
+					// printf("FOO Entry: (%i,%i): %s\n", row, column, glm::to_string(point1).c_str());
+					// printf("FOO Entry: (%i,%i): %s\n", row - 1, column - 1, glm::to_string(point2).c_str());
+					// printf("FOO Entry: (%i,%i): %s\n", row - 1, column, glm::to_string(point3).c_str());
 
-
-				addNormal(point1, point2, point3);
-
-				fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
-				fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
-				fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
-
-				int indexPoints = points->size();
-				fprintf(this->file, "t %d %d %d\n", indexPoints - 2, indexPoints - 1, indexPoints);
-				// }
+					// log
+					fprintf(this->file, "v %f %f %f\n", point1.x, point1.y, point1.z);
+					fprintf(this->file, "v %f %f %f\n", point2.x, point2.y, point2.z);
+					fprintf(this->file, "v %f %f %f\n", point3.x, point3.y, point3.z);
+					int indexPoints = points->size();
+					fprintf(this->file, "t %d %d %d\n", indexPoints - 2, indexPoints - 1, indexPoints);
+				}
 			}
 			if (column < (this->columns - 1))
 			{
@@ -134,33 +125,37 @@ void Calculation::addPoints() {
 				glm::vec3 point5(this->allPoints[row - 1][column]);
 				glm::vec3 point6(this->allPoints[row][column + 1]);
 
+				// normalize all vectors
 				point4 = point4 * (1 / maxDistance);
 				point5 = point5 * (1 / maxDistance);
 				point6 = point6 * (1 / maxDistance);
 
-				// if (checkAnyEmptyPoint(point4, point5, point6)) {
-				// 	printf("Missing point at row %d column %d\n", row, column);
-				// } else {
-				this->points->push_back(point4);
-				this->points->push_back(point5);
-				this->points->push_back(point6);
+				if (checkAnyEmptyPoint(point4, point5, point6)) {
+					printf("Missing point at row %d column %d\n", row, column);
+				} else {
+					// push points in correct order to the points array for the view
+					this->points->push_back(point4);
+					this->points->push_back(point5);
+					this->points->push_back(point6);
 
-				// printf("BAA Entry: (%i,%i): %s\n", row, column, glm::to_string(point4).c_str());
-				// printf("BAA Entry: (%i,%i): %s\n", row - 1, column, glm::to_string(point5).c_str());
-				// printf("BAA Entry: (%i,%i): %s\n", row, column + 1, glm::to_string(point6).c_str());
+					// add the normals for these three points
+					addNormal(point4, point5, point6);
 
-				addNormal(point4, point5, point6);
+					// printf("BAA Entry: (%i,%i): %s\n", row, column, glm::to_string(point4).c_str());
+					// printf("BAA Entry: (%i,%i): %s\n", row - 1, column, glm::to_string(point5).c_str());
+					// printf("BAA Entry: (%i,%i): %s\n", row, column + 1, glm::to_string(point6).c_str());
 
-				fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
-				fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
-				fprintf(this->file, "v %f %f %f\n", point6.x, point6.y, point6.z);
-
-				int indexPoints = points->size();
-				fprintf(this->file, "t %d %d %d\n", indexPoints - 2, indexPoints - 1, indexPoints);
-				// }
+					// log
+					fprintf(this->file, "v %f %f %f\n", point4.x, point4.y, point4.z);
+					fprintf(this->file, "v %f %f %f\n", point5.x, point5.y, point5.z);
+					fprintf(this->file, "v %f %f %f\n", point6.x, point6.y, point6.z);
+					int indexPoints = points->size();
+					fprintf(this->file, "t %d %d %d\n", indexPoints - 2, indexPoints - 1, indexPoints);
+				}
 			}
 		}
 	}
+	// close log file
 	fclose(this->file);
 }
 
@@ -204,33 +199,12 @@ void Calculation::addNormal(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3
 	this->normals->push_back(normal);
 	this->normals->push_back(normal);
 
+	// log
 	fprintf(this->file, "f %f %f %f\n", normal.x, normal.y, normal.z);
 	fprintf(this->file, "f %f %f %f\n", normal.x, normal.y, normal.z);
 	fprintf(this->file, "f %f %f %f\n", normal.x, normal.y, normal.z);
 
 }
-
-// void Calculation::addPoint2(glm::vec3 point) {
-// 	if (((indexRow % 2) == 0) && (indexColumn < this->columns))
-// 	{
-// 		this->allPoints[this->indexRow][this->indexColumn] = point;
-// 		indexColumn++;
-// 		if (indexColumn == this->columns)
-// 		{
-// 			indexRow++;
-// 		}
-// 	} else {
-// 		indexColumn--;
-// 		this->allPoints[this->indexRow][this->indexColumn] = point;
-
-// 		if (indexColumn == 0)
-// 		{
-// 			indexRow++;
-// 		}
-// 	}
-// }
-
-
 
 
 
