@@ -14,7 +14,7 @@
   * [ ] Merlin und Gyro kalibrieren/nullen
   * [ ] Den Merlin so ansteuern, dass er die Hemisphäre scannt
   * [ ] Dabei in regelmäßigen Intervallen Messungen mit Gyroskop und Lidar machen und sammeln
-  * [ ] Abschließend die Punktwolke in einem 3D-Format (OBJ, PLY o.ä.) rausschreiben
+  * [ ] Abschließend die Punktwolke in einem 3D-Format (OBJ, PLY o.ä.) rausschreiben (Format siehe Aufgabenstellung)
 
 * [ ] LIDAR Daten in einem sinnvollen Format Speichern
 
