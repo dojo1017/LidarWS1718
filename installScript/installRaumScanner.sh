@@ -8,7 +8,7 @@ echo "Zum Ausführen des Skriptes die Zeile mit dem exit entfernen."
 echo "Der Rest müsste (sollte) funktionieren. Ist aber ungetestet."
 echo "Viel Spaß beim Projekt!"
 echo "Viele Grüße vom Wintersemester 2015/16"
-exit 201516;
+#exit 201516;
 
 echo "Installing dependencies for RaumScanner!"
 sudo apt-get -y update
