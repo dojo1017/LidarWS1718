@@ -2,17 +2,23 @@
 
 ## Meilensteine
 
-[ ] Merlin-Steuerung zum Laufen bekommen
+* [x] Merlin-Steuerung zum Laufen bekommen
 
-[ ] Gyro auslesen können
+* [ ] Gyro auslesen können
 
-[ ] Verbindung zwischen Motorsteuerung und Gyro herstellen
+* [ ] Verbindung zwischen Motorsteuerung und Gyro herstellen
 
-[ ] LIDAR zum Laufen bekommen
+* [ ] LIDAR zum Laufen bekommen
 
-[ ] LIDAR Daten in einem sinnvollen Format Speichern
+* [ ] Aus den Teilelementen ein sinnvolles Programm formen, das folgendes kann:
+  * [ ] Merlin und Gyro kalibrieren/nullen
+  * [ ] Den Merlin so ansteuern, dass er die Hemisphäre scannt
+  * [ ] Dabei in regelmäßigen Intervallen Messungen mit Gyroskop und Lidar machen und sammeln
+  * [ ] Abschließend die Punktwolke in einem 3D-Format (OBJ, PLY o.ä.) rausschreiben
 
-[ ] LIDAR Punktwolken in Meshes umwandeln
+* [ ] LIDAR Daten in einem sinnvollen Format Speichern
+
+* [ ] LIDAR Punktwolken in Meshes umwandeln
 
 
 ## Links
