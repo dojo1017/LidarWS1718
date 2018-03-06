@@ -10,11 +10,13 @@
 class Merlin {
 public:
     Merlin();
-    void aimAt(float targetHeading, float targetPitch);
+    void aimAt(float heading, float pitch);
 
 private:
     Gyro gyro;
     const float maxError = 1.f;
+
+
 };
 
 

@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     for(float pitch = 0.f; pitch < 90.f; pitch += step) {
         // Step through heading, describing a circle
         for (float heading = 0.f; heading < 360.f; heading += step) {
-            printf("lat: %.2f long: %.2f\n", pitch, heading);
+            printf("heading: %.2f pitch: %.2f\n", heading, pitch);
 
             // Tell Merlin to drive to the current lat/long coordinates
             // (Merlin controller class internally checks these with the gyro)
