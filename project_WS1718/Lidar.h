@@ -6,7 +6,6 @@
 #define PROJECT_WS1718_LIDAR_H
 
 
-#include <cstdint>  // uint16_t
 #include "libs/lidar/lidarController.h"
 
 class Lidar {

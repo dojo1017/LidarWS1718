@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 
             // Take measurement with Lidar
             unsigned int distance = lidar.measureDistance();
-            measurements.emplace_back(Measurement(heading, pitch, distance));
+            measurements.push_back(Measurement(heading, pitch, distance));
         }
     }
 
