@@ -46,3 +46,6 @@ lidarTest
 *.log
 *.pdf
 *.synctex.gz
+
+# CLion
+*.idea/

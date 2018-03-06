@@ -29,3 +29,17 @@
 ## Remotes
 Origin Sourceforge: https://iwistudent@git.code.sf.net/p/autosyslab/laserscanner
 Origin Github: https://github.com/dojo1017/LidarWS1718.git
+
+
+## Minidoku
+
+UART zum Laufen bringen (Raspberry Pi 3):
+
+1. sudo apt-get update && sudo apt-get upgrade -y
+1. sudo rpi-update
+1. sudo reboot
+1. sudo nano /boot/cmdline.txt und "console=serial0,115200" entfernen, speichern
+1. sudo nano /boot/config.txt, folgendes eintragen:
+  dtoverlay=pi3-miniuart-bt
+  enable_uart=1
+1. sudo reboot
