@@ -9,11 +9,6 @@
 
 class Gyro {
 public:
-    typedef struct Position {
-        float latitude;
-        float longitude;
-    };
-
     Gyro();
     double getHeading();
     double getPitch();

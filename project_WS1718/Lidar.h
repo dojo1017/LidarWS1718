@@ -6,11 +6,15 @@
 #define PROJECT_WS1718_LIDAR_H
 
 
-#include <cstdint>
+#include <cstdint>  // uint16_t
+#include "libs/lidar/lidarController.h"
 
 class Lidar {
 public:
-    uint16_t measureDistance();
+    unsigned int measureDistance();
+
+private:
+    lidarController lib;
 };
 
 

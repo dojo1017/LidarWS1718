@@ -5,13 +5,13 @@ using std::vector;
 #include "Merlin.h"
 
 typedef struct Measurement {
-    Measurement(float heading, float pitch, uint16_t dist)
+    Measurement(float heading, float pitch, unsigned int dist)
         : heading(heading), pitch(pitch), distance(dist)
     {}
 
     float heading;
     float pitch;
-    uint16_t distance;
+    unsigned int distance;
 };
 
 int main(int argc, char **argv) {
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
             merlin.aimAt(heading, pitch);
 
             // Take measurement with Lidar
-            uint16_t distance = lidar.measureDistance();
+            unsigned int distance = lidar.measureDistance();
             measurements.emplace_back(Measurement(heading, pitch, distance));
         }
     }
@@ -42,5 +42,6 @@ int main(int argc, char **argv) {
 
     // Write to file
 
+    cout << "Done." << endl;
     return 0;
 }
