@@ -5,7 +5,7 @@
 #ifndef PROJECT_WS1718_GYRO_H
 #define PROJECT_WS1718_GYRO_H
 
-#include "Gyro_Lib/BNO055.h"
+#include "libs/gyro/BNO055.h"
 
 class Gyro {
 public:
