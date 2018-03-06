@@ -3,7 +3,6 @@
 //
 
 #include <stdio.h>
-#include <math.h>
 #include <sstream
 #include <iomanip>
 #include "Merlin.h"
@@ -21,32 +20,6 @@ void Merlin::aimAt(float heading, float pitch) {
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
 
     
-
-//    while(true) {
-//        // Check where we are currently
-//        float heading = gyro.getHeading();
-//        float pitch = gyro.getPitch();
-//
-//        float deltaHeading = targetHeading - heading;
-//        float deltaPitch = targetPitch - pitch;
-//
-//        if(fabsf(deltaHeading) < maxError && fabsf(deltaPitch) < maxError) {
-//            // Target reached
-//            break;
-//        }
-//
-//        if(deltaHeading > 0.f) {
-//            // Move so heading gets smaller
-//        } else {
-//            // Move so heading gets larger
-//        }
-//
-//        if(deltaPitch > 0.f) {
-//            // Move so heading gets smaller
-//        } else {
-//            // Move so heading gets larger
-//        }
-//    }
 }
 
 void Merlin::addCommand(string command, bool lineEnd) {
@@ -92,24 +65,3 @@ string Merlin::positionToString(int pos) {
 
     return result;
 }
-
-//private String TranslatePosition(int pos) {
-//    String temp;
-//    temp = Integer.toHexString(pos);
-//    StringBuilder dest = new StringBuilder(temp);
-//    for (int i = temp.length(); i < 6; i++) {
-//        dest.append("0");
-//    }
-//
-//    StringBuilder dest2 = new StringBuilder("");
-//    dest2.append(dest.charAt(4));
-//    dest2.append(dest.charAt(5));
-//
-//    dest2.append(dest.charAt(2));
-//    dest2.append(dest.charAt(3));
-//
-//    dest2.append(dest.charAt(0));
-//    dest2.append(dest.charAt(1));
-//
-//    return dest2.toString().toUpperCase();
-//}
