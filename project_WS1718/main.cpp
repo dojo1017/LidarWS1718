@@ -5,12 +5,12 @@ using std::vector;
 #include "Merlin.h"
 
 typedef struct Measurement {
-    Measurement(float lat, float longitude, uint16_t dist)
-        : latitude(lat), longitude(longitude), distance(dist)
+    Measurement(float heading, float pitch, uint16_t dist)
+        : heading(heading), pitch(pitch), distance(dist)
     {}
 
-    float latitude;
-    float longitude;
+    float heading;
+    float pitch;
     uint16_t distance;
 };
 
@@ -21,26 +21,26 @@ int main(int argc, char **argv) {
     vector<Measurement> measurements;
     const float step = 5.f;
 
-    // Step through latitude from 0° (equator) to 90° (north pole)
-    for(float latitude = 0.f; latitude < 90.f; latitude += step) {
-        // Step through longitude, describing a circle
-        for (float longitude = 0.f; longitude < 360.f; longitude += step) {
-            printf("lat: %.2f long: %.2f\n", latitude, longitude);
+    // Step through pitch from 0° (equator) to 90° (north pole)
+    for(float pitch = 0.f; pitch < 90.f; pitch += step) {
+        // Step through heading, describing a circle
+        for (float heading = 0.f; heading < 360.f; heading += step) {
+            printf("lat: %.2f long: %.2f\n", pitch, heading);
 
             // Tell Merlin to drive to the current lat/long coordinates
             // (Merlin controller class internally checks these with the gyro)
             // (this method blocks until the coordinates are reached)
-            merlin.aimAt(latitude, longitude);
+            merlin.aimAt(heading, pitch);
 
             // Take measurement with Lidar
             uint16_t distance = lidar.measureDistance();
-            measurements.emplace_back(Measurement(latitude, longitude, distance));
+            measurements.emplace_back(Measurement(heading, pitch, distance));
         }
     }
 
     // Convert measurements into 3D coordinates
 
-    // Write to 3D file
+    // Write to file
 
     return 0;
 }
