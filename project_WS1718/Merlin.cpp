@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "Merlin.h"
+using std::string;
 
 Merlin::Merlin() {
 
@@ -42,4 +43,16 @@ void Merlin::aimAt(float heading, float pitch) {
 //            // Move so heading gets larger
 //        }
 //    }
+}
+
+void Merlin::addCommand(string command) {
+    commands += command;
+}
+
+void Merlin::startMotor(string motor) {
+    addCommand(":G" + motor + "");
+}
+
+void Merlin::stopMotor(string motor) {
+
 }

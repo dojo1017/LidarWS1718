@@ -3,4 +3,25 @@ project(project_WS1718)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(project_WS1718 main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h)
+add_executable(project_WS1718
+        # Main project
+        main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h
+        # libs
+        libs/gyro/BNO055.cpp
+        libs/gyro/BNO055.h
+        libs/lidar/lidarController.cpp
+        libs/lidar/lidarController.h
+        libs/lidar/lidarLite.c
+        libs/lidar/lidarLite.h
+        )
+
+# Needed libraries:
+# sudo apt-get install libi2c-dev
+# WiringPi
+
+TARGET_LINK_LIBRARIES(
+        project_WS1718
+        wiringPi
+        rt
+        crypt
+)

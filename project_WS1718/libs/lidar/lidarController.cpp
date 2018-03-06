@@ -1,5 +1,7 @@
 #include "lidarController.h"
-#include "lidarLite.h"
+extern "C" {
+	#include "lidarLite.h"
+}
 
 #include <unistd.h>
 
