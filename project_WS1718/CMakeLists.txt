@@ -6,13 +6,16 @@ set(CMAKE_CXX_STANDARD 11)
 add_executable(project_WS1718
         # Main project
         main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h
-        # libs
+        # gyro libs
         libs/gyro/BNO055.cpp
         libs/gyro/BNO055.h
+        # lidar libs
         libs/lidar/lidarController.cpp
         libs/lidar/lidarController.h
         libs/lidar/lidarLite.c
         libs/lidar/lidarLite.h
+        # merlin libs
+        libs/merlin/MerlinHalfSqhere.h
         )
 
 # Needed libraries:

@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include <sstream
+#include <sstream>
 #include <iomanip>
 #include "Merlin.h"
 using std::string;
@@ -19,7 +19,7 @@ void Merlin::aimAt(float heading, float pitch) {
     double currPitch = gyro.getPitch();
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
 
-    
+
 }
 
 void Merlin::addCommand(string command, bool lineEnd) {
