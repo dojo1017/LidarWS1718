@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
 
             // Take measurement with Lidar
             unsigned int distance = lidar.measureDistance();
+            cout << "distance: " << distance << " cm" << endl;
             measurements.push_back(Measurement(heading, pitch, distance));
         }
     }

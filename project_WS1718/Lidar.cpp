@@ -6,6 +6,7 @@
 #include "Lidar.h"
 #include "libs/lidar/lidarLite.h"  // For the status codes
 
+// The returned distance is in cm
 unsigned int Lidar::measureDistance() {
     unsigned int distance = lib.getDistance();
     unsigned char status = lib.getStatus();

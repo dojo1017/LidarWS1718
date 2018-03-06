@@ -19,23 +19,38 @@ Gyro::Gyro()
     // TODO: We should probably calibrate until these values
     // reach at least 2 (0 = not calibrated at all, 3 = fully calibrated)
 
-    // Anzeige der Euler Daten und Kalibrierungsdaten
-    for(int i = 0; i < 100; i++) {
-        //Eulersche Winkelangaben
-        printf("Heading: %4.2f ", lib.getEulerHeading());
-        printf("Roll: %4.2f ", lib.getEulerRoll());
-        printf("Pitch: %4.2f \t\t", lib.getEulerPitch());
+    int calibrationGyro = -1;
+    int calibrationMag = -1;
+    const int fullyCalibrated = 3;
 
-        // Kalibrierungsdaten, sollten mind.2 sein um sinnvolle Daten zu erhalten
-        // Sollte das Magnetometer bei < 2 sein handelt es sich um relative Angaben
-        // erst wenn das Magnetometer den Nordpol gefunden hat sind es absolute Angaben
-        cout << "Sys: " << lib.getKalibrierungSys()
-             << " Gyro: " << lib.getKalibrierungGyro()
-             << " Acc: " << lib.getKalibrierungAcc()
-             << " Mag: " << lib.getKalibrierungMag() << endl;
+    while(calibrationGyro < fullyCalibrated && calibrationMag < fullyCalibrated) {
+        calibrationGyro = lib.getKalibrierungGyro();
+        calibrationMag = lib.getKalibrierungMag();
+
+        cout << "Calibration:" << endl
+             << "  Gyro: " << calibrationGyro << "/" << fullyCalibrated << endl
+             << "  Mag: " << calibrationMag << "/" << fullyCalibrated << endl;
 
         sleep(1);
     }
+
+//    // Anzeige der Euler Daten und Kalibrierungsdaten
+//    for(int i = 0; i < 100; i++) {
+//        //Eulersche Winkelangaben
+//        printf("Heading: %4.2f ", lib.getEulerHeading());
+//        printf("Roll: %4.2f ", lib.getEulerRoll());
+//        printf("Pitch: %4.2f \t\t", lib.getEulerPitch());
+//
+//        // Kalibrierungsdaten, sollten mind.2 sein um sinnvolle Daten zu erhalten
+//        // Sollte das Magnetometer bei < 2 sein handelt es sich um relative Angaben
+//        // erst wenn das Magnetometer den Nordpol gefunden hat sind es absolute Angaben
+//        cout << "Sys: " << lib.getKalibrierungSys()
+//             << " Gyro: " << lib.getKalibrierungGyro()
+//             << " Acc: " << lib.getKalibrierungAcc()
+//             << " Mag: " << lib.getKalibrierungMag() << endl;
+//
+//        sleep(1);
+//    }
 }
 
 double Gyro::getHeading() {

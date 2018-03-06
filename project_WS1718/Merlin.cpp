@@ -13,7 +13,12 @@ Merlin::Merlin() {
 
 // This is a blocking method (blocks until the new position is reached)
 void Merlin::aimAt(float heading, float pitch) {
-    printf("Merlin: aiming at heading %.2f pitch %.2f\n", heading, pitch);
+//    printf("Merlin: aiming at heading %.2f pitch %.2f\n", heading, pitch);
+    double currHeading = gyro.getHeading();
+    double currPitch = gyro.getPitch();
+    printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
+
+
     // TODO
 
 

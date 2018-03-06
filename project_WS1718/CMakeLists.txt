@@ -17,7 +17,8 @@ add_executable(project_WS1718
 
 # Needed libraries:
 # sudo apt-get install libi2c-dev
-# WiringPi
+# WiringPi: Von der Website runterladen und kompilieren
+# rt und crypt sollten vorinstalliert sein
 
 TARGET_LINK_LIBRARIES(
         project_WS1718
