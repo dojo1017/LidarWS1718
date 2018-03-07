@@ -18,6 +18,7 @@ struct Measurement {
 int main(int argc, char **argv) {
     Lidar lidar;
     Merlin merlin;
+    return 0;  // Debug
 
     vector<Measurement> measurements;
     const float step = 5.f;
