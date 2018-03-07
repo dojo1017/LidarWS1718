@@ -5,9 +5,12 @@
 #include <fcntl.h>
 #include <cmath>
 
-#include "Utils.h"
 #include "Merlin.h"
 using std::string;
+
+// More or less crappy documentation of the Merlin/Orion protocol:
+// http://www.papywizard.org/wiki/DevelopGuide
+// https://framagit.org/fma38/Papywizard/blob/master/papywizard/hardware/merlinOrionHardware.py
 
 // How to move a motor:
 //
@@ -220,20 +223,7 @@ void Merlin::waitForStop(const string &motor)
 }
 
 void Merlin::moveMotor(std::string motor, int direction, int speed) {
-    // From the documentation at http://www.papywizard.org/wiki/DevelopGuide
-//    const string speedDivider = "220000";
-//    const string directionStr = direction ? "1" : "0";
-//
-//    addCommand("L" + motor);
-//    addCommand("G" + motor + "3" + directionStr);
-//    addCommand("I" + motor + speedDivider);
-//    addCommand("J" + motor);
-//
-//    communicate();
-//    usleep(1000000);
-
-    // New try
-    addCommand("L" + motor);
+    stopMotor(motor);
     communicate();
 
     const string directionStr = direction ? "31" : "30";
@@ -243,7 +233,7 @@ void Merlin::moveMotor(std::string motor, int direction, int speed) {
     addCommand("I" + motor + positionToString(speed));
     communicate();
 
-    addCommand("J" + motor);
+    startMotor(motor);
     communicate();
 }
 
@@ -267,6 +257,10 @@ int Merlin::openUART() {
 }
 
 // Sends the queued commands to the Merlin and reads the responses into recvBuffer.
+// After calling this method, the command buffer is empty and the recvBuffer
+// only contains the response of the last command (without control characters,
+// so e.g. the response "=303\r" is actually "303" in the recvBuffer).
+//
 // Special characters:
 //      : begins a command from us
 //      = begins a response by the Merlin head
@@ -290,14 +284,16 @@ void Merlin::communicate() {
         }
         usleep(delay);
 
-
         if(charToSend == '\r') {
+            // Trial and error result, not sure if needed
+            usleep(delay);
+
+            // We finished a command, read the response.
+            // First we read an echo of our own command, then the actual response.
             bool gotEchoStart = false;
             bool gotEchoEnd = false;
             bool gotResponseStart = false;
             bool endResponseEnd = false;
-
-            usleep(delay);
 
             const int maxRecvErrors = 5;
             int recvErrors = 0;
@@ -346,6 +342,7 @@ void Merlin::communicate() {
 //                cout << "> Recv: " << debugOutput << endl;
             } while(!endResponseEnd);
 
+            // Trial and error result, not sure if needed
             usleep(delay);
         }
     }
@@ -366,11 +363,11 @@ void Merlin::addCommand(string command, bool lineEnd) {
 
 // For debugging
 void Merlin::printBuffer(std::string buffer) {
-    for(int i = 0; i < buffer.size(); ++i) {
-        if(buffer[i] == '\r') {
+    for(const char c : buffer) {
+        if(c == '\r') {
             cout << "\\r\n";
         } else {
-            cout << buffer[i];
+            cout << c;
         }
     }
     cout << endl;
