@@ -46,18 +46,24 @@ void Merlin::init(){
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle() {
     startHeading = gyro.getHeading();
-    startTime = time(nullptr);
+    // TODO: find out if direction 0 or 1 is needed to increase the heading
     const int direction = 0;
     moveMotor(motorHeading, direction, Speed::FAST);
 }
 
 bool Merlin::checkHorizontalCircleFull() {
     double currentHeading = gyro.getHeading();
-    double deltaHeading = angleDelta(currentHeading, startHeading);
-    time_t elapsedTime = time(nullptr) - startTime;  // in seconds
+
+    // We assume here that currentHeading grows the more we turn
+    // (direction has to be correct)
+    // 220 -> 220, 230, 240, 355 ... 0, 100, 200
+    //          0   10   20  135  -220 -120 -20   current - start
+    double deltaHeading = currentHeading - startHeading;
+    cout << "deltaHeading: " << deltaHeading << endl;
 
     // Only check after a few seconds to avoid stopping right after starting
-    if(elapsedTime > 5 && fabs(deltaHeading) < maxErrorHeading) {
+    if(deltaHeading < 0.0 && deltaHeading > -maxErrorHeading) {
+        cout << "Circle done, stopping motor" << endl;
         // We reached our starting point
         stopMotor(motorHeading);
         waitForStop(motorHeading);
