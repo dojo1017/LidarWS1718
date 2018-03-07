@@ -13,6 +13,7 @@ using std::string;
 
 Merlin::Merlin() {
     // Just a test
+    init();
     moveHeadingTo(30.f);
     cout << "start communicate()" << endl;
     communicate();
@@ -115,13 +116,19 @@ void Merlin::communicate() {
         return;
     }
 
-    unsigned char recvBuffer[1024];
-    unsigned char *recvBufferPtr = recvBuffer;
+    string recvBuffer;
+//    unsigned char recvBuffer[1024];
+//    unsigned char *recvBufferPtr = recvBuffer;
     const char *sendBufferPtr = commands.c_str();
 
     for(int i = 0; i < commands.size(); ++i) {
         const char charToSend = sendBufferPtr[0];
-        cout << "Send: " << charToSend << endl;
+        // Debug output
+        string debugOutput(1, charToSend);
+        if(charToSend == '\r') {
+            debugOutput = "\\r";
+        }
+        cout << "Send: " << debugOutput << endl;
 
         if(write(filestream, sendBufferPtr++, sizeof(char)) != sizeof(char)) {
             cout << "ERROR during write()" << endl;
@@ -133,13 +140,28 @@ void Merlin::communicate() {
             usleep(delay);
 
             do {
-                // Read one char into the receive buffer
-                if(read(filestream, recvBufferPtr, sizeof(char)) != sizeof(char)) {
+                // Read one char
+                unsigned char tempRecvBuffer[1];
+                if(read(filestream, tempRecvBuffer, sizeof(char)) != sizeof(char)) {
                     cout << "ERROR during read()" << endl;
+                    // Do not add this char to the receive buffer, it is random
+                    // TODO: if the '\r' fails, we have an endless loop...
+                    continue;
                 }
-                cout << "Recv: " << recvBufferPtr[0] << endl;
+
+                recvBuffer.push_back(tempRecvBuffer[0]);
+
+                // Debug output
+                const char recvChar = recvBuffer.back();
+                string debugOutput(1, recvChar);
+                if(recvChar == '\r') {
+                    debugOutput = "\\r";
+                }
+                cout << "> Recv: " << debugOutput << endl;
                 // TODO: sleep after each char?
-            } while(*recvBufferPtr++ != '\r');
+            } while(recvBuffer.back() != '\r');
         }
     }
+
+    close(filestream);
 }
