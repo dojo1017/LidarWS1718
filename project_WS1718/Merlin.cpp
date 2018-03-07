@@ -18,39 +18,29 @@ Merlin::Merlin() : gyro() {
     init();
     communicate();
 
-    aimAt(0, 0);
+    for(int i = 0; i < 20; ++i) {
+        startMotor(motorHeading);
+        communicate();
+        waitForStop(motorHeading);
+    }
+
+//    aimAt(0, 0);
 
 //    moveHeadingTo(30.f);  // does not work
 //    communicate();
 
     // Debug: print receive buffer
-    for(int i = 0; i < recvBuffer.size(); ++i) {
-        if(recvBuffer[i] == '\r') {
-            cout << "\\r\n";
-        } else {
-            cout << recvBuffer[i];
-        }
-    }
-    cout << endl;
+    printBuffer(recvBuffer);
 }
 
 void Merlin::init(){
-    string command;
-    //Motor 1
-    command = "F" + motorHeading;
-    addCommand(command);
-    command = "a" + motorHeading;
-    addCommand(command);
-    command = "D" + motorHeading;
-    addCommand(command);
+    addCommand("F" + motorHeading);
+    addCommand("a" + motorHeading);
+    addCommand("D" + motorHeading);
 
-    //Motor 2
-    command = "F" + motorPitch;
-    addCommand(command);
-    command = "a" + motorPitch;
-    addCommand(command);
-    command = "D" + motorPitch;
-    addCommand(command);
+    addCommand("F" + motorPitch);
+    addCommand("a" + motorPitch);
+    addCommand("D" + motorPitch);
 }
 
 // This is a blocking method (blocks until the new position is reached)
@@ -66,8 +56,8 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
 
     while(!targetReached){
-        const bool headingMoving = isMoving(motorHeading);
-        const bool pitchMoving = isMoving(motorPitch);
+        const bool headingMoving = waitForStop(motorHeading);
+        const bool pitchMoving = waitForStop(motorPitch);
 
         cout << "heading moving: " << headingMoving;
         cout << " pitch moving: " << pitchMoving << endl;
@@ -302,9 +292,9 @@ void Merlin::moveMotor(std::string motor, int direction) {
     addCommand("J" + motor);
 }
 
-bool Merlin::isMoving(const string &motor)
+bool Merlin::waitForStop(const string &motor)
 {
-    cout << "enter isMoving(" << motor << ")" << endl;
+    cout << "enter waitForStop(" << motor << ")" << endl;
 
     // For some reason we need to stop the motor, otherwise we don't get a response to "f"
     stopMotor(motor);
