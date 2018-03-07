@@ -237,7 +237,13 @@ void Merlin::communicate() {
         }
         usleep(delay);
 
+
         if(charToSend == '\r') {
+            bool gotEcho = false;
+            bool endEcho = false;
+            bool gotResponse = false;
+            bool endResponse = false;
+
             usleep(delay);
 
             const int maxRecvErrors = 5;
@@ -258,17 +264,34 @@ void Merlin::communicate() {
                     }
                 }
 
-                recvBuffer.push_back(tempRecvBuffer[0]);
+                char received = tempRecvBuffer[0];
+                recvBuffer.push_back(received);
+
+                if(received == ':') {
+                    gotEcho = true;
+                }
+                if(gotEcho && received == '\r') {
+                    endEcho = true;
+                }
+
+                if(endEcho) {
+                    if (received == '=') {
+                        gotResponse = true;
+                    }
+                    if (gotResponse && received == '\r') {
+                        endResponse = true;
+                    }
+                }
 
                 // Debug output
-//                const char recvChar = recvBuffer[recvBuffer.size() - 1];
-//                string debugOutput(1, recvChar);
-//                if(recvChar == '\r') {
-//                    debugOutput = "\\r";
-//                }
-//                cout << "> Recv: " << debugOutput << endl;
+                const char recvChar = received;
+                string debugOutput(1, recvChar);
+                if(recvChar == '\r') {
+                    debugOutput = "\\r";
+                }
+                cout << "> Recv: " << debugOutput << endl;
                 // TODO: sleep after each char?
-            } while(recvBuffer[recvBuffer.size() - 1] != '\r');
+            } while(!endResponse);
 
             usleep(delay);
         }
@@ -313,16 +336,16 @@ bool Merlin::isPitchMoving()
 {
     cout << "enter isPitchMoving()" << endl;
 
-    checkServoMoving('2');
-    return false;
+//    checkServoMoving('2');
+//    return false;
 
-//
-//    addCommand("f" + motorPitch);
-//    communicate();
-//
-//    printBuffer(recvBuffer);
-//
-//    return recvBuffer[recvBuffer.size() - 3] != '0';
+
+    addCommand("f" + motorPitch);
+    communicate();
+
+    printBuffer(recvBuffer);
+
+    return recvBuffer[recvBuffer.size() - 3] != '0';
 }
 
 void Merlin::printBuffer(std::string buffer) {
