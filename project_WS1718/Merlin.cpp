@@ -13,18 +13,19 @@ using std::string;
 
 //#include "libs/merlin/MerlinHalfSqhere.h"
 
-// MANUAL_SPEED_TABLE = {'slow': 170,  # "AA0000"  / 5
-//'alternate': 80, # "500000"
-//'normal': 34, # "220000" nominal
-//'fast': 17   # "110000"  * 2
-//}
-
 typedef enum {
     FAST = 17,
     NORMAL = 34,
-    ALTERNATE = 80,
+    ALTERNATE = 80,  // No idea what this means
     SLOW = 170,
 } Speed;
+
+// How to move a motor:
+//
+// moveMotor(motorHeading, 0, Speed::FAST);
+// usleep(5000000);  // wait 5 seconds, during this time the motor drives
+// stopMotor(motorHeading);
+// waitForStop(motorHeading);
 
 
 Merlin::Merlin() : gyro() {
