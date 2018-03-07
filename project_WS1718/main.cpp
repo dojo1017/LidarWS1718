@@ -3,7 +3,7 @@
 using std::vector;
 #include "Lidar.h"
 #include "Merlin.h"
-#include "libs/merlin/MerlinHalfSqhere.h"
+//#include "libs/merlin/MerlinHalfSqhere.h"
 
 struct Measurement {
     Measurement(float heading, float pitch, unsigned int dist)

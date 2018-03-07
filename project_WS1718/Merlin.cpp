@@ -11,6 +11,8 @@
 #include "Merlin.h"
 using std::string;
 
+#include "libs/merlin/MerlinHalfSqhere.h"
+
 Merlin::Merlin() : gyro() {
     // Just a test
     init();
@@ -267,7 +269,7 @@ void Merlin::communicate() {
 //                cout << "> Recv: " << debugOutput << endl;
                 // TODO: sleep after each char?
             } while(recvBuffer[recvBuffer.size() - 1] != '\r');
-            
+
             usleep(delay);
         }
     }
@@ -311,12 +313,16 @@ bool Merlin::isPitchMoving()
 {
     cout << "enter isPitchMoving()" << endl;
 
-    addCommand("f" + motorPitch);
-    communicate();
+    checkServoMoving('2');
+    return false;
 
-    printBuffer(recvBuffer);
-
-    return recvBuffer[recvBuffer.size() - 3] != '0';
+//
+//    addCommand("f" + motorPitch);
+//    communicate();
+//
+//    printBuffer(recvBuffer);
+//
+//    return recvBuffer[recvBuffer.size() - 3] != '0';
 }
 
 void Merlin::printBuffer(std::string buffer) {
