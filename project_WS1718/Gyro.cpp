@@ -6,6 +6,16 @@
 #include "Gyro.h"
 #include "libs/gyro/BNO055.h"
 
+void int16_to_char(int16_t& from, char* to) {
+	to[0] = (char)((from >> 8) & 0xFF);
+	to[1] = (char)(from & 0xFF);
+}
+
+void char_to_int16(char* from, int16_t& to, uint16_t starting) {
+	to = (from[starting] << 8) | from[starting + 1];
+}
+
+
 /**************************************************************************/
 /*
     Displays some basic information on this sensor from the unified
@@ -158,34 +168,39 @@ bool Gyro::calibrationDataExists() {
 	return exists;
 }
 
-void Gyro::saveCalibrationData(adafruit_bno055_offsets_t calib) {
-	int16_t calibData[11];
-	calibData[0] = calib.accel_offset_x;
-	calibData[1] = calib.accel_offset_y;
-	calibData[2] = calib.accel_offset_z;
-	calibData[3] = calib.mag_offset_x;
-	calibData[4] = calib.mag_offset_y;
-	calibData[5] = calib.mag_offset_z;
-	calibData[6] = calib.gyro_offset_x;
-	calibData[7] = calib.gyro_offset_y;
-	calibData[8] = calib.gyro_offset_z;
+void copyArr(char* from, uint16_t fromStart, char* to, uint16_t toStart, uint16_t count) {
+	for(; fromStart < fromStart + count; fromStart++, toStart++) {
+		to[toStart] = from[fromStart];
+	}
+}
+void copyCal(char* calibData, int16_t calibValue, int8_t pos) {
+	char _conv[2];
+	int16_to_char(calibValue, _conv);
+	copyArr(_conv, 0, calibData, pos, 2);
+}
 
-	calibData[9] = calib.accel_radius;
-	calibData[10] = calib.mag_radius;
+
+void Gyro::saveCalibrationData(adafruit_bno055_offsets_t calib) {
+	char calibData[23];
+
+	copyCal(calibData, calib.accel_offset_x, 0);
+	copyCal(calibData, calib.accel_offset_y, 2);
+	copyCal(calibData, calib.accel_offset_z, 4);
+	copyCal(calibData, calib.mag_offset_x, 6);
+	copyCal(calibData, calib.mag_offset_y, 8);
+	copyCal(calibData, calib.mag_offset_z, 10);
+	copyCal(calibData, calib.gyro_offset_x, 12);
+	copyCal(calibData, calib.gyro_offset_y, 14);
+	copyCal(calibData, calib.gyro_offset_z, 16);
+	copyCal(calibData, calib.accel_radius, 18);
+	copyCal(calibData, calib.mag_radius, 20);
+	calibData[22] = '\0';
 
 	ofstream outputFile("calibration.dat");
 	outputFile << calibData;
 	outputFile.close();
 }
 
-void int16_to_char(int16_t& from, char* to) {
-	to[0] = (char)((from >> 8) & 0xFF);
-	to[1] = (char)(from & 0xFF);
-}
-
-void char_to_int16(char* from, int16_t& to, uint16_t starting) {
-	to = (from[starting] << 8) | from[starting + 1];
-}
 
 adafruit_bno055_offsets_t Gyro::loadCalibrationData() {
 	adafruit_bno055_offsets_t calibData;
@@ -255,7 +270,7 @@ void Gyro::accessCalibrationData() {
 		while (!lib.isFullyCalibrated())
 		{
 			lib.getEvent(&event);
-			printf("X: %d\tY: %d\tZ: %d",
+			printf("X: %.3f\tY: %.3f\tZ: %.3f",
 				   event.orientation.x,
 				   event.orientation.y,
 				   event.orientation.z);
@@ -276,7 +291,7 @@ void Gyro::accessCalibrationData() {
 		{
 			lib.getEvent(&event);
 
-			printf("X: %d\tY: %d\tZ: %d",
+			printf("X: %.3f\tY: %.3f\tZ: %.3f",
 				   event.orientation.x,
 				   event.orientation.y,
 				   event.orientation.z);
@@ -285,7 +300,7 @@ void Gyro::accessCalibrationData() {
 			displayCalStatus();
 
 			/* New line for the next sample */
-			printf("\n");
+			printf("\r");
 
 			/* Wait the specified delay before requesting new data */
 			sleep(0.001 * BNO055_SAMPLERATE_DELAY_MS);
