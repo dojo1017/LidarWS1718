@@ -7,35 +7,20 @@
 #include <iomanip>
 #include <termios.h>
 #include <fcntl.h>
-
+#include <math.h>
 #include "Merlin.h"
 using std::string;
 
-Merlin::Merlin() {
+Merlin::Merlin() : gyro() {
     // Just a test
     init();
 
-    moveMotor(motorHeading, 0);
-    init();
-    moveMotor(motorHeading, 0);
-    init();
-    moveMotor(motorHeading, 1);
-    init();
-    moveMotor(motorHeading, 1);
-
-    init();
-    moveMotor(motorPitch, 0);
-    init();
-    moveMotor(motorPitch, 0);
-    init();
-    moveMotor(motorPitch, 1);
-    init();
-    moveMotor(motorPitch, 1);
+    aimAt(0, 0);
 
 //    moveHeadingTo(30.f);  // does not work
+//    communicate();
 
-    communicate();
-    cout << "----" << endl << recvBuffer << endl << "----" << endl;
+    // Debug: print receive buffer
     for(int i = 0; i < recvBuffer.size(); ++i) {
         if(recvBuffer[i] == '\r') {
             cout << "\\r\n";
@@ -66,11 +51,90 @@ void Merlin::init(){
 }
 
 // This is a blocking method (blocks until the new position is reached)
-void Merlin::aimAt(float heading, float pitch) {
+void Merlin::aimAt(float targetHeading, float targetPitch) {
 //    printf("Merlin: aiming at heading %.2f pitch %.2f\n", heading, pitch);
+    float deltaHeading;
+    float deltaPitch;
+    bool headingTargetReached = false;
+    bool pitchTargetReached = false;
+    bool targetReached = false;
     double currHeading = gyro.getHeading();
     double currPitch = gyro.getPitch();
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
+
+
+    while(!targetReached){
+
+        if((!isHeadingMoving()) && (!isPitchMoving()))
+        {
+            deltaHeading = targetHeading - currHeading;
+            deltaPitch = targetPitch - currPitch;
+
+
+            //Heading-Motor an Zielposition annaehern
+            if(fabsf(deltaHeading) > maxErrorHeading)
+            {
+                //Heading-Motor dreht sich solange nach rechts bis er die Zeilposition erreicht
+                //startMoving(motorHeading, right_up_direction);
+                ////TODO Kommandos senden
+                //resetCommands();
+
+                if(targetHeading > currHeading) //Ziel befindet sich weiter "rechts" im Uhrzeigersinn
+                {
+                    if( fabsf(deltaHeading) > 180)
+                    {
+                        //kuerzerer Weg bei Bewegung nach links
+                        startMoving(motorHeading,left_down_direction); //nach links bewegen
+                        communicate();
+                    }else
+                    {
+                        //kuerzerer Weg bei Bewegung nach rechts
+                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
+                        communicate();
+                    }
+
+                }else if (targetHeading < currHeading) //Ziel befindet sich weiter "links" im Uhrzeigersinn
+                {
+                    if( fabsf(deltaHeading) > 180)
+                    {
+                        //kuerzerer Weg bei Bewegung nach rechts
+                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
+                        communicate();
+                    }else
+                    {
+                        //kuerzerer Weg bei Bewegung nach links
+                        startMoving(motorHeading,left_down_direction); //nach links bewegen
+                        communicate();
+                    }
+                }
+
+            }
+            else
+            {
+                headingTargetReached = true;
+            }
+
+            //Pitch-Motor an Zielposition annaehern
+            if(fabsf(deltaPitch) > maxErrorPitch)
+            {
+                //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
+                startMoving(motorPitch, right_up_direction);
+                communicate();
+            }
+            else
+            {
+                pitchTargetReached = true;
+            }
+
+            if(headingTargetReached && pitchTargetReached)
+            {
+                targetReached = true;
+            }
+        }
+
+
+    }
+
 }
 
 void Merlin::addCommand(string command, bool lineEnd) {
@@ -89,6 +153,14 @@ void Merlin::stopMotor(string motor) {
 }
 
 // TODO does not work yet - do we need it?
+void Merlin::startMoving(string motor, string direction)
+{
+    stopMotor(motor); //":L<motor>\r"
+    addCommand("G" + motor + "3" + direction);
+    addCommand("I" + motor + "220000");
+    startMotor(motor); //":J<motor>\r"
+}
+
 void Merlin::moveHeadingTo(float degrees) {
     // The magic number 8388608 is from the Chronomotion code
     long pos = degrees * stepsHeading / 360.f + 8388608;
@@ -217,4 +289,33 @@ void Merlin::moveMotor(std::string motor, int direction) {
     addCommand("G" + motor + "3" + directionStr);
     addCommand("I" + motor + speedDivider);
     addCommand("J" + motor);
+}
+
+bool Merlin::isHeadingMoving()
+{
+    addCommand("f" + motorHeading);
+    communicate();
+
+    if(recvBuffer[1] == '0')
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+
+}
+
+bool Merlin::isPitchMoving()
+{
+    addCommand("f" + motorPitch);
+    communicate();
+
+    if(recvBuffer[1] == '0')
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
 }
