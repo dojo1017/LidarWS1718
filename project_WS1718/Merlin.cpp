@@ -235,7 +235,6 @@ void Merlin::communicate() {
         }
         usleep(delay);
 
-        // TODO: extra delay after '\r'?
         if(charToSend == '\r') {
             usleep(delay);
 
@@ -294,6 +293,7 @@ void Merlin::moveMotor(std::string motor, int direction) {
 bool Merlin::isHeadingMoving()
 {
     cout << "enter isHeadingMoving()" << endl;
+    stopMotor(motorHeading);
     addCommand("f" + motorHeading);
     communicate();
 
