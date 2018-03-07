@@ -267,6 +267,8 @@ void Merlin::communicate() {
 //                cout << "> Recv: " << debugOutput << endl;
                 // TODO: sleep after each char?
             } while(recvBuffer[recvBuffer.size() - 1] != '\r');
+            
+            usleep(delay);
         }
     }
 
@@ -295,17 +297,12 @@ bool Merlin::isHeadingMoving()
     cout << "enter isHeadingMoving()" << endl;
     stopMotor(motorHeading);
     addCommand("f" + motorHeading);
+
+    printBuffer(commands);
+
     communicate();
 
-    // debug
-    for(int i = 0; i < recvBuffer.size(); ++i) {
-        if(recvBuffer[i] == '\r') {
-            cout << "\\r\n";
-        } else {
-            cout << recvBuffer[i];
-        }
-    }
-    cout << endl;
+    printBuffer(recvBuffer);
 
     return recvBuffer[recvBuffer.size() - 3] != '0';
 }
@@ -317,15 +314,18 @@ bool Merlin::isPitchMoving()
     addCommand("f" + motorPitch);
     communicate();
 
-    // debug
-    for(int i = 0; i < recvBuffer.size(); ++i) {
-        if(recvBuffer[i] == '\r') {
+    printBuffer(recvBuffer);
+
+    return recvBuffer[recvBuffer.size() - 3] != '0';
+}
+
+void Merlin::printBuffer(std::string buffer) {
+    for(int i = 0; i < buffer.size(); ++i) {
+        if(buffer[i] == '\r') {
             cout << "\\r\n";
         } else {
-            cout << recvBuffer[i];
+            cout << buffer[i];
         }
     }
     cout << endl;
-
-    return recvBuffer[recvBuffer.size() - 3] != '0';
 }

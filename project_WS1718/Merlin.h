@@ -39,6 +39,7 @@ private:
     int openUART();
     void communicate();
     void moveMotor(std::string motor, int direction);
+    void printBuffer(std::string buffer);
 };
 
 
