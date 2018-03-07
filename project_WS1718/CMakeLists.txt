@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(project_WS1718)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
+SET (CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 add_executable(project_WS1718
         # Main project

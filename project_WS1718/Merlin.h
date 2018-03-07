@@ -24,6 +24,7 @@ private:
     // Delay between characters when sending commands, in nanoseconds
     const unsigned int delay = 10000;
     string commands;
+    string recvBuffer;
 
     void addCommand(std::string command, bool lineEnd=true);
     void startMotor(std::string motor);
@@ -32,6 +33,7 @@ private:
     std::string positionToString(int pos);
     int openUART();
     void communicate();
+    void moveMotor(std::string motor, int direction);
 };
 
 

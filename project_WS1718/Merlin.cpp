@@ -14,10 +14,21 @@ using std::string;
 Merlin::Merlin() {
     // Just a test
     init();
-    moveHeadingTo(30.f);
-    cout << "start communicate()" << endl;
+
+    moveMotor(motorHeading, 0);
+    moveMotor(motorHeading, 0);
+    moveMotor(motorHeading, 1);
+    moveMotor(motorHeading, 1);
+
+    moveMotor(motorPitch, 0);
+    moveMotor(motorPitch, 0);
+    moveMotor(motorPitch, 1);
+    moveMotor(motorPitch, 1);
+
+//    moveHeadingTo(30.f);  // does not work
+
     communicate();
-    cout << "communicate() done" << endl;
+    cout << "----" << endl << recvBuffer << endl << "----" << endl;
 }
 
 void Merlin::init(){
@@ -62,6 +73,7 @@ void Merlin::stopMotor(string motor) {
     addCommand("L" + motor);
 }
 
+// TODO does not work yet - do we need it?
 void Merlin::moveHeadingTo(float degrees) {
     // The magic number 8388608 is from the Chronomotion code
     long pos = degrees * stepsHeading / 360.f + 8388608;
@@ -110,15 +122,16 @@ int Merlin::openUART() {
     return uart0_filestream;
 }
 
+// Sends the queued commands to the Merlin and reads the responses into recvBuffer
 void Merlin::communicate() {
     int filestream = openUART();
     if(filestream == -1) {
         return;
     }
 
-    string recvBuffer;
-//    unsigned char recvBuffer[1024];
-//    unsigned char *recvBufferPtr = recvBuffer;
+    // Throw away old responses
+    recvBuffer.clear();
+
     const char *sendBufferPtr = commands.c_str();
 
     for(int i = 0; i < commands.size(); ++i) {
@@ -139,14 +152,22 @@ void Merlin::communicate() {
         if(charToSend == '\r') {
             usleep(delay);
 
+            const int maxRecvErrors = 5;
+            int recvErrors = 0;
+
             do {
                 // Read one char
                 unsigned char tempRecvBuffer[1];
                 if(read(filestream, tempRecvBuffer, sizeof(char)) != sizeof(char)) {
                     cout << "ERROR during read()" << endl;
+                    recvErrors++;
                     // Do not add this char to the receive buffer, it is random
-                    // TODO: if the '\r' fails, we have an endless loop...
-                    continue;
+                    if(recvErrors >= maxRecvErrors) {
+                        // Prevent an endless loop if we fail to read the '\r'
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
 
                 recvBuffer.push_back(tempRecvBuffer[0]);
@@ -164,4 +185,18 @@ void Merlin::communicate() {
     }
 
     close(filestream);
+
+    // Throw away the commands we sent
+    commands.clear();
+}
+
+void Merlin::moveMotor(std::string motor, int direction) {
+    // From the documentation at http://www.papywizard.org/wiki/DevelopGuide
+    const string speedDivider = "220000";
+    const string directionStr = direction ? "1" : "0";
+
+    addCommand("L" + motor);
+    addCommand("G" + motor + "3" + directionStr);
+    addCommand("I" + motor + speedDivider);
+    addCommand("J" + motor);
 }
