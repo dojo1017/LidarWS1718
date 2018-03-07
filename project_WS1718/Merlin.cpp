@@ -1,10 +1,11 @@
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 #include <iomanip>
 #include <termios.h>
 #include <fcntl.h>
-#include <math.h>
+#include <cmath>
 
+#include "Utils.h"
 #include "Merlin.h"
 using std::string;
 
@@ -39,17 +40,20 @@ void Merlin::init(){
     addCommand("D" + motorPitch);
 }
 
+// Start to move the lower motor (heading) in a full circle.
+// This method is non-blocking.
+// You have to check regularly if the circle was completed
+// by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle() {
     startHeading = gyro.getHeading();
     startTime = time(nullptr);
-
-    moveMotor(motorHeading, 0, Speed::FAST);
+    const int direction = 0;
+    moveMotor(motorHeading, direction, Speed::FAST);
 }
 
 bool Merlin::checkHorizontalCircleFull() {
-    // TODO check if we need to do modulo 360 on the heading
     double currentHeading = gyro.getHeading();
-    double deltaHeading = currentHeading - startHeading;
+    double deltaHeading = angleDelta(currentHeading, startHeading);
     time_t elapsedTime = time(nullptr) - startTime;  // in seconds
 
     // Only check after a few seconds to avoid stopping right after starting

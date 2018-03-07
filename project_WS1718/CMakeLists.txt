@@ -6,7 +6,7 @@ SET (CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 add_executable(project_WS1718
         # Main project
-        main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h
+        main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h Utils.h
         # gyro libs
         libs/gyro/BNO055.cpp
         libs/gyro/BNO055.h
