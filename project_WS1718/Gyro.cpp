@@ -319,7 +319,7 @@ void Gyro::accessCalibrationData() {
 	printf("\n\nStoring calibration data...\n");
 
 	lib.getSensor(&sensor);
-	saveCalibrationData(newCalib);
+	//saveCalibrationData(newCalib);
 	printf("Data stored.\n");
 
 	printf("\n--------------------------------\n");
