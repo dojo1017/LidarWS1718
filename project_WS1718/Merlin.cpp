@@ -29,6 +29,14 @@ Merlin::Merlin() {
 
     communicate();
     cout << "----" << endl << recvBuffer << endl << "----" << endl;
+    for(int i = 0; i < recvBuffer.size(); ++i) {
+        if(recvBuffer[i] == '\r') {
+            cout << "\\r\n";
+        } else {
+            cout << recvBuffer[i];
+        }
+    }
+    cout << endl;
 }
 
 void Merlin::init(){
