@@ -293,6 +293,8 @@ void Gyro::accessCalibrationData() {
 	}
 
 	printf("\nFully calibrated!\n");
+	displayCalStatus();
+	printf("\n");
 	printf("\n--------------------------------\n");
 	printf("\nCalibration Results: \n");
 	adafruit_bno055_offsets_t newCalib;
