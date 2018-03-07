@@ -20,8 +20,8 @@ private:
     const float maxErrorPitch = 1.f;
     const std::string motorHeading = "1";
     const std::string motorPitch = "2";
-    const std::string right_up_direction = "0";
-    const std::string left_down_direction = "1";
+    const int right_up_direction = 0;
+    const int left_down_direction = 1;
     const float stepsHeading = 1.f; // TODO
     const float stepsPitch = 1.f; // TODO
     // Delay between characters when sending commands, in nanoseconds
@@ -32,7 +32,6 @@ private:
     void addCommand(std::string command, bool lineEnd=true);
     void startMotor(std::string motor);
     void stopMotor(std::string motor);
-    void startMoving(string motor, string direction);
     void moveHeadingTo(float degrees);
     bool isHeadingMoving();
     bool isPitchMoving();

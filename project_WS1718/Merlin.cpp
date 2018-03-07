@@ -70,55 +70,61 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
             deltaHeading = targetHeading - currHeading;
             deltaPitch = targetPitch - currPitch;
 
+            cout << "deltaHeading: " << deltaHeading;
+            cout << "deltaPitch: " << deltaPitch << endl;
+
 
             //Heading-Motor an Zielposition annaehern
             if(fabsf(deltaHeading) > maxErrorHeading)
             {
+                cout << "turn right" << endl;
                 //Heading-Motor dreht sich solange nach rechts bis er die Zeilposition erreicht
-                //startMoving(motorHeading, right_up_direction);
-                ////TODO Kommandos senden
-                //resetCommands();
+//                startMoving(motorHeading, right_up_direction);
+                moveMotor(motorHeading, right_up_direction);
+                communicate();
 
-                if(targetHeading > currHeading) //Ziel befindet sich weiter "rechts" im Uhrzeigersinn
-                {
-                    if( fabsf(deltaHeading) > 180)
-                    {
-                        //kuerzerer Weg bei Bewegung nach links
-                        startMoving(motorHeading,left_down_direction); //nach links bewegen
-                        communicate();
-                    }else
-                    {
-                        //kuerzerer Weg bei Bewegung nach rechts
-                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
-                        communicate();
-                    }
-
-                }else if (targetHeading < currHeading) //Ziel befindet sich weiter "links" im Uhrzeigersinn
-                {
-                    if( fabsf(deltaHeading) > 180)
-                    {
-                        //kuerzerer Weg bei Bewegung nach rechts
-                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
-                        communicate();
-                    }else
-                    {
-                        //kuerzerer Weg bei Bewegung nach links
-                        startMoving(motorHeading,left_down_direction); //nach links bewegen
-                        communicate();
-                    }
-                }
+//                if(targetHeading > currHeading) //Ziel befindet sich weiter "rechts" im Uhrzeigersinn
+//                {
+//                    if( fabsf(deltaHeading) > 180)
+//                    {
+//                        //kuerzerer Weg bei Bewegung nach links
+//                        startMoving(motorHeading,left_down_direction); //nach links bewegen
+//                        communicate();
+//                    }else
+//                    {
+//                        //kuerzerer Weg bei Bewegung nach rechts
+//                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
+//                        communicate();
+//                    }
+//
+//                }else if (targetHeading < currHeading) //Ziel befindet sich weiter "links" im Uhrzeigersinn
+//                {
+//                    if( fabsf(deltaHeading) > 180)
+//                    {
+//                        //kuerzerer Weg bei Bewegung nach rechts
+//                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
+//                        communicate();
+//                    }else
+//                    {
+//                        //kuerzerer Weg bei Bewegung nach links
+//                        startMoving(motorHeading,left_down_direction); //nach links bewegen
+//                        communicate();
+//                    }
+//                }
 
             }
             else
             {
+                cout << "target reached (heading)" << endl;
                 headingTargetReached = true;
             }
 
             //Pitch-Motor an Zielposition annaehern
             if(fabsf(deltaPitch) > maxErrorPitch)
             {
+                cout << "move pitch" << endl;
                 //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
-                startMoving(motorPitch, right_up_direction);
+                moveMotor(motorPitch, right_up_direction);
                 communicate();
             }
             else
@@ -150,15 +156,6 @@ void Merlin::startMotor(string motor) {
 
 void Merlin::stopMotor(string motor) {
     addCommand("L" + motor);
-}
-
-// TODO does not work yet - do we need it?
-void Merlin::startMoving(string motor, string direction)
-{
-    stopMotor(motor); //":L<motor>\r"
-    addCommand("G" + motor + "3" + direction);
-    addCommand("I" + motor + "220000");
-    startMotor(motor); //":J<motor>\r"
 }
 
 void Merlin::moveHeadingTo(float degrees) {
@@ -224,11 +221,11 @@ void Merlin::communicate() {
     for(int i = 0; i < commands.size(); ++i) {
         const char charToSend = sendBufferPtr[0];
         // Debug output
-        string debugOutput(1, charToSend);
-        if(charToSend == '\r') {
-            debugOutput = "\\r";
-        }
-        cout << "Send: " << debugOutput << endl;
+//        string debugOutput(1, charToSend);
+//        if(charToSend == '\r') {
+//            debugOutput = "\\r";
+//        }
+//        cout << "Send: " << debugOutput << endl;
 
         if(write(filestream, sendBufferPtr++, sizeof(char)) != sizeof(char)) {
             cout << "ERROR during write()" << endl;
@@ -260,12 +257,12 @@ void Merlin::communicate() {
                 recvBuffer.push_back(tempRecvBuffer[0]);
 
                 // Debug output
-                const char recvChar = recvBuffer[recvBuffer.size() - 1];
-                string debugOutput(1, recvChar);
-                if(recvChar == '\r') {
-                    debugOutput = "\\r";
-                }
-                cout << "> Recv: " << debugOutput << endl;
+//                const char recvChar = recvBuffer[recvBuffer.size() - 1];
+//                string debugOutput(1, recvChar);
+//                if(recvChar == '\r') {
+//                    debugOutput = "\\r";
+//                }
+//                cout << "> Recv: " << debugOutput << endl;
                 // TODO: sleep after each char?
             } while(recvBuffer[recvBuffer.size() - 1] != '\r');
         }
