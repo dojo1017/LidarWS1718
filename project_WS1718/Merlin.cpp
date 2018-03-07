@@ -17,11 +17,18 @@ Merlin::Merlin() : gyro() {
     // Just a test
     init();
 
-    addCommand("L2");
-    addCommand("G200");
-    addCommand("S2");
-    addCommand("J2");
-    communicate();
+    for(int i = 0; i < 20; ++i) {
+        cout << "moveMotor" << endl;
+        moveMotor(motorHeading, 0);
+        cout << "waitForStop" << endl;
+        waitForStop(motorHeading);
+    }
+
+//    addCommand("L2");
+//    addCommand("G200");
+//    addCommand("S2");
+//    addCommand("J2");
+//    communicate();
 
 //    aimAt(0, 0);  // does not work
 
@@ -55,8 +62,11 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
 
     while(!targetReached){
-        const bool headingMoving = waitForStop(motorHeading);
-        const bool pitchMoving = waitForStop(motorPitch);
+        // TODO
+//        const bool headingMoving = waitForStop(motorHeading);
+//        const bool pitchMoving = waitForStop(motorPitch);
+        bool headingMoving = false;
+        bool pitchMoving = false;
 
         cout << "heading moving: " << headingMoving;
         cout << " pitch moving: " << pitchMoving << endl;
@@ -167,19 +177,21 @@ string Merlin::positionToString(int pos) {
     return result;
 }
 
-bool Merlin::waitForStop(const string &motor)
+void Merlin::waitForStop(const string &motor)
 {
     cout << "enter waitForStop(" << motor << ")" << endl;
 
-    // For some reason we need to stop the motor, otherwise we don't get a response to "f"
-    stopMotor(motor);
-    addCommand("f" + motor);
-    communicate();
+    do {
+        // For some reason we need to stop the motor, otherwise we don't get a response to "f"
+        stopMotor(motor);
+        addCommand("f" + motor);
+        communicate();
 
-    // debug
-    printBuffer(recvBuffer);
+        // debug
+        printBuffer(recvBuffer);
 
-    return recvBuffer[recvBuffer.size() - 4] != '0';
+        // The end of recvBuffer contains: "X0X" or "X1X" (X are numbers we don't care for)
+    } while(recvBuffer[recvBuffer.size() - 2] != '0');
 }
 
 void Merlin::moveMotor(std::string motor, int direction) {
@@ -246,8 +258,9 @@ void Merlin::communicate() {
             do {
                 // Read one char
                 unsigned char tempRecvBuffer[1];
-                if(read(filestream, tempRecvBuffer, sizeof(char)) != sizeof(char)) {
-                    cout << "ERROR during read()" << endl;
+                ssize_t readBytes;
+                if((readBytes = read(filestream, tempRecvBuffer, sizeof(char))) != sizeof(char)) {
+                    cout << "ERROR during read(): got " << readBytes << " instead of " << sizeof(char) << endl;
                     recvErrors++;
                     // Do not add this char to the receive buffer, it is random
                     if(recvErrors >= maxRecvErrors) {
