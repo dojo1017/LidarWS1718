@@ -12,7 +12,11 @@
 using std::string;
 
 Merlin::Merlin() {
-
+    // Just a test
+    moveHeadingTo(30.f);
+    cout << "start communicate()" << endl;
+    communicate();
+    cout << "communicate() done" << endl;
 }
 
 void Merlin::init(){
