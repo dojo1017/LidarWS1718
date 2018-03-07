@@ -186,6 +186,9 @@ void Merlin::communicate() {
 
     close(filestream);
 
+    // Terminate receive buffer
+    recvBuffer.push_back('\0');
+
     // Throw away the commands we sent
     commands.clear();
 }
