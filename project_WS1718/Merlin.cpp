@@ -13,13 +13,28 @@ using std::string;
 
 //#include "libs/merlin/MerlinHalfSqhere.h"
 
+// MANUAL_SPEED_TABLE = {'slow': 170,  # "AA0000"  / 5
+//'alternate': 80, # "500000"
+//'normal': 34, # "220000" nominal
+//'fast': 17   # "110000"  * 2
+//}
+
+typedef enum {
+    FAST = 17,
+    NORMAL = 34,
+    ALTERNATE = 80,
+    SLOW = 170,
+} Speed;
+
+
 Merlin::Merlin() : gyro() {
     // Just a test
     init();
 
     for(int i = 0; i < 20; ++i) {
         cout << "moveMotor" << endl;
-        moveMotor(motorHeading, 0);
+        moveMotor(motorHeading, 0, Speed::FAST);
+        usleep(5000000);
         cout << "waitForStop" << endl;
         waitForStop(motorHeading);
     }
@@ -87,7 +102,7 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
                 cout << "turn right" << endl;
                 //Heading-Motor dreht sich solange nach rechts bis er die Zeilposition erreicht
 //                startMoving(motorHeading, right_up_direction);
-                moveMotor(motorHeading, right_up_direction);
+                moveMotor(motorHeading, right_up_direction, Speed::FAST);
                 communicate();
 
 //                if(targetHeading > currHeading) //Ziel befindet sich weiter "rechts" im Uhrzeigersinn
@@ -127,7 +142,7 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
             if(fabsf(deltaPitch) > maxErrorPitch) {
                 cout << "move pitch" << endl;
                 //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
-                moveMotor(motorPitch, right_up_direction);
+                moveMotor(motorPitch, right_up_direction, Speed::FAST);
                 communicate();
             } else {
                 pitchTargetReached = true;
@@ -181,10 +196,11 @@ void Merlin::waitForStop(const string &motor)
 {
     cout << "enter waitForStop(" << motor << ")" << endl;
 
+    int i = 0;  // debug counter
     do {
-        cout << "waitForStop loop" << endl;
+        cout << "waitForStop loop " << i++ << endl;
         // For some reason we need to stop the motor, otherwise we don't get a response to "f"
-        stopMotor(motor);
+//        stopMotor(motor);
         addCommand("f" + motor);
         communicate();
 
@@ -195,18 +211,32 @@ void Merlin::waitForStop(const string &motor)
     } while(recvBuffer[recvBuffer.size() - 2] != '0');
 }
 
-void Merlin::moveMotor(std::string motor, int direction) {
+void Merlin::moveMotor(std::string motor, int direction, int speed) {
     // From the documentation at http://www.papywizard.org/wiki/DevelopGuide
-    const string speedDivider = "220000";
-    const string directionStr = direction ? "1" : "0";
+//    const string speedDivider = "220000";
+//    const string directionStr = direction ? "1" : "0";
+//
+//    addCommand("L" + motor);
+//    addCommand("G" + motor + "3" + directionStr);
+//    addCommand("I" + motor + speedDivider);
+//    addCommand("J" + motor);
+//
+//    communicate();
+//    usleep(1000000);
 
+    // New try
     addCommand("L" + motor);
-    addCommand("G" + motor + "3" + directionStr);
-    addCommand("I" + motor + speedDivider);
-    addCommand("J" + motor);
-
     communicate();
-    usleep(1000000);
+
+    const string directionStr = direction ? "31" : "30";
+    addCommand("G" + motor + directionStr);
+    communicate();
+
+    addCommand("I" + motor + positionToString(speed));
+    communicate();
+
+    addCommand("J" + motor);
+    communicate();
 }
 
 int Merlin::openUART() {
@@ -228,7 +258,12 @@ int Merlin::openUART() {
     return uart0_filestream;
 }
 
-// Sends the queued commands to the Merlin and reads the responses into recvBuffer
+// Sends the queued commands to the Merlin and reads the responses into recvBuffer.
+// Special characters:
+//      : begins a command from us
+//      = begins a response by the Merlin head
+//      \r signals the end of a command or response
+//      ! signals an invalid command syntax (! can be in the response from the head)
 void Merlin::communicate() {
     int filestream = openUART();
     if(filestream == -1) {

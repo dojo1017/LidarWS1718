@@ -34,7 +34,7 @@ private:
     void stopMotor(std::string motor);
     void moveHeadingTo(float degrees);
     void waitForStop(const std::string &motor);
-    void moveMotor(std::string motor, int direction);
+    void moveMotor(std::string motor, int direction, int speed);
 
     // UART communication methods
     void addCommand(std::string command, bool lineEnd=true);
