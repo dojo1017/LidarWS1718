@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <chrono>
 
-long millis() {
+long _millis() {
 	using namespace std::chrono;
 	return duration_cast< milliseconds >(
 			system_clock::now().time_since_epoch()
@@ -403,7 +403,7 @@ bool BNO055::getEvent(sensors_event_t *event)
 	event->version   = sizeof(sensors_event_t);
 	event->sensor_id = _sensorID;
 	event->type      = SENSOR_TYPE_ORIENTATION;
-	event->timestamp = millis();
+	event->timestamp = _millis();
 
 	/* Get a Euler angle sample for orientation */
 	imu::Vector<3> euler = getVector(BNO055::VECTOR_EULER);

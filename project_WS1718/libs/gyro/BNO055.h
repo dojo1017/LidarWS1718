@@ -2,8 +2,6 @@
 #define BNO055_H_
 
 #include <iostream>
-#include <libs/utility/imumaths.h>
-
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
