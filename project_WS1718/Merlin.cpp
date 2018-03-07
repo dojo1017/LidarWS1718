@@ -334,7 +334,7 @@ bool Merlin::isHeadingMoving()
     printBuffer(recvBuffer);
 
     cout << ">>>>> " << recvBuffer[recvBuffer.size() - 4] << endl;
-    return recvBuffer[recvBuffer.size() - 3] != '0';
+    return recvBuffer[recvBuffer.size() - 4] != '0';
 }
 
 bool Merlin::isPitchMoving()
