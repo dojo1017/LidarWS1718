@@ -182,13 +182,14 @@ void Merlin::waitForStop(const string &motor)
     cout << "enter waitForStop(" << motor << ")" << endl;
 
     do {
+        cout << "waitForStop loop" << endl;
         // For some reason we need to stop the motor, otherwise we don't get a response to "f"
         stopMotor(motor);
         addCommand("f" + motor);
         communicate();
 
         // debug
-        printBuffer(recvBuffer);
+//        printBuffer(recvBuffer);
 
         // The end of recvBuffer contains: "X0X" or "X1X" (X are numbers we don't care for)
     } while(recvBuffer[recvBuffer.size() - 2] != '0');
@@ -203,6 +204,9 @@ void Merlin::moveMotor(std::string motor, int direction) {
     addCommand("G" + motor + "3" + directionStr);
     addCommand("I" + motor + speedDivider);
     addCommand("J" + motor);
+
+    communicate();
+    usleep(1000000);
 }
 
 int Merlin::openUART() {
@@ -304,9 +308,6 @@ void Merlin::communicate() {
     }
 
     close(filestream);
-
-    // Terminate receive buffer
-    recvBuffer.push_back('\0');
 
     // Throw away the commands we sent
     commands.clear();
