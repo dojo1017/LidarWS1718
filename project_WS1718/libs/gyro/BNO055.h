@@ -2,7 +2,7 @@
 #define BNO055_H_
 
 #include <iostream>
-#include <utility/imumaths.h>
+#include <libs/utility/imumaths.h>
 
 
 #include <wiringPi.h>
