@@ -16,21 +16,12 @@ using std::string;
 Merlin::Merlin() : gyro() {
     // Just a test
     init();
+
+    addCommand("L2");
+    addCommand("G200");
+    addCommand("S2");
+    addCommand("J2");
     communicate();
-
-    for(int i = 0; i < 20; ++i) {
-        startMotor(motorHeading);
-        communicate();
-        waitForStop(motorHeading);
-    }
-
-    usleep(100000);
-
-    for(int i = 0; i < 20; ++i) {
-        startMotor(motorPitch);
-        communicate();
-        waitForStop(motorPitch);
-    }
 
 //    aimAt(0, 0);  // does not work
 
@@ -139,13 +130,6 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
     }
 }
 
-void Merlin::addCommand(string command, bool lineEnd) {
-    commands += ":" + command;
-    if(lineEnd) {
-        commands += "\r";
-    }
-}
-
 void Merlin::startMotor(string motor) {
     addCommand("J" + motor);
 }
@@ -181,6 +165,32 @@ string Merlin::positionToString(int pos) {
     result[5] = temp[1];
 
     return result;
+}
+
+bool Merlin::waitForStop(const string &motor)
+{
+    cout << "enter waitForStop(" << motor << ")" << endl;
+
+    // For some reason we need to stop the motor, otherwise we don't get a response to "f"
+    stopMotor(motor);
+    addCommand("f" + motor);
+    communicate();
+
+    // debug
+    printBuffer(recvBuffer);
+
+    return recvBuffer[recvBuffer.size() - 4] != '0';
+}
+
+void Merlin::moveMotor(std::string motor, int direction) {
+    // From the documentation at http://www.papywizard.org/wiki/DevelopGuide
+    const string speedDivider = "220000";
+    const string directionStr = direction ? "1" : "0";
+
+    addCommand("L" + motor);
+    addCommand("G" + motor + "3" + directionStr);
+    addCommand("I" + motor + speedDivider);
+    addCommand("J" + motor);
 }
 
 int Merlin::openUART() {
@@ -289,30 +299,12 @@ void Merlin::communicate() {
     commands.clear();
 }
 
-void Merlin::moveMotor(std::string motor, int direction) {
-    // From the documentation at http://www.papywizard.org/wiki/DevelopGuide
-    const string speedDivider = "220000";
-    const string directionStr = direction ? "1" : "0";
 
-    addCommand("L" + motor);
-    addCommand("G" + motor + "3" + directionStr);
-    addCommand("I" + motor + speedDivider);
-    addCommand("J" + motor);
-}
-
-bool Merlin::waitForStop(const string &motor)
-{
-    cout << "enter waitForStop(" << motor << ")" << endl;
-
-    // For some reason we need to stop the motor, otherwise we don't get a response to "f"
-    stopMotor(motor);
-    addCommand("f" + motor);
-    communicate();
-
-    // debug
-    printBuffer(recvBuffer);
-
-    return recvBuffer[recvBuffer.size() - 4] != '0';
+void Merlin::addCommand(string command, bool lineEnd) {
+    commands += ":" + command;
+    if(lineEnd) {
+        commands += "\r";
+    }
 }
 
 // For debugging

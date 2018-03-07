@@ -25,19 +25,22 @@ private:
     const float stepsHeading = 1.f; // TODO
     const float stepsPitch = 1.f; // TODO
     // Delay between characters when sending commands, in nanoseconds
-    const unsigned int delay = 10000;
+    const unsigned int delay = 25000;
     string commands;
     string recvBuffer;
 
-    void addCommand(std::string command, bool lineEnd=true);
+    // Motor control methods
     void startMotor(std::string motor);
     void stopMotor(std::string motor);
     void moveHeadingTo(float degrees);
     bool waitForStop(const std::string &motor);
+    void moveMotor(std::string motor, int direction);
+
+    // UART communication methods
+    void addCommand(std::string command, bool lineEnd=true);
     std::string positionToString(int pos);
     int openUART();
     void communicate();
-    void moveMotor(std::string motor, int direction);
     void printBuffer(std::string buffer);
 };
 
