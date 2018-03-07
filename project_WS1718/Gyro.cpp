@@ -255,6 +255,17 @@ void Gyro::accessCalibrationData() {
 		while (!lib.isFullyCalibrated())
 		{
 			lib.getEvent(&event);
+			printf("X: %d\tY: %d\tZ: %d",
+				   event.orientation.x,
+				   event.orientation.y,
+				   event.orientation.z);
+
+			/* Optional: Display calibration status */
+			displayCalStatus();
+
+			/* New line for the next sample */
+			printf("\n");
+
 			sleep(0.001 * BNO055_SAMPLERATE_DELAY_MS);
 		}
 	}
