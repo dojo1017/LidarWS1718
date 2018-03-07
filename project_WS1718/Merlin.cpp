@@ -11,7 +11,7 @@
 #include "Merlin.h"
 using std::string;
 
-#include "libs/merlin/MerlinHalfSqhere.h"
+//#include "libs/merlin/MerlinHalfSqhere.h"
 
 Merlin::Merlin() : gyro() {
     // Just a test
@@ -65,17 +65,16 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
     double currPitch = gyro.getPitch();
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
 
-
     while(!targetReached){
-
-        const bool headingMoving = isHeadingMoving();
-        const bool pitchMoving = isPitchMoving();
+        const bool headingMoving = isMoving(motorHeading);
+        const bool pitchMoving = isMoving(motorPitch);
 
         cout << "heading moving: " << headingMoving;
         cout << " pitch moving: " << pitchMoving << endl;
 
-        if(!(headingMoving || pitchMoving))
-        {
+        if(headingMoving || pitchMoving) {
+            cout << "heading or pitch moving" << endl;
+        } else {
             deltaHeading = targetHeading - currHeading;
             deltaPitch = targetPitch - currPitch;
 
@@ -120,36 +119,26 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 //                        communicate();
 //                    }
 //                }
-
-            }
-            else
-            {
+            } else {
                 cout << "target reached (heading)" << endl;
                 headingTargetReached = true;
             }
 
             //Pitch-Motor an Zielposition annaehern
-            if(fabsf(deltaPitch) > maxErrorPitch)
-            {
+            if(fabsf(deltaPitch) > maxErrorPitch) {
                 cout << "move pitch" << endl;
                 //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
                 moveMotor(motorPitch, right_up_direction);
                 communicate();
-            }
-            else
-            {
+            } else {
                 pitchTargetReached = true;
             }
 
-            if(headingTargetReached && pitchTargetReached)
-            {
+            if(headingTargetReached && pitchTargetReached) {
                 targetReached = true;
             }
         }
-
-
     }
-
 }
 
 void Merlin::addCommand(string command, bool lineEnd) {
@@ -229,13 +218,6 @@ void Merlin::communicate() {
 
     for(int i = 0; i < commands.size(); ++i) {
         const char charToSend = sendBufferPtr[0];
-        // Debug output
-//        string debugOutput(1, charToSend);
-//        if(charToSend == '\r') {
-//            debugOutput = "\\r";
-//        }
-//        cout << "Send: " << debugOutput << endl;
-
         if(write(filestream, sendBufferPtr++, sizeof(char)) != sizeof(char)) {
             cout << "ERROR during write()" << endl;
         }
@@ -243,10 +225,10 @@ void Merlin::communicate() {
 
 
         if(charToSend == '\r') {
-            bool gotEcho = false;
-            bool endEcho = false;
-            bool gotResponse = false;
-            bool endResponse = false;
+            bool gotEchoStart = false;
+            bool gotEchoEnd = false;
+            bool gotResponseStart = false;
+            bool endResponseEnd = false;
 
             usleep(delay);
 
@@ -269,33 +251,32 @@ void Merlin::communicate() {
                 }
 
                 char received = tempRecvBuffer[0];
-                recvBuffer.push_back(received);
 
                 if(received == ':') {
-                    gotEcho = true;
-                }
-                if(gotEcho && received == '\r') {
-                    endEcho = true;
+                    gotEchoStart = true;
+                } else if(gotEchoStart && received == '\r') {
+                    gotEchoEnd = true;
                 }
 
-                if(endEcho) {
+                if(gotEchoEnd) {
                     if (received == '=') {
-                        gotResponse = true;
-                    }
-                    if (gotResponse && received == '\r') {
-                        endResponse = true;
+                        gotResponseStart = true;
+                    } else if (gotResponseStart && received == '\r') {
+                        endResponseEnd = true;
+                    } else {
+                        // Only add all characters that are not control characters to receive buffer
+                        recvBuffer.push_back(received);
                     }
                 }
 
                 // Debug output
-                const char recvChar = received;
-                string debugOutput(1, recvChar);
-                if(recvChar == '\r') {
-                    debugOutput = "\\r";
-                }
-                cout << "> Recv: " << debugOutput << endl;
-                // TODO: sleep after each char?
-            } while(!endResponse);
+//                const char recvChar = received;
+//                string debugOutput(1, recvChar);
+//                if(recvChar == '\r') {
+//                    debugOutput = "\\r";
+//                }
+//                cout << "> Recv: " << debugOutput << endl;
+            } while(!endResponseEnd);
 
             usleep(delay);
         }
@@ -321,38 +302,22 @@ void Merlin::moveMotor(std::string motor, int direction) {
     addCommand("J" + motor);
 }
 
-bool Merlin::isHeadingMoving()
+bool Merlin::isMoving(const string &motor)
 {
-    cout << "enter isHeadingMoving()" << endl;
-    stopMotor(motorHeading);
-    addCommand("f" + motorHeading);
+    cout << "enter isMoving(" << motor << ")" << endl;
 
-    printBuffer(commands);
-
+    // For some reason we need to stop the motor, otherwise we don't get a response to "f"
+    stopMotor(motor);
+    addCommand("f" + motor);
     communicate();
 
-    printBuffer(recvBuffer);
-
-    cout << ">>>>> " << recvBuffer[recvBuffer.size() - 4] << endl;
-    return recvBuffer[recvBuffer.size() - 4] != '0';
-}
-
-bool Merlin::isPitchMoving()
-{
-    cout << "enter isPitchMoving()" << endl;
-
-//    checkServoMoving('2');
-//    return false;
-
-
-    addCommand("f" + motorPitch);
-    communicate();
-
+    // debug
     printBuffer(recvBuffer);
 
     return recvBuffer[recvBuffer.size() - 4] != '0';
 }
 
+// For debugging
 void Merlin::printBuffer(std::string buffer) {
     for(int i = 0; i < buffer.size(); ++i) {
         if(buffer[i] == '\r') {

@@ -33,8 +33,7 @@ private:
     void startMotor(std::string motor);
     void stopMotor(std::string motor);
     void moveHeadingTo(float degrees);
-    bool isHeadingMoving();
-    bool isPitchMoving();
+    bool isMoving(const std::string &motor);
     std::string positionToString(int pos);
     int openUART();
     void communicate();
