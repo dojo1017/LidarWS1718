@@ -10,12 +10,30 @@
 
 class Merlin {
 public:
+    typedef enum {
+        FAST = 17,
+        NORMAL = 34,
+        ALTERNATE = 80,  // No idea what this means
+        SLOW = 170,
+    } Speed;
+
     Merlin();
-    void init();
-    void aimAt(float targetHeading, float targetPitch);
+    void aimAt(float targetHeading, float targetPitch);  // TODO - do we need this?
+
+    // public motor control methods
+    void startHorizontalCircle();
+    bool checkHorizontalCircleFull();
+
+    void stopMotor(std::string motor);
+    void waitForStop(const std::string &motor);
+
+    Gyro gyro;
 
 private:
-    Gyro gyro;
+    // For the circle
+    double startHeading;
+    time_t startTime;
+
     const float maxErrorHeading = 1.f;
     const float maxErrorPitch = 1.f;
     const std::string motorHeading = "1";
@@ -29,12 +47,11 @@ private:
     string commands;
     string recvBuffer;
 
-    // Motor control methods
+    // private motor control methods
+    void init();
     void startMotor(std::string motor);
-    void stopMotor(std::string motor);
-    void moveHeadingTo(float degrees);
-    void waitForStop(const std::string &motor);
     void moveMotor(std::string motor, int direction, int speed);
+    void moveHeadingTo(float degrees);  // TODO - do we need this?
 
     // UART communication methods
     void addCommand(std::string command, bool lineEnd=true);

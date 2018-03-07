@@ -1,24 +1,12 @@
-//
-// Created by simon on 06.03.18.
-//
-
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
 #include <termios.h>
 #include <fcntl.h>
 #include <math.h>
+
 #include "Merlin.h"
 using std::string;
-
-//#include "libs/merlin/MerlinHalfSqhere.h"
-
-typedef enum {
-    FAST = 17,
-    NORMAL = 34,
-    ALTERNATE = 80,  // No idea what this means
-    SLOW = 170,
-} Speed;
 
 // How to move a motor:
 //
@@ -29,30 +17,16 @@ typedef enum {
 
 
 Merlin::Merlin() : gyro() {
-    // Just a test
     init();
 
-    for(int i = 0; i < 20; ++i) {
-        cout << "moveMotor" << endl;
-        moveMotor(motorHeading, 0, Speed::FAST);
-        usleep(5000000);
-        cout << "waitForStop" << endl;
-        waitForStop(motorHeading);
-    }
-
-//    addCommand("L2");
-//    addCommand("G200");
-//    addCommand("S2");
-//    addCommand("J2");
-//    communicate();
-
-//    aimAt(0, 0);  // does not work
-
-//    moveHeadingTo(30.f);  // does not work
-//    communicate();
-
-    // Debug: print receive buffer
-    printBuffer(recvBuffer);
+    // Just a test
+//    for(int i = 0; i < 20; ++i) {
+//        cout << "moveMotor" << endl;
+//        moveMotor(motorHeading, 0, Speed::FAST);
+//        usleep(5000000);
+//        cout << "waitForStop" << endl;
+//        waitForStop(motorHeading);
+//    }
 }
 
 void Merlin::init(){
@@ -63,6 +37,29 @@ void Merlin::init(){
     addCommand("F" + motorPitch);
     addCommand("a" + motorPitch);
     addCommand("D" + motorPitch);
+}
+
+void Merlin::startHorizontalCircle() {
+    startHeading = gyro.getHeading();
+    startTime = time(nullptr);
+
+    moveMotor(motorHeading, 0, Speed::FAST);
+}
+
+bool Merlin::checkHorizontalCircleFull() {
+    // TODO check if we need to do modulo 360 on the heading
+    double currentHeading = gyro.getHeading();
+    double deltaHeading = currentHeading - startHeading;
+    time_t elapsedTime = time(nullptr) - startTime;  // in seconds
+
+    // Only check after a few seconds to avoid stopping right after starting
+    if(elapsedTime > 5 && fabs(deltaHeading) < maxErrorHeading) {
+        // We reached our starting point
+        stopMotor(motorHeading);
+        waitForStop(motorHeading);
+        return true;
+    }
+    return false;
 }
 
 // This is a blocking method (blocks until the new position is reached)
