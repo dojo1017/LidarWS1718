@@ -68,9 +68,13 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 
     while(!targetReached){
 
+        const bool headingMoving = isHeadingMoving();
+        const bool pitchMoving = isPitchMoving();
 
+        cout << "heading moving: " << headingMoving;
+        cout << " pitch moving: " << pitchMoving << endl;
 
-        if((!isHeadingMoving()) && (!isPitchMoving()))
+        if(!(headingMoving || pitchMoving))
         {
             deltaHeading = targetHeading - currHeading;
             deltaPitch = targetPitch - currPitch;
@@ -329,6 +333,7 @@ bool Merlin::isHeadingMoving()
 
     printBuffer(recvBuffer);
 
+    cout << ">>>>> " << recvBuffer[recvBuffer.size() - 3] << endl;
     return recvBuffer[recvBuffer.size() - 3] != '0';
 }
 
