@@ -629,10 +629,9 @@ byte BNO055::read8(adafruit_bno055_reg_t reg )
 /**************************************************************************/
 bool BNO055::readLen(adafruit_bno055_reg_t reg, byte * buffer, uint8_t len)
 {
-
 	for (uint8_t i = 0; i < len; i++)
 	{
-		buffer[i] = read8(reg + i);
+		buffer[i] = read8((adafruit_bno055_reg_t)((uint8_t) reg + i));
 	}
 
 	/* ToDo: Check for errors! */
