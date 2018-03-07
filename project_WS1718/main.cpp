@@ -22,21 +22,21 @@ int main(int argc, char **argv) {
     vector<Measurement> measurements;
     const float step = 5.f;
 
-    for (int sequence = 0; sequence < 90 / ANGLE_UP; sequence++)
-    {
-        if (sequence % 2 == 0)
-        {
-            // Motor 1 um ANGLE_SIDE drehen
-            doSequenceStep(ANGLE_SIDE, ENGINE_BOTTOM);
-        } else
-        {
-            // Motor 2 um ANGLE_SIDE zurück drehen (auf 0°)
-            doSequenceStep(0, ENGINE_BOTTOM);
-        }
-
-        // Motor 2 um ANGLE_UP weiter drehen
-        doSequenceStep(ANGLE_UP * (sequence + 1), ENGINE_UP);
-    }
+//    for (int sequence = 0; sequence < 90 / ANGLE_UP; sequence++)
+//    {
+//        if (sequence % 2 == 0)
+//        {
+//            // Motor 1 um ANGLE_SIDE drehen
+//            doSequenceStep(ANGLE_SIDE, ENGINE_BOTTOM);
+//        } else
+//        {
+//            // Motor 2 um ANGLE_SIDE zurück drehen (auf 0°)
+//            doSequenceStep(0, ENGINE_BOTTOM);
+//        }
+//
+//        // Motor 2 um ANGLE_UP weiter drehen
+//        doSequenceStep(ANGLE_UP * (sequence + 1), ENGINE_UP);
+//    }
 
 //    // Step through pitch from 0° (equator) to 90° (north pole)
 //    for(float pitch = 0.f; pitch < 90.f; pitch += step) {

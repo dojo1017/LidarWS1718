@@ -115,13 +115,31 @@ void Merlin::communicate() {
         return;
     }
 
-    unsigned char RX_BUFFER[commands.size()];
-    const char *TX_BUFFER = commands.c_str();
+    unsigned char recvBuffer[1024];
+    unsigned char *recvBufferPtr = recvBuffer;
+    const char *sendBufferPtr = commands.c_str();
 
     for(int i = 0; i < commands.size(); ++i) {
-        write(filestream, TX_BUFFER++, sizeof(char));
+        const char charToSend = sendBufferPtr[0];
+        cout << "Send: " << charToSend << endl;
+
+        if(write(filestream, sendBufferPtr++, sizeof(char)) != sizeof(char)) {
+            cout << "ERROR during write()" << endl;
+        }
         usleep(delay);
 
         // TODO: extra delay after '\r'?
+        if(charToSend == '\r') {
+            usleep(delay);
+
+            do {
+                // Read one char into the receive buffer
+                if(read(filestream, recvBufferPtr, sizeof(char)) != sizeof(char)) {
+                    cout << "ERROR during read()" << endl;
+                }
+                cout << "Recv: " << recvBufferPtr[0] << endl;
+                // TODO: sleep after each char?
+            } while(*recvBufferPtr++ != '\r');
+        }
     }
 }
