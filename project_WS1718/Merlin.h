@@ -21,6 +21,8 @@ private:
     const std::string motorPitch = "2";
     const float stepsHeading = 1.f; // TODO
     const float stepsPitch = 1.f; // TODO
+    // Delay between characters when sending commands, in nanoseconds
+    const unsigned int delay = 10000;
     string commands;
 
     void addCommand(std::string command, bool lineEnd=true);
@@ -28,6 +30,8 @@ private:
     void stopMotor(std::string motor);
     void moveHeadingTo(float degrees);
     std::string positionToString(int pos);
+    int openUART();
+    void communicate();
 };
 
 

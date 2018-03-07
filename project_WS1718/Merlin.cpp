@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
+#include <termios.h>
+#include <fcntl.h>
+
 #include "Merlin.h"
 using std::string;
 
@@ -81,4 +84,40 @@ string Merlin::positionToString(int pos) {
     result[5] = temp[1];
 
     return result;
+}
+
+int Merlin::openUART() {
+    int uart0_filestream = -1;
+    uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+    if (uart0_filestream == -1) {
+        cout << "[ERROR] UART0 open() failed" << endl;
+        return -1;
+    }
+
+    struct termios options;
+    tcgetattr(uart0_filestream, &options);
+    options.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
+    options.c_iflag = IGNPAR;
+    options.c_oflag = 0;
+    options.c_lflag = 0;
+    tcflush(uart0_filestream, TCIFLUSH);
+    tcsetattr(uart0_filestream, TCSANOW, &options);
+    return uart0_filestream;
+}
+
+void Merlin::communicate() {
+    int filestream = openUART();
+    if(filestream == -1) {
+        return;
+    }
+
+    unsigned char RX_BUFFER[commands.size()];
+    const char *TX_BUFFER = commands.c_str();
+
+    for(int i = 0; i < commands.size(); ++i) {
+        write(filestream, TX_BUFFER++, sizeof(char));
+        usleep(delay);
+
+        // TODO: extra delay after '\r'?
+    }
 }
