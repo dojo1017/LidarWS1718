@@ -587,7 +587,7 @@ bool BNO055::isFullyCalibrated(void)
 {
 	uint8_t system, gyro, accel, mag;
 	getCalibration(&system, &gyro, &accel, &mag);
-	if (system < 3 || gyro < 3 || accel < 3 || mag < 3)
+	if (system < 2 || gyro < 3 || accel < 3 || mag < 3)
 		return false;
 	return true;
 }
