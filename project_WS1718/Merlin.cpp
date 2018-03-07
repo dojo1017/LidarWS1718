@@ -24,7 +24,15 @@ Merlin::Merlin() : gyro() {
         waitForStop(motorHeading);
     }
 
-//    aimAt(0, 0);
+    usleep(100000);
+
+    for(int i = 0; i < 20; ++i) {
+        startMotor(motorPitch);
+        communicate();
+        waitForStop(motorPitch);
+    }
+
+//    aimAt(0, 0);  // does not work
 
 //    moveHeadingTo(30.f);  // does not work
 //    communicate();
