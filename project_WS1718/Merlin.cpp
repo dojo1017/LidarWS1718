@@ -16,13 +16,20 @@ Merlin::Merlin() {
     init();
 
     moveMotor(motorHeading, 0);
+    init();
     moveMotor(motorHeading, 0);
+    init();
     moveMotor(motorHeading, 1);
+    init();
     moveMotor(motorHeading, 1);
 
+    init();
     moveMotor(motorPitch, 0);
+    init();
     moveMotor(motorPitch, 0);
+    init();
     moveMotor(motorPitch, 1);
+    init();
     moveMotor(motorPitch, 1);
 
 //    moveHeadingTo(30.f);  // does not work
