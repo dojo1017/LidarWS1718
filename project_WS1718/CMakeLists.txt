@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 project(project_WS1718)
 
 set(CMAKE_CXX_STANDARD 11)
+SET(GCC_COMPILE_FLAGS "-std=c++11")
+add_definitions(${GCC_COMPILE_FLAGS})
 
 add_executable(main
         # Main project
