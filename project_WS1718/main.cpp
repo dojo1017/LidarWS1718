@@ -4,6 +4,7 @@ using std::vector;
 #include "Lidar.h"
 #include "Merlin.h"
 //#include "libs/merlin/MerlinHalfSqhere.h"
+#include "Calculation.h"
 
 struct Measurement {
     Measurement(float heading, float pitch, unsigned int dist)
@@ -18,8 +19,10 @@ struct Measurement {
 int main(int argc, char **argv) {
     Lidar lidar;
     Merlin merlin;
+    Calculation calculation;
 
     vector<Measurement> measurements;
+    vector<Measurement_3D> measurements_3D;
     const float step = 5.f;
 
 //    merlin.aimAt(0,0); //an Start
@@ -60,6 +63,11 @@ int main(int argc, char **argv) {
 //    }
 
     // Convert measurements into 3D coordinates
+    for(int m = 0; m <= measurements.size(); m++){
+        Measurement_3D tempMeasurement_3D = calculation.get3DCoordinates(measurements[m].heading, measurements[m].pitch, measurements[m].distance);
+        measurements_3D.push_back(tempMeasurement_3D);
+    }
+
 
     // Write to file
 

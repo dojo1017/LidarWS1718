@@ -17,7 +17,7 @@ add_executable(project_WS1718
         libs/lidar/lidarLite.h
         # merlin libs
         libs/merlin/MerlinHalfSqhere.h
-        )
+        Calculation.cpp Calculation.h)
 
 # Needed libraries:
 # sudo apt-get install libi2c-dev
