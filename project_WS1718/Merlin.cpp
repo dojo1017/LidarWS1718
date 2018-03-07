@@ -12,29 +12,46 @@ Merlin::Merlin() {
 
 }
 
+void Merlin::init(){
+    string command;
+    //Motor 1
+    command = "F" + motorHeading;
+    addCommand(command);
+    command = "a" + motorHeading;
+    addCommand(command);
+    command = "D" + motorHeading;
+    addCommand(command);
+
+    //Motor 2
+    command = "F" + motorPitch;
+    addCommand(command);
+    command = "a" + motorPitch;
+    addCommand(command);
+    command = "D" + motorPitch;
+    addCommand(command);
+}
+
 // This is a blocking method (blocks until the new position is reached)
 void Merlin::aimAt(float heading, float pitch) {
 //    printf("Merlin: aiming at heading %.2f pitch %.2f\n", heading, pitch);
     double currHeading = gyro.getHeading();
     double currPitch = gyro.getPitch();
     printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
-
-
 }
 
 void Merlin::addCommand(string command, bool lineEnd) {
-    commands += command;
+    commands += ":" + command;
     if(lineEnd) {
         commands += "\r";
     }
 }
 
 void Merlin::startMotor(string motor) {
-    addCommand(":J" + motor);
+    addCommand("J" + motor);
 }
 
 void Merlin::stopMotor(string motor) {
-    addCommand(":L" + motor);
+    addCommand("L" + motor);
 }
 
 void Merlin::moveHeadingTo(float degrees) {
@@ -43,8 +60,8 @@ void Merlin::moveHeadingTo(float degrees) {
     string posString = positionToString(pos);
 
     stopMotor(motorHeading);
-    addCommand(":G" + motorHeading + "40");
-    addCommand(":S" + motorHeading + posString);
+    addCommand("G" + motorHeading + "40");
+    addCommand("S" + motorHeading + posString);
     startMotor(motorHeading);
 }
 

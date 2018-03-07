@@ -11,6 +11,7 @@
 class Merlin {
 public:
     Merlin();
+    void init();
     void aimAt(float heading, float pitch);
 
 private:
