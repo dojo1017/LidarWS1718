@@ -152,14 +152,14 @@ void Merlin::communicate() {
                 recvBuffer.push_back(tempRecvBuffer[0]);
 
                 // Debug output
-                const char recvChar = recvBuffer.back();
+                const char recvChar = recvBuffer[recvBuffer.size() - 1];
                 string debugOutput(1, recvChar);
                 if(recvChar == '\r') {
                     debugOutput = "\\r";
                 }
                 cout << "> Recv: " << debugOutput << endl;
                 // TODO: sleep after each char?
-            } while(recvBuffer.back() != '\r');
+            } while(recvBuffer[recvBuffer.size() - 1] != '\r');
         }
     }
 
