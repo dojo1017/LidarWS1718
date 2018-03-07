@@ -218,14 +218,14 @@ void Gyro::accessCalibrationData() {
 	sensor_t sensor;
 	lib.getSensor(&sensor);
 
-	if (calibrationDataExists())
+	if (!calibrationDataExists())
 	{
-		printf("\nNo Calibration Data for this sensor exists in EEPROM\n");
+		printf("\nNo Calibration Data for this sensor exists\n");
 		sleep(0.500);
 	}
 	else
 	{
-		printf("\nFound Calibration for this sensor in EEPROM.\n");
+		printf("\nFound Calibration for this sensor.\n");
 		calibrationData = loadCalibrationData();
 
 		displaySensorOffsets(calibrationData);
