@@ -14,6 +14,7 @@ using std::string;
 Merlin::Merlin() : gyro() {
     // Just a test
     init();
+    communicate();
 
     aimAt(0, 0);
 
@@ -64,6 +65,8 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 
 
     while(!targetReached){
+
+
 
         if((!isHeadingMoving()) && (!isPitchMoving()))
         {
@@ -290,29 +293,39 @@ void Merlin::moveMotor(std::string motor, int direction) {
 
 bool Merlin::isHeadingMoving()
 {
+    cout << "enter isHeadingMoving()" << endl;
     addCommand("f" + motorHeading);
     communicate();
 
-    if(recvBuffer[1] == '0')
-    {
-        return false;
-    }else
-    {
-        return true;
+    // debug
+    for(int i = 0; i < recvBuffer.size(); ++i) {
+        if(recvBuffer[i] == '\r') {
+            cout << "\\r\n";
+        } else {
+            cout << recvBuffer[i];
+        }
     }
+    cout << endl;
 
+    return recvBuffer[recvBuffer.size() - 3] != '0';
 }
 
 bool Merlin::isPitchMoving()
 {
+    cout << "enter isPitchMoving()" << endl;
+
     addCommand("f" + motorPitch);
     communicate();
 
-    if(recvBuffer[1] == '0')
-    {
-        return false;
-    }else
-    {
-        return true;
+    // debug
+    for(int i = 0; i < recvBuffer.size(); ++i) {
+        if(recvBuffer[i] == '\r') {
+            cout << "\\r\n";
+        } else {
+            cout << recvBuffer[i];
+        }
     }
+    cout << endl;
+
+    return recvBuffer[recvBuffer.size() - 3] != '0';
 }
