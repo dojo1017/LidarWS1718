@@ -17,11 +17,11 @@ void Gyro::displaySensorDetails(void) {
 	lib.getSensor(&sensor);
 	printf((string("------------------------------------\n")
 			+ "Sensor: %s\n"
-			+ "Driver Ver: %s\n"
-			+ "Unique ID: %s\n"
-			+ "Max Value: %s xxx\n"
-			+ "Min Value: %s xxx\n"
-			+ "Resolution: %s xxx\n"
+			+ "Driver Ver: %d\n"
+			+ "Unique ID: %d\n"
+			+ "Max Value: %.6f xxx\n"
+			+ "Min Value: %.6f xxx\n"
+			+ "Resolution: %.6f xxx\n"
 			+ "------------------------------------\n\n")
 				   .c_str(),
 		   sensor.name,
