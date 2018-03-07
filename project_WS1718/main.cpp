@@ -40,6 +40,9 @@ int main(int argc, char **argv) {
     }
      */
 
+    merlin.init(); //Initialisierung der Motoren
+    merlin.aimAt(0,0); //an Start 
+
     // Step through pitch from 0° (equator) to 90° (north pole)
     for(float pitch = 0.f; pitch < 90.f; pitch += step) {
         // Step through heading, describing a circle

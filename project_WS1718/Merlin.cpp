@@ -10,7 +10,7 @@
 using std::string;
 
 Merlin::Merlin() {
-
+    init(); //Motoren werden initialisiert
 }
 
 void Merlin::init(){
@@ -103,7 +103,7 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
             //Pitch-Motor an Zielposition annaehern
             if(fabsf(deltaPitch) > maxErrorPitch)
             {
-                //Pitch-Motor dreht sich solange nach oben bis er die Zeilposition erreicht
+                //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
                 startMoving(motorPitch, right_up_direction);
                 //TODO Kommandos senden
                 resetCommands();
@@ -188,19 +188,35 @@ bool Merlin::isHeadingMoving()
     resetCommands();
     addCommand("f" + motorHeading);
     //TODO senden
+    resetCommands();
     //TODO empfangen (receivedMessage setzen)
 
-    //if(receivedMessage[1].("0"))
+    if(receivedMessage[1] == '0')
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
 
 }
 
 bool Merlin::isPitchMoving()
 {
+    string receivedMessage;
+
     resetCommands();
     addCommand("f" + motorPitch);
     //TODO senden
+    resetCommands();
     //TODO empfangen(receivedMessage setzen)
 
-
+    if(receivedMessage[1] == '0')
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
 
 }
