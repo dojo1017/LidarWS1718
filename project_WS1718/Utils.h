@@ -16,9 +16,7 @@ namespace utils {
     // Pitch is in range -180..180
     double pitchAngleDelta(double angle1, double angle2) {
         // Bring in range 0..360
-        const double a1 = angle1 + 180.0;
-        const double a2 = angle2 + 180.0;
-        return headingAngleDelta(a1, a2);
+        return headingAngleDelta(angle1 + 180.0, angle2 + 180.0);
     }
 
     // Roll is in range -90..90

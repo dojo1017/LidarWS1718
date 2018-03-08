@@ -85,13 +85,17 @@ void Merlin::moveMotorPitch(double degrees, Direction dir) {
     moveMotor(motorPitch, dir, Speed::NORMAL);
 
     double currPitch;
-    while(utils::pitchAngleDelta(currPitch = gyro.getPitch(), startPitch) < degrees) {
+    do {
+        currPitch = gyro.getPitch();
+        const double deltaPitch = utils::pitchAngleDelta(currPitch, startPitch);
+
         cout << "pitch: " << currPitch << " startPitch: " << startPitch
-             << " = angle: " << utils::pitchAngleDelta(currPitch, startPitch) << endl;
+             << " = deltaPitch: " << deltaPitch << endl;
         // Wait for the motor to move the specified amount
         usleep(5000);
-    }
+    } while(currPitch < degrees);
 
+    // currPitch > degrees, we are done
     stopMotor(motorPitch);
     waitForStop(motorPitch);
 }
