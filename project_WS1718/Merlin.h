@@ -17,12 +17,21 @@ public:
         SLOW = 170,
     } Speed;
 
+    // direction of motor rotation as seen from above (motorHeading) or ?? (motorPitch)
+    typedef enum {
+        CLOCKWISE = 0,
+        COUNTERCLOCKWISE = 1,
+    } Direction;
+
     Merlin();
     void aimAt(float targetHeading, float targetPitch);  // TODO - do we need this?
 
     // public motor control methods
-    void startHorizontalCircle();
+    void startHorizontalCircle(Direction dir);
     bool checkHorizontalCircleFull();
+//    void startVerticalCircle(Direction dir);
+//    bool checkVerticalCircleFull();
+    void moveMotorPitch(double degrees, Direction dir);
 
     void stopMotor(std::string motor);
     void waitForStop(const std::string &motor);
@@ -32,10 +41,15 @@ public:
 private:
     // For the circle
     double startHeading;
-    time_t startTime;
+    Direction horizCircleDir;
+    double startPitch;
+    Direction vertCircleDir;
 
-    const float maxErrorHeading = 1.f;
-    const float maxErrorPitch = 1.f;
+    // Maximum allowed error for the circle, in degrees
+    // Smaller values mean more precision but require
+    const float maxErrorHeading = 2.f;
+    const float maxErrorPitch = 2.f;
+
     const std::string motorHeading = "1";
     const std::string motorPitch = "2";
     const int right_up_direction = 0;

@@ -1,12 +1,18 @@
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 #include <iomanip>
 #include <termios.h>
 #include <fcntl.h>
-#include <math.h>
+#include <cmath>
 
 #include "Merlin.h"
+#include "Utils.h"
+
 using std::string;
+
+// More or less crappy documentation of the Merlin/Orion protocol:
+// http://www.papywizard.org/wiki/DevelopGuide
+// https://framagit.org/fma38/Papywizard/blob/master/papywizard/hardware/merlinOrionHardware.py
 
 // How to move a motor:
 //
@@ -39,21 +45,32 @@ void Merlin::init(){
     addCommand("D" + motorPitch);
 }
 
-void Merlin::startHorizontalCircle() {
+// Start to move the lower motor (heading) in a full circle.
+// This method is non-blocking.
+// You have to check regularly if the circle was completed
+// by calling Merlin::checkHorizontalCircleFull()
+void Merlin::startHorizontalCircle(Direction dir) {
     startHeading = gyro.getHeading();
-    startTime = time(nullptr);
-
-    moveMotor(motorHeading, 0, Speed::FAST);
+    horizCircleDir = dir;
+    // TODO: find out if direction 0 or 1 is needed to increase the heading
+    // Direction::CLOCKWISE increases the heading
+    moveMotor(motorHeading, dir, Speed::FAST);
 }
 
 bool Merlin::checkHorizontalCircleFull() {
-    // TODO check if we need to do modulo 360 on the heading
-    double currentHeading = gyro.getHeading();
-    double deltaHeading = currentHeading - startHeading;
-    time_t elapsedTime = time(nullptr) - startTime;  // in seconds
+    const double currentHeading = gyro.getHeading();
 
-    // Only check after a few seconds to avoid stopping right after starting
-    if(elapsedTime > 5 && fabs(deltaHeading) < maxErrorHeading) {
+    double deltaHeading;
+    if(horizCircleDir == Direction::CLOCKWISE) {
+        deltaHeading = currentHeading - startHeading;
+    } else {
+        deltaHeading = startHeading - currentHeading;
+    }
+    cout << "deltaHeading: " << deltaHeading << endl;
+
+    // TODO test counterclockwise direction, not sure if correct
+    if(deltaHeading < 0.0 && deltaHeading > -maxErrorHeading) {
+        cout << "Horizontal circle done, stopping motor" << endl;
         // We reached our starting point
         stopMotor(motorHeading);
         waitForStop(motorHeading);
@@ -61,6 +78,55 @@ bool Merlin::checkHorizontalCircleFull() {
     }
     return false;
 }
+
+// This is a blocking method
+void Merlin::moveMotorPitch(double degrees, Direction dir) {
+    const double startPitch = gyro.getPitch();
+    moveMotor(motorPitch, dir, Speed::NORMAL);
+
+    double currPitch;
+    do {
+        currPitch = gyro.getPitch();
+        const double deltaPitch = utils::pitchAngleDelta(currPitch, startPitch);
+
+        cout << "pitch: " << currPitch << " startPitch: " << startPitch
+             << " = deltaPitch: " << deltaPitch << endl;
+        // Wait for the motor to move the specified amount
+        usleep(5000);
+    } while(currPitch < degrees);
+
+    // currPitch > degrees, we are done
+    stopMotor(motorPitch);
+    waitForStop(motorPitch);
+}
+
+//void Merlin::startVerticalCircle(Direction dir) {
+//    startPitch = gyro.getPitch();
+//    vertCircleDir = dir;
+//    moveMotor(motorPitch, dir, Speed::FAST);
+//}
+//
+//bool Merlin::checkVerticalCircleFull() {
+//    const double currentPitch = gyro.getPitch();
+//
+//    double deltaPitch;
+//    if(vertCircleDir == Direction::CLOCKWISE) {
+//        deltaPitch = currentPitch - startPitch;
+//    } else {
+//        deltaPitch = startPitch - currentPitch;
+//    }
+//    cout << "deltaPitch: " << deltaPitch << endl;
+//
+//    // TODO test counterclockwise direction, not sure if correct
+//    if(deltaPitch < 0.0 && deltaPitch > -maxErrorHeading) {
+//        cout << "Vertical circle done, stopping motor" << endl;
+//        // We reached our starting point
+//        stopMotor(motorPitch);
+//        waitForStop(motorPitch);
+//        return true;
+//    }
+//    return false;
+//}
 
 // This is a blocking method (blocks until the new position is reached)
 void Merlin::aimAt(float targetHeading, float targetPitch) {
@@ -210,20 +276,7 @@ void Merlin::waitForStop(const string &motor)
 }
 
 void Merlin::moveMotor(std::string motor, int direction, int speed) {
-    // From the documentation at http://www.papywizard.org/wiki/DevelopGuide
-//    const string speedDivider = "220000";
-//    const string directionStr = direction ? "1" : "0";
-//
-//    addCommand("L" + motor);
-//    addCommand("G" + motor + "3" + directionStr);
-//    addCommand("I" + motor + speedDivider);
-//    addCommand("J" + motor);
-//
-//    communicate();
-//    usleep(1000000);
-
-    // New try
-    addCommand("L" + motor);
+    stopMotor(motor);
     communicate();
 
     const string directionStr = direction ? "31" : "30";
@@ -233,7 +286,7 @@ void Merlin::moveMotor(std::string motor, int direction, int speed) {
     addCommand("I" + motor + positionToString(speed));
     communicate();
 
-    addCommand("J" + motor);
+    startMotor(motor);
     communicate();
 }
 
@@ -257,6 +310,10 @@ int Merlin::openUART() {
 }
 
 // Sends the queued commands to the Merlin and reads the responses into recvBuffer.
+// After calling this method, the command buffer is empty and the recvBuffer
+// only contains the response of the last command (without control characters,
+// so e.g. the response "=303\r" is actually "303" in the recvBuffer).
+//
 // Special characters:
 //      : begins a command from us
 //      = begins a response by the Merlin head
@@ -280,14 +337,16 @@ void Merlin::communicate() {
         }
         usleep(delay);
 
-
         if(charToSend == '\r') {
+            // Trial and error result, not sure if needed
+            usleep(delay);
+
+            // We finished a command, read the response.
+            // First we read an echo of our own command, then the actual response.
             bool gotEchoStart = false;
             bool gotEchoEnd = false;
             bool gotResponseStart = false;
             bool endResponseEnd = false;
-
-            usleep(delay);
 
             const int maxRecvErrors = 5;
             int recvErrors = 0;
@@ -336,6 +395,7 @@ void Merlin::communicate() {
 //                cout << "> Recv: " << debugOutput << endl;
             } while(!endResponseEnd);
 
+            // Trial and error result, not sure if needed
             usleep(delay);
         }
     }
@@ -356,11 +416,11 @@ void Merlin::addCommand(string command, bool lineEnd) {
 
 // For debugging
 void Merlin::printBuffer(std::string buffer) {
-    for(int i = 0; i < buffer.size(); ++i) {
-        if(buffer[i] == '\r') {
+    for(const char c : buffer) {
+        if(c == '\r') {
             cout << "\\r\n";
         } else {
-            cout << buffer[i];
+            cout << c;
         }
     }
     cout << endl;
