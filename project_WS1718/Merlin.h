@@ -42,6 +42,10 @@ public:
 
 //private:
     // For the circle
+    bool checkClockwise = true; //check clockwise
+    bool clockwise;
+    bool searchBorder = true;
+    double borderHeading;
     double startHeading;
     Direction horizCircleDir;
     double startPitch;

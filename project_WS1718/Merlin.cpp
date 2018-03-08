@@ -57,7 +57,7 @@ void Merlin::startHorizontalCircle(Direction dir) {
     // Direction::CLOCKWISE increases the heading
     moveMotor(motorHeading, dir, Speed::FAST);
 }
-
+/*
 bool Merlin::checkHorizontalCircleFull() {
     const double currentHeading = gyro.getHeading();
 
@@ -102,6 +102,77 @@ void Merlin::moveMotorPitch(double degrees, Direction dir) {
     // currPitch > degrees, we are done
     stopMotor(motorPitch);
     waitForStop(motorPitch);
+}
+
+*/
+
+bool Merlin::checkHorizontalCircleFull() {
+    const double currentHeading = gyro.getHeading();
+    double deltaHeading;
+
+    if(checkClockwise)
+    {
+        if(currentHeading > startHeading)
+        {
+            if(currentHeading > (startHeading + 180))
+            {
+                clockwise = false;
+            }else{
+                clockwise = true;
+            }
+        }
+
+        if(currentHeading < startHeading)
+        {
+            if(currentHeading < (startHeading - 180))
+            {
+                clockwise = true;
+            }else{
+                clockwise = false;
+            }
+        }
+
+        checkClockwise = false;
+    }
+
+    if(clockwise) {
+
+        if(searchBorder && (currentHeading > (startHeading + maxErrorHeading)) )
+        {
+            borderHeading = currentHeading;
+            searchBorder = false;
+        }
+
+        if((!searchBorder) && (currentHeading > startHeading) && (currentHeading < maxErrorHeading))
+        {
+            cout << "Horizontal circle done, stopping motor" << endl;
+            // We reached our starting point
+            stopMotor(motorHeading);
+            waitForStop(motorHeading);
+            return true;
+        }
+
+        return false;
+
+    }else{
+
+        if(searchBorder && (currentHeading < (startHeading - maxErrorHeading)) )
+        {
+            borderHeading = currentHeading;
+            searchBorder = false;
+        }
+
+        if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > maxErrorHeading))
+        {
+            cout << "Horizontal circle done, stopping motor" << endl;
+            // We reached our starting point
+            stopMotor(motorHeading);
+            waitForStop(motorHeading);
+            return true;
+        }
+
+    }
+
 }
 
 //void Merlin::startVerticalCircle(Direction dir) {
