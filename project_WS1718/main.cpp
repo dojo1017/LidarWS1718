@@ -3,32 +3,12 @@
 using std::vector;
 #include "Lidar.h"
 #include "Merlin.h"
-//#include "libs/merlin/MerlinHalfSqhere.h"
 #include "Calculation.h"
-#include <fstream>
-
-void writeMeasurementsToFile(const string &filename, const vector<Measurement_3D> &measurements_3D)
-{
-    ofstream fileout;
-    fileout.open(filename + ".ply");
-    fileout << "ply\n";
-    fileout << "format ascii 1.0\n";
-    fileout << "element vertex " << measurements_3D.size() << "\n";
-    fileout << "property float x\n";
-    fileout << "property float y\n";
-    fileout << "property float z\n";
-    fileout << "end_header\n";
-
-    for(const Measurement_3D &m : measurements_3D)
-    {
-        fileout << m.x << " " << m.y << " " << m.z << "\n";
-    }
-}
+#include "Utils.h"
 
 int main(int argc, char **argv) {
     Lidar lidar;
     Merlin merlin;
-    Calculation calculation;
 
     vector<Measurement> measurements;
     vector<Measurement_3D> measurements_3D;
@@ -121,12 +101,11 @@ int main(int argc, char **argv) {
     // Convert measurements into 3D coordinates
     for(const Measurement &m : measurements){
         // Note that we need to switch heading and pitch here - TODO make use of heading/pitch consistent
-        measurements_3D.emplace_back(Calculation::get3DCoordinates(m.pitch, m.heading, m.distance));
+        measurements_3D.emplace_back(Calculation::get3DCoordinates(m));
     }
 
     // Write to file
-    writeMeasurementsToFile("3dPoints", measurements_3D);
-    cout << "test" << endl;
+    utils::writeBinaryPLY("3dPoints", measurements_3D);
 
     cout << "Done." << endl;
     return 0;

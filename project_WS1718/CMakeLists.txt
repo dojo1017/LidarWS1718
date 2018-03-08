@@ -17,7 +17,7 @@ add_executable(main
         libs/lidar/lidarLite.c
         libs/lidar/lidarLite.h
         # merlin libs
-        libs/merlin/MerlinHalfSqhere.h)
+        libs/merlin/MerlinHalfSqhere.h Utils.cpp)
 
 add_executable(calibrateGyro
         calibrateGyro.cpp

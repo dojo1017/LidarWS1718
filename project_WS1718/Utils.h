@@ -3,24 +3,35 @@
 
 #include <cmath>
 #include <cassert>
+#include <fstream>
+#include <vector>
+#include "Calculation.h"
 
 namespace utils {
     // Returns the smallest difference between two angles.
     // Handles rollover at 0°/360° border.
-    inline double headingAngleDelta(double angle1, double angle2) {
-        assert(angle1 >= 0.0 && angle1 <= 360.0);
-        assert(angle2 >= 0.0 && angle2 <= 360.0);
-        return 180.0 - fabs(fabs(angle1 - angle2) - 180.0);
-    }
+    double headingAngleDelta(double angle1, double angle2);
 
     // Pitch is in range -180..180
-    double pitchAngleDelta(double angle1, double angle2) {
-        // Bring in range 0..360
-        return headingAngleDelta(angle1 + 180.0, angle2 + 180.0);
-    }
+    double pitchAngleDelta(double angle1, double angle2);
 
     // Roll is in range -90..90
     // If we need it we have to add an extra function for it
+
+    // ---------------
+    // PLY file output
+
+    // Write measurements to file as human-readable text.
+    // The extension ".ply" is appended to the filename.
+    void writeAsciiPLY(const std::string &filename, const std::vector<Measurement_3D> &measurements_3D);
+
+    // Write measurements to file as compact binary data.
+    // The extension ".ply" is appended to the filename.
+    void writeBinaryPLY(const std::string &filename, const std::vector<Measurement_3D> &measurements_3D);
+
+    // Functions used internally by PLY output
+    void writeAsBinary(std::ofstream &fileout, const float value);
+    void writePLYHeader(std::ofstream &fileout, const std::string &format, size_t vertexCount);
 
 } // namespace utils
 
