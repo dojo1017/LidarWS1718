@@ -7,27 +7,23 @@ using std::vector;
 #include "Calculation.h"
 #include <fstream>
 
-void writeMeasurementsToFile(vector<Measurement_3D> measurements_3D)
+void writeMeasurementsToFile(const string &filename, const vector<Measurement_3D> &measurements_3D)
 {
     ofstream fileout;
-    fileout.open("3dPoints.ply");
-    fileout << "ply" << endl;
-    fileout << "format ascii 1.0" << endl;
-    fileout << "element vertex " << measurements_3D.size() << endl;
-    fileout << "property float x" << endl;
-    fileout << "property float y" << endl;
-    fileout << "property float z" << endl;
-    fileout << "end_header" << endl;
+    fileout.open(filename + ".ply");
+    fileout << "ply\n";
+    fileout << "format ascii 1.0\n";
+    fileout << "element vertex " << measurements_3D.size() << "\n";
+    fileout << "property float x\n";
+    fileout << "property float y\n";
+    fileout << "property float z\n";
+    fileout << "end_header\n";
 
     for(const Measurement_3D &m : measurements_3D)
     {
-        fileout << m.x << " " << m.y << " " << m.z << " " << endl;
+        fileout << m.x << " " << m.y << " " << m.z << "\n";
     }
-
-    fileout.close();
 }
-
-
 
 int main(int argc, char **argv) {
 
@@ -89,7 +85,7 @@ int main(int argc, char **argv) {
     }
 
     // Write to file
-    writeMeasurementsToFile(measurements_3D);
+    writeMeasurementsToFile("3dPoints", measurements_3D);
 
     cout << "Done." << endl;
     return 0;
