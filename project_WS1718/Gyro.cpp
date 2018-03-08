@@ -168,60 +168,16 @@ bool Gyro::calibrationDataExists(const char* calibrationDataFile) {
 	return exists;
 }
 
-void copyArr(char* from, uint16_t fromStart, char* to, uint16_t toStart, uint16_t count) {
-	for(; fromStart < fromStart + count; fromStart++, toStart++) {
-		to[toStart] = from[fromStart];
-	}
-}
-void copyCal(char* calibData, int16_t calibValue, int8_t pos) {
-	char _conv[2];
-	int16_to_char(calibValue, _conv);
-	memcpy(calibData + pos, _conv, 2);
-	//copyArr(_conv, 0, calibData, pos, 2);
-}
-
-
 void Gyro::saveCalibrationData(adafruit_bno055_offsets_t calib, const char* calibrationDataFile) {
-	char calibData[23];
-
-	copyCal(calibData, calib.accel_offset_x, 0);
-	copyCal(calibData, calib.accel_offset_y, 2);
-	copyCal(calibData, calib.accel_offset_z, 4);
-	copyCal(calibData, calib.mag_offset_x, 6);
-	copyCal(calibData, calib.mag_offset_y, 8);
-	copyCal(calibData, calib.mag_offset_z, 10);
-	copyCal(calibData, calib.gyro_offset_x, 12);
-	copyCal(calibData, calib.gyro_offset_y, 14);
-	copyCal(calibData, calib.gyro_offset_z, 16);
-	copyCal(calibData, calib.accel_radius, 18);
-	copyCal(calibData, calib.mag_radius, 20);
-	calibData[22] = '\0';
-
-	ofstream outputFile(calibrationDataFile);
-	outputFile << calibData;
+    ofstream outputFile(calibrationDataFile);
+    outputFile.write(reinterpret_cast<const char *>(&calib), sizeof(calib));
 }
-
 
 adafruit_bno055_offsets_t Gyro::loadCalibrationData(const char* calibrationDataFile) {
 	adafruit_bno055_offsets_t calibData;
-	char readData[22];
 
-	ifstream inputFile(calibrationDataFile);
-	inputFile.read(readData, 22);
-	inputFile.close();
-
-	char_to_int16(readData, calibData.accel_offset_x, 0);
-	char_to_int16(readData, calibData.accel_offset_y, 2);
-	char_to_int16(readData, calibData.accel_offset_z, 4);
-	char_to_int16(readData, calibData.mag_offset_x, 6);
-	char_to_int16(readData, calibData.mag_offset_y, 8);
-	char_to_int16(readData, calibData.mag_offset_z, 10);
-	char_to_int16(readData, calibData.gyro_offset_x, 12);
-	char_to_int16(readData, calibData.gyro_offset_y, 14);
-	char_to_int16(readData, calibData.gyro_offset_z, 16);
-	char_to_int16(readData, calibData.accel_radius, 18);
-	char_to_int16(readData, calibData.mag_radius, 20);
-
+    ifstream inputFile(calibrationDataFile);
+    inputFile.read(reinterpret_cast<char *>(&calibData), sizeof(calibData));
 
 	return calibData;
 }
