@@ -40,7 +40,7 @@ public:
 
     Gyro gyro;
 
-private:
+//private:
     // For the circle
     double startHeading;
     Direction horizCircleDir;

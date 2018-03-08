@@ -61,6 +61,9 @@ void Merlin::startHorizontalCircle(Direction dir) {
 bool Merlin::checkHorizontalCircleFull() {
     const double currentHeading = gyro.getHeading();
 
+    // 220
+    //
+
     double deltaHeading;
     if(horizCircleDir == Direction::CLOCKWISE) {
         deltaHeading = currentHeading - startHeading;

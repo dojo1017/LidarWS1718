@@ -57,7 +57,8 @@ int main(int argc, char **argv) {
     // For now, just one circle
     merlin.startHorizontalCircle(Merlin::CLOCKWISE);
 
-    while(!merlin.checkHorizontalCircleFull()) {
+    //while(!merlin.checkHorizontalCircleFull()) {
+    for(int i = 0; i < 40; ++i) {
         // Take measurement with Lidar
         const unsigned int distance = lidar.measureDistance();
         const float heading = merlin.gyro.getHeading();
@@ -67,7 +68,12 @@ int main(int argc, char **argv) {
              << "Pitch: " << pitch
              << endl;
         measurements.emplace_back(Measurement(heading, pitch, distance));
+
+        usleep(100000);
     }
+    // Test
+    merlin.stopMotor(merlin.motorHeading);
+    merlin.waitForStop(merlin.motorHeading);
 
     // Measurement test code
 //    for(int pitch = 0; pitch < 90; pitch += 5) {
