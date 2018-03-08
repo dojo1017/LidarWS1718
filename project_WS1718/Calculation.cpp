@@ -17,5 +17,6 @@ Measurement_3D Calculation::get3DCoordinates(float pitch_deg, float yaw_deg, uns
 }
 
 Measurement_3D Calculation::get3DCoordinates(const Measurement &m) {
-    return get3DCoordinates(m.heading, m.pitch, m.distance);
+    // Note that we need to switch heading and pitch here - TODO make use of heading/pitch consistent
+    return get3DCoordinates(m.pitch, m.heading, m.distance);
 }

@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 //        }
 //    }
 
-    for(int pitch = -90; pitch < 90; pitch += 5) {
+    for(int pitch = 0; pitch < 90; pitch += 5) {
         // Describe a horizontal circle
         for (int heading = 0; heading < 360; heading += 10) {
             measurements.emplace_back(Measurement(heading, pitch, 2));
@@ -81,11 +81,13 @@ int main(int argc, char **argv) {
 
     // Convert measurements into 3D coordinates
     for(const Measurement &m : measurements){
-        measurements_3D.emplace_back(Calculation::get3DCoordinates(m));
+        // Note that we need to switch heading and pitch here - TODO make use of heading/pitch consistent
+        measurements_3D.emplace_back(Calculation::get3DCoordinates(m.pitch, m.heading, m.distance));
     }
 
     // Write to file
     writeMeasurementsToFile("3dPoints", measurements_3D);
+    cout << "test" << endl;
 
     cout << "Done." << endl;
     return 0;
