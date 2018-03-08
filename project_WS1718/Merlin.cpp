@@ -6,6 +6,8 @@
 #include <cmath>
 
 #include "Merlin.h"
+#include "Utils.h"
+
 using std::string;
 
 // More or less crappy documentation of the Merlin/Orion protocol:
@@ -77,33 +79,50 @@ bool Merlin::checkHorizontalCircleFull() {
     return false;
 }
 
-void Merlin::startVerticalCircle(Direction dir) {
-    startPitch = gyro.getPitch();
-    vertCircleDir = dir;
-    moveMotor(motorPitch, dir, Speed::FAST);
+// This is a blocking method
+void Merlin::moveMotorPitch(double degrees, Direction dir) {
+    const double startPitch = gyro.getPitch();
+    moveMotor(motorPitch, dir, Speed::NORMAL);
+
+    double currPitch;
+    while(utils::angleDelta(currPitch = gyro.getPitch(), startPitch) < degrees) {
+        cout << "pitch: " << currPitch << " startPitch: " << startPitch
+             << " = angle: " << utils::angleDelta(currPitch, startPitch) << endl;
+        // Wait for the motor to move the specified amount
+        usleep(5000);
+    }
+
+    stopMotor(motorPitch);
+    waitForStop(motorPitch);
 }
 
-bool Merlin::checkVerticalCircleFull() {
-    const double currentPitch = gyro.getPitch();
-
-    double deltaPitch;
-    if(vertCircleDir == Direction::CLOCKWISE) {
-        deltaPitch = currentPitch - startPitch;
-    } else {
-        deltaPitch = startPitch - currentPitch;
-    }
-    cout << "deltaPitch: " << deltaPitch << endl;
-
-    // TODO test counterclockwise direction, not sure if correct
-    if(deltaPitch < 0.0 && deltaPitch > -maxErrorHeading) {
-        cout << "Vertical circle done, stopping motor" << endl;
-        // We reached our starting point
-        stopMotor(motorPitch);
-        waitForStop(motorPitch);
-        return true;
-    }
-    return false;
-}
+//void Merlin::startVerticalCircle(Direction dir) {
+//    startPitch = gyro.getPitch();
+//    vertCircleDir = dir;
+//    moveMotor(motorPitch, dir, Speed::FAST);
+//}
+//
+//bool Merlin::checkVerticalCircleFull() {
+//    const double currentPitch = gyro.getPitch();
+//
+//    double deltaPitch;
+//    if(vertCircleDir == Direction::CLOCKWISE) {
+//        deltaPitch = currentPitch - startPitch;
+//    } else {
+//        deltaPitch = startPitch - currentPitch;
+//    }
+//    cout << "deltaPitch: " << deltaPitch << endl;
+//
+//    // TODO test counterclockwise direction, not sure if correct
+//    if(deltaPitch < 0.0 && deltaPitch > -maxErrorHeading) {
+//        cout << "Vertical circle done, stopping motor" << endl;
+//        // We reached our starting point
+//        stopMotor(motorPitch);
+//        waitForStop(motorPitch);
+//        return true;
+//    }
+//    return false;
+//}
 
 // This is a blocking method (blocks until the new position is reached)
 void Merlin::aimAt(float targetHeading, float targetPitch) {

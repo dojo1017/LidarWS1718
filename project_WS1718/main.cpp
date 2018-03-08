@@ -42,20 +42,10 @@ int main(int argc, char **argv) {
 //        }
 //    }
 
-    // Test vertical circle
-    merlin.startVerticalCircle(Merlin::CLOCKWISE);
-
-    while(!merlin.checkVerticalCircleFull()) {
-        // Take measurement with Lidar
-        const unsigned int distance = lidar.measureDistance();
-        const float heading = merlin.gyro.getHeading();
-        const float pitch = merlin.gyro.getPitch();
-        cout << "distance: " << distance << " cm, "
-             << "Heading: " << heading << ", "
-             << "Pitch: " << pitch
-             << endl;
-        measurements.emplace_back(Measurement(heading, pitch, distance));
-    }
+    // Test vertical movement
+    merlin.moveMotorPitch(30.0, Merlin::CLOCKWISE);
+    usleep(100000);
+    merlin.moveMotorPitch(30.0, Merlin::COUNTERCLOCKWISE);
 
     // For now, just one circle
 //    for(int i = 0; i < 5; ++i) {

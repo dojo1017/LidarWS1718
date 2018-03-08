@@ -29,8 +29,9 @@ public:
     // public motor control methods
     void startHorizontalCircle(Direction dir);
     bool checkHorizontalCircleFull();
-    void startVerticalCircle(Direction dir);
-    bool checkVerticalCircleFull();
+//    void startVerticalCircle(Direction dir);
+//    bool checkVerticalCircleFull();
+    void moveMotorPitch(double degrees, Direction dir);
 
     void stopMotor(std::string motor);
     void waitForStop(const std::string &motor);
