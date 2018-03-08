@@ -26,7 +26,6 @@ void writeMeasurementsToFile(const string &filename, const vector<Measurement_3D
 }
 
 int main(int argc, char **argv) {
-
     Lidar lidar;
     Merlin merlin;
     Calculation calculation;
@@ -57,7 +56,7 @@ int main(int argc, char **argv) {
 
     // For now, just one circle
 //    for(int i = 0; i < 5; ++i) {
-        merlin.startHorizontalCircle();
+        merlin.startHorizontalCircle(Merlin::CLOCKWISE);
 
         while(!merlin.checkHorizontalCircleFull()) {
             // Take measurement with Lidar
