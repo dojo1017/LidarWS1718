@@ -5,7 +5,7 @@
 #ifndef PROJECT_WS1718_CALCULATION_H
 #define PROJECT_WS1718_CALCULATION_H
 
-#endif //PROJECT_WS1718_CALCULATION_H
+
 
 
 struct Measurement_3D {
@@ -20,6 +20,9 @@ struct Measurement_3D {
 
 class Calculation{
 public:
-    Calculation();
+    Calculation(){};
     Measurement_3D get3DCoordinates(float pitch_deg, float yaw_deg, unsigned int distance);
 };
+
+
+#endif //PROJECT_WS1718_CALCULATION_H

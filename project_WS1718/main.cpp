@@ -5,6 +5,7 @@ using std::vector;
 #include "Merlin.h"
 //#include "libs/merlin/MerlinHalfSqhere.h"
 #include "Calculation.h"
+#include <fstream>
 
 struct Measurement {
     Measurement(float heading, float pitch, unsigned int dist)
@@ -15,6 +16,28 @@ struct Measurement {
     float pitch;
     unsigned int distance;
 };
+
+void writeMeasurementsToFile(vector<Measurement_3D> measurements_3D)
+{
+    ofstream fileout;
+    fileout.open("3dPoints.ply");
+    fileout << "ply" << endl;
+    fileout << "format ascii 1.0" << endl;
+    fileout << "element vertex " << measurements_3D.size() << endl;
+    fileout << "property float x" << endl;
+    fileout << "property float y" << endl;
+    fileout << "property float z" << endl;
+    fileout << "end_header" << endl;
+
+    for(const Measurement_3D &m : measurements_3D)
+    {
+        fileout << m.x << " " << m.y << " " << m.z << " " << endl;
+    }
+
+    fileout.close();
+}
+
+
 
 int main(int argc, char **argv) {
 
@@ -71,6 +94,7 @@ int main(int argc, char **argv) {
 
 
     // Write to file
+    writeMeasurementsToFile(measurements_3D);
 
     cout << "Done." << endl;
     return 0;
