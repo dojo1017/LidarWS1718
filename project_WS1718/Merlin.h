@@ -49,7 +49,7 @@ private:
 
     // Maximum allowed error for the circle, in degrees
     // Smaller values mean more precision but require
-    const float maxErrorHeading = 2.f;
+    const float maxErrorHeading = 30.f;
     const float maxErrorPitch = 2.f;
 
     const std::string motorHeading = "1";

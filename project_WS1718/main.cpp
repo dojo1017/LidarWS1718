@@ -55,21 +55,19 @@ int main(int argc, char **argv) {
 //    }
 
     // For now, just one circle
-//    for(int i = 0; i < 5; ++i) {
-        merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
 
-        while(!merlin.checkHorizontalCircleFull()) {
-            // Take measurement with Lidar
-            const unsigned int distance = lidar.measureDistance();
-            const float heading = merlin.gyro.getHeading();
-            const float pitch = merlin.gyro.getPitch();
-            cout << "distance: " << distance << " cm, "
-                 << "Heading: " << heading << ", "
-                 << "Pitch: " << pitch
-                 << endl;
-            measurements.emplace_back(Measurement(heading, pitch, distance));
-        }
-//    }
+    while(!merlin.checkHorizontalCircleFull()) {
+        // Take measurement with Lidar
+        const unsigned int distance = lidar.measureDistance();
+        const float heading = merlin.gyro.getHeading();
+        const float pitch = merlin.gyro.getPitch();
+        cout << "distance: " << distance << " cm, "
+             << "Heading: " << heading << ", "
+             << "Pitch: " << pitch
+             << endl;
+        measurements.emplace_back(Measurement(heading, pitch, distance));
+    }
 
     // Measurement test code
 //    for(int pitch = 0; pitch < 90; pitch += 5) {
