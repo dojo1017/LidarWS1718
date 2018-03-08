@@ -55,25 +55,41 @@ int main(int argc, char **argv) {
 //    }
 
     // For now, just one circle
-    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+//    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
 
     //while(!merlin.checkHorizontalCircleFull()) {
-    for(int i = 0; i < 40; ++i) {
-        // Take measurement with Lidar
-        const unsigned int distance = lidar.measureDistance();
-        const float heading = merlin.gyro.getHeading();
-        const float pitch = merlin.gyro.getPitch();
-        cout << "distance: " << distance << " cm, "
-             << "Heading: " << heading << ", "
-             << "Pitch: " << pitch
-             << endl;
-        measurements.emplace_back(Measurement(heading, pitch, distance));
+    for(int i = 0; i < 10; ++i) {
+        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+        merlin.moveMotor(merlin.motorHeading, dir, Merlin::FAST);
 
-        usleep(100000);
+        for(int j = 0; j < 10; ++j) {
+            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+            merlin.moveMotor(merlin.motorPitch, dir2, Merlin::FAST);
+
+            for(int k = 0; k < 100; ++k) {
+                // Take measurement with Lidar
+                const unsigned int distance = lidar.measureDistance();
+                const float heading = merlin.gyro.getHeading();
+                const float pitch = merlin.gyro.getPitch();
+                cout << "distance: " << distance << " cm, "
+                     << "Heading: " << heading << ", "
+                     << "Pitch: " << pitch
+                     << endl;
+                measurements.emplace_back(Measurement(heading, pitch, distance));
+
+                usleep(500000);
+            }
+
+            merlin.stopMotor(merlin.motorPitch);
+            merlin.waitForStop(merlin.motorPitch);
+        }
+
+        merlin.stopMotor(merlin.motorHeading);
+        merlin.waitForStop(merlin.motorHeading);
     }
-    // Test
-    merlin.stopMotor(merlin.motorHeading);
-    merlin.waitForStop(merlin.motorHeading);
+//    // Test
+//    merlin.stopMotor(merlin.motorHeading);
+//    merlin.waitForStop(merlin.motorHeading);
 
     // Measurement test code
 //    for(int pitch = 0; pitch < 90; pitch += 5) {
