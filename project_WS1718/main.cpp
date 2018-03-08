@@ -27,8 +27,8 @@ void writeMeasurementsToFile(const string &filename, const vector<Measurement_3D
 
 int main(int argc, char **argv) {
 
-//    Lidar lidar;
-//    Merlin merlin;
+    Lidar lidar;
+    Merlin merlin;
     Calculation calculation;
 
     vector<Measurement> measurements;
