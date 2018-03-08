@@ -7,7 +7,7 @@ add_definitions(${GCC_COMPILE_FLAGS})
 
 add_executable(main
         # Main project
-        main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h
+        main.cpp Lidar.cpp Lidar.h Merlin.cpp Merlin.h Gyro.cpp Gyro.h Calculation.cpp Calculation.h
         # gyro libs
         libs/gyro/BNO055.cpp
         libs/gyro/BNO055.h
