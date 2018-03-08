@@ -16,7 +16,7 @@ public:
     double getHeading();
     double getPitch();
 
-	void calibrate();
+	void calibrate(const char* calibrationDataFile);
 
 private:
     BNO055 lib;
@@ -32,13 +32,11 @@ private:
 
 	void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData);
 
-	void accessCalibrationData();
+	bool calibrationDataExists(const char* calibrationDataFile);
 
-	bool calibrationDataExists();
+	adafruit_bno055_offsets_t loadCalibrationData(const char* calibrationDataFile);
 
-	adafruit_bno055_offsets_t loadCalibrationData();
-
-	void saveCalibrationData(adafruit_bno055_offsets_t calib);
+	void saveCalibrationData(adafruit_bno055_offsets_t calib, const char* calibrationDataFile);
 };
 
 

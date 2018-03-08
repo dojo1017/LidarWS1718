@@ -160,8 +160,8 @@ Gyro::Gyro() : lib(I2C_ADDRESS, RESET_PIN) {
 //    }
 }
 
-bool Gyro::calibrationDataExists() {
-	ifstream calibFile("calibration.dat");
+bool Gyro::calibrationDataExists(const char* calibrationDataFile) {
+	ifstream calibFile(calibrationDataFile);
 	bool exists = calibFile.good();
 	calibFile.close();
 
@@ -176,11 +176,12 @@ void copyArr(char* from, uint16_t fromStart, char* to, uint16_t toStart, uint16_
 void copyCal(char* calibData, int16_t calibValue, int8_t pos) {
 	char _conv[2];
 	int16_to_char(calibValue, _conv);
-	copyArr(_conv, 0, calibData, pos, 2);
+	memcpy(calibData + pos, _conv, 2);
+	//copyArr(_conv, 0, calibData, pos, 2);
 }
 
 
-void Gyro::saveCalibrationData(adafruit_bno055_offsets_t calib) {
+void Gyro::saveCalibrationData(adafruit_bno055_offsets_t calib, const char* calibrationDataFile) {
 	char calibData[23];
 
 	copyCal(calibData, calib.accel_offset_x, 0);
@@ -196,17 +197,16 @@ void Gyro::saveCalibrationData(adafruit_bno055_offsets_t calib) {
 	copyCal(calibData, calib.mag_radius, 20);
 	calibData[22] = '\0';
 
-	ofstream outputFile("calibration.dat");
+	ofstream outputFile(calibrationDataFile);
 	outputFile << calibData;
-	outputFile.close();
 }
 
 
-adafruit_bno055_offsets_t Gyro::loadCalibrationData() {
+adafruit_bno055_offsets_t Gyro::loadCalibrationData(const char* calibrationDataFile) {
 	adafruit_bno055_offsets_t calibData;
 	char readData[22];
 
-	ifstream inputFile("calibration.dat");
+	ifstream inputFile(calibrationDataFile);
 	inputFile.read(readData, 22);
 	inputFile.close();
 
@@ -226,14 +226,14 @@ adafruit_bno055_offsets_t Gyro::loadCalibrationData() {
 	return calibData;
 }
 
-void Gyro::accessCalibrationData() {
+void Gyro::calibrate(const char* calibrationDataFile) {
 	bool foundCalib = false;
 
 	adafruit_bno055_offsets_t calibrationData;
 	sensor_t sensor;
 	lib.getSensor(&sensor);
 
-	if (!calibrationDataExists())
+	if (!calibrationDataExists(calibrationDataFile))
 	{
 		printf("\nNo Calibration Data for this sensor exists\n");
 		sleep(0.500);
@@ -241,7 +241,7 @@ void Gyro::accessCalibrationData() {
 	else
 	{
 		printf("\nFound Calibration for this sensor.\n");
-		calibrationData = loadCalibrationData();
+		calibrationData = loadCalibrationData(calibrationDataFile);
 
 		displaySensorOffsets(calibrationData);
 
@@ -318,8 +318,7 @@ void Gyro::accessCalibrationData() {
 
 	printf("\n\nStoring calibration data...\n");
 
-	lib.getSensor(&sensor);
-	//saveCalibrationData(newCalib);
+	saveCalibrationData(newCalib, calibrationDataFile);
 	printf("Data stored.\n");
 
 	printf("\n--------------------------------\n");
@@ -329,10 +328,6 @@ void Gyro::accessCalibrationData() {
 	while(true) {
 		cout << "Heading: " << lib.getEulerHeading() << endl;
 	}
-}
-
-void Gyro::calibrate() {
-	accessCalibrationData();
 }
 
 double Gyro::getHeading() {

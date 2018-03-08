@@ -10,15 +10,8 @@ int main(int argc, char **argv) {
 	}
 
 	Gyro *gyro = new Gyro();
-	gyro->calibrate();
+	gyro->calibrate("calibration.dat");
 
-	// TODO: load calibration data
 
-	// TODO: Show current calibration
-	// TODO: X needs calibration, calibrate now? (Y/n)
-	// TODO: Please do ... for up to 30 seconds to calibrate
-	// TODO: calibrate next
-
-	// TODO: save calibration data
 
 }
