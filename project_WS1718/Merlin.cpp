@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "Merlin.h"
+
 using std::string;
 
 // How to move a motor:
@@ -17,6 +18,7 @@ using std::string;
 
 
 Merlin::Merlin() : gyro() {
+    gyro.calibrate(CALIBRATION_FILENAME);
     init();
 
     // Just a test
