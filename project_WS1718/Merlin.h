@@ -8,6 +8,8 @@
 #include <string>
 #include "Gyro.h"
 
+#define CALIBRATION_FILENAME "calibration.dat"
+
 class Merlin {
 public:
     typedef enum {

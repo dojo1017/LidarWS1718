@@ -23,6 +23,7 @@ using std::string;
 
 
 Merlin::Merlin() : gyro() {
+    gyro.calibrate(CALIBRATION_FILENAME);
     init();
 
     // Just a test

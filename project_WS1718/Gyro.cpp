@@ -280,10 +280,6 @@ void Gyro::calibrate(const char* calibrationDataFile) {
 	printf("\n--------------------------------\n");
 	sleep(0.500);
 
-
-	while(true) {
-		cout << "Heading: " << lib.getEulerHeading() << endl;
-	}
 }
 
 double Gyro::getHeading() {
