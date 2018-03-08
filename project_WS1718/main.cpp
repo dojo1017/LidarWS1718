@@ -17,6 +17,7 @@ struct Measurement {
 };
 
 int main(int argc, char **argv) {
+
     Lidar lidar;
     Merlin merlin;
     Calculation calculation;
