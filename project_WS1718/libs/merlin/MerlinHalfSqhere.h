@@ -8,6 +8,9 @@
 #include <cctype>
 #include <string>
 
+#ifndef MERLIN_LIB
+#define MERLIN_LIB
+
 
 
 /**
@@ -464,3 +467,5 @@ int initCOM()
     tcsetattr(uart0_filestream, TCSANOW, &options);
     return uart0_filestream;
 }
+
+#endif
