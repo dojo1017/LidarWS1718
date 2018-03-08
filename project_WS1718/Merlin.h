@@ -38,6 +38,9 @@ public:
     void stopMotor(std::string motor);
     void waitForStop(const std::string &motor);
 
+    void goToDegree(std::string motor, int degree);
+    void doSequenceStep(int angle, std::string motor);
+
     Gyro gyro;
 
 //private:

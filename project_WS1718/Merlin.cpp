@@ -25,15 +25,6 @@ using std::string;
 Merlin::Merlin() : gyro() {
     //gyro.calibrate(CALIBRATION_FILENAME);
     init();
-
-    // Just a test
-//    for(int i = 0; i < 20; ++i) {
-//        cout << "moveMotor" << endl;
-//        moveMotor(motorHeading, 0, Speed::FAST);
-//        usleep(5000000);
-//        cout << "waitForStop" << endl;
-//        waitForStop(motorHeading);
-//    }
 }
 
 void Merlin::init(){
@@ -428,4 +419,32 @@ void Merlin::printBuffer(std::string buffer) {
         }
     }
     cout << endl;
+}
+
+// Basically a direct port from MerlinHalfSphere
+void Merlin::goToDegree(std::string motor, int degree) {
+    const int SINGLE_DEGREE = 0xA00;
+    const int PIVOT_ANGLE = 0x800000;
+
+    const int relativeAngle = degree * SINGLE_DEGREE;
+    const int targetAngle = PIVOT_ANGLE + relativeAngle;
+    const string posString = positionToString(targetAngle);
+
+    addCommand("G" + motor + "00");
+    addCommand("S" + motor + posString);
+}
+
+// Basically a direct port from MerlinHalfSphere
+void Merlin::doSequenceStep(int angle, string motor) {
+    // Size of one step, in degrees
+    const int ANGLE = 5;
+    // Größe eines 1° Winkels - Derzeit empierischer Wert, nicht ganz korrekt.
+    const int SINGLE_DEGREE = 0xA00;
+
+    stopMotor(motor);
+    goToDegree(motor, angle);
+    startMotor(motor);
+    communicate();
+
+    waitForStop(motor);
 }
