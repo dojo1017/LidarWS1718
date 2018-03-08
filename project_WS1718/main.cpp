@@ -42,21 +42,36 @@ int main(int argc, char **argv) {
 //        }
 //    }
 
+    // Test vertical circle
+    merlin.startVerticalCircle(Merlin::CLOCKWISE);
+
+    while(!merlin.checkVerticalCircleFull()) {
+        // Take measurement with Lidar
+        const unsigned int distance = lidar.measureDistance();
+        const float heading = merlin.gyro.getHeading();
+        const float pitch = merlin.gyro.getPitch();
+        cout << "distance: " << distance << " cm, "
+             << "Heading: " << heading << ", "
+             << "Pitch: " << pitch
+             << endl;
+        measurements.emplace_back(Measurement(heading, pitch, distance));
+    }
+
     // For now, just one circle
 //    for(int i = 0; i < 5; ++i) {
-        merlin.startHorizontalCircle();
-
-        while(!merlin.checkHorizontalCircleFull()) {
-            // Take measurement with Lidar
-            const unsigned int distance = lidar.measureDistance();
-            const float heading = merlin.gyro.getHeading();
-            const float pitch = merlin.gyro.getPitch();
-            cout << "distance: " << distance << " cm, "
-                 << "Heading: " << heading << ", "
-                 << "Pitch: " << pitch
-                 << endl;
-            measurements.emplace_back(Measurement(heading, pitch, distance));
-        }
+//        merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+//
+//        while(!merlin.checkHorizontalCircleFull()) {
+//            // Take measurement with Lidar
+//            const unsigned int distance = lidar.measureDistance();
+//            const float heading = merlin.gyro.getHeading();
+//            const float pitch = merlin.gyro.getPitch();
+//            cout << "distance: " << distance << " cm, "
+//                 << "Heading: " << heading << ", "
+//                 << "Pitch: " << pitch
+//                 << endl;
+//            measurements.emplace_back(Measurement(heading, pitch, distance));
+//        }
 //    }
 
     // Convert measurements into 3D coordinates

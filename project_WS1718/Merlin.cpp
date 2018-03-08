@@ -47,29 +47,59 @@ void Merlin::init(){
 // This method is non-blocking.
 // You have to check regularly if the circle was completed
 // by calling Merlin::checkHorizontalCircleFull()
-void Merlin::startHorizontalCircle() {
+void Merlin::startHorizontalCircle(Direction dir) {
     startHeading = gyro.getHeading();
+    horizCircleDir = dir;
     // TODO: find out if direction 0 or 1 is needed to increase the heading
-    const int direction = 0;
-    moveMotor(motorHeading, direction, Speed::FAST);
+    // Direction::CLOCKWISE increases the heading
+    moveMotor(motorHeading, dir, Speed::FAST);
 }
 
 bool Merlin::checkHorizontalCircleFull() {
-    double currentHeading = gyro.getHeading();
+    const double currentHeading = gyro.getHeading();
 
-    // We assume here that currentHeading grows the more we turn
-    // (direction has to be correct)
-    // 220 -> 220, 230, 240, 355 ... 0, 100, 200
-    //          0   10   20  135  -220 -120 -20   current - start
-    double deltaHeading = currentHeading - startHeading;
+    double deltaHeading;
+    if(horizCircleDir == Direction::CLOCKWISE) {
+        deltaHeading = currentHeading - startHeading;
+    } else {
+        deltaHeading = startHeading - currentHeading;
+    }
     cout << "deltaHeading: " << deltaHeading << endl;
 
-    // Only check after a few seconds to avoid stopping right after starting
+    // TODO test counterclockwise direction, not sure if correct
     if(deltaHeading < 0.0 && deltaHeading > -maxErrorHeading) {
-        cout << "Circle done, stopping motor" << endl;
+        cout << "Horizontal circle done, stopping motor" << endl;
         // We reached our starting point
         stopMotor(motorHeading);
         waitForStop(motorHeading);
+        return true;
+    }
+    return false;
+}
+
+void Merlin::startVerticalCircle(Direction dir) {
+    startPitch = gyro.getPitch();
+    vertCircleDir = dir;
+    moveMotor(motorPitch, dir, Speed::FAST);
+}
+
+bool Merlin::checkVerticalCircleFull() {
+    const double currentPitch = gyro.getPitch();
+
+    double deltaPitch;
+    if(vertCircleDir == Direction::CLOCKWISE) {
+        deltaPitch = currentPitch - startPitch;
+    } else {
+        deltaPitch = startPitch - currentPitch;
+    }
+    cout << "deltaPitch: " << deltaPitch << endl;
+
+    // TODO test counterclockwise direction, not sure if correct
+    if(deltaPitch < 0.0 && deltaPitch > -maxErrorHeading) {
+        cout << "Vertical circle done, stopping motor" << endl;
+        // We reached our starting point
+        stopMotor(motorPitch);
+        waitForStop(motorPitch);
         return true;
     }
     return false;
