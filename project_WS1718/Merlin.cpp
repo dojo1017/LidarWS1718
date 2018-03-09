@@ -44,6 +44,7 @@ void Merlin::init(){
 // You have to check regularly if the circle was completed
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle(Direction dir) {
+    gyro.getHeading();
     startHeading = gyro.getHeading();
     cout << "INIT HEADING - Start Heading: " << startHeading << endl;
     horizCircleDir = dir;
