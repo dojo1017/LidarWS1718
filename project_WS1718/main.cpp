@@ -31,6 +31,8 @@ int main(int argc, char **argv) {
     vector<Measurement> measurements;
     vector<Measurement_3D> measurements_3D;
 
+	//usleep(200 * 1000); // Wait for gyro to calibrate itself
+
     // For now, just one circle
     merlin.startHorizontalCircle(Merlin::CLOCKWISE);
 

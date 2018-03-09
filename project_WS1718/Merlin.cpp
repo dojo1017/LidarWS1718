@@ -25,11 +25,13 @@ using std::string;
 
 
 Merlin::Merlin() : gyro() {
-	gyro.calibrateGyroOnly();
 	init();
 }
 
 void Merlin::init() {
+	gyro.calibrateGyroOnly();
+	gyro.getHeading();
+
 	addCommand("F" + MOTOR_HEADING);
 	addCommand("a" + MOTOR_HEADING);
 	addCommand("D" + MOTOR_HEADING);
@@ -44,6 +46,8 @@ void Merlin::init() {
 // You have to check regularly if the circle was completed
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle(Direction dir) {
+
+
 	startCheckHeading = false;
 	long starttime = BNO055::_millis();
 	while (true) {
