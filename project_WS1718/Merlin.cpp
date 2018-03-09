@@ -29,6 +29,7 @@ Merlin::Merlin() : gyro() {
 }
 
 void Merlin::init() {
+	gyro.calibrate("calibration.dat");
 	gyro.getHeading();
 
 	addCommand("F" + MOTOR_HEADING);
