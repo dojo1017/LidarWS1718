@@ -190,7 +190,7 @@ int main(int argc, char **argv) {
 //
 //    // Write to file
 //    utils::writeBinaryPLY("3dPoints", measurements_3D);
-
+*/
     cout << "Done." << endl;
     return 0;
 }
