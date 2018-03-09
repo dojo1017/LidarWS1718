@@ -98,8 +98,9 @@ void Merlin::moveMotorPitch(double degrees, Direction dir) {
 */
 
 bool Merlin::checkHorizontalCircleFull() {
-    const double currentHeading = gyro.getHeading();
-    double deltaHeading;
+    const float currentHeading = gyro.getHeading();
+    float deltaHeading;
+    float startMaxError; //maxError relativ zum Startpunkt
 
     if(checkClockwise)
     {
@@ -128,41 +129,100 @@ bool Merlin::checkHorizontalCircleFull() {
 
     if(clockwise) {
 
-        if(searchBorder && (currentHeading > (startHeading + maxErrorHeading)) )
+        startMaxError = startHeading + maxErrorHeading;
+
+        if(startMaxError >= 360) //falls der Nullpunkt zwischen start und startMaxError liegt
         {
-            borderHeading = currentHeading;
-            searchBorder = false;
+            startMaxError = startMaxError - 360;
+
+            if(searchBorder && (currentHeading > startMaxError) )
+            {
+                borderHeading = currentHeading;
+            }
+
+            if((!searchBorder) && ((currentHeading > startHeading) || (currentHeading < borderHeading)))
+            {
+                cout << "Horizontal circle done, stopping motor" << endl;
+                // We reached our starting point
+                stopMotor(motorHeading);
+                waitForStop(motorHeading);
+                searchBorder = true;
+                checkClockwise = true;
+                return true;
+            }
+
+        }else{
+
+            if(searchBorder && (currentHeading > startMaxError) )
+            {
+                borderHeading = currentHeading;
+                searchBorder = false;
+            }
+
+            if((!searchBorder) && (currentHeading > startHeading) && (currentHeading <= borderHeading))
+            {
+                cout << "Horizontal circle done, stopping motor" << endl;
+                // We reached our starting point
+                stopMotor(motorHeading);
+                waitForStop(motorHeading);
+                searchBorder = true;
+                checkClockwise = true;
+                return true;
+            }
+
         }
 
-        if((!searchBorder) && (currentHeading > startHeading) && (currentHeading < maxErrorHeading))
+
+    }else{ //counterclockwise
+
+        startMaxError = startHeading - maxErrorHeading;
+
+        if(startMaxError < 0) //falls der Nullpunkt  zwischen start und startMaxError liegt
         {
-            cout << "Horizontal circle done, stopping motor" << endl;
-            // We reached our starting point
-            stopMotor(motorHeading);
-            waitForStop(motorHeading);
-            return true;
-        }
+            startMaxError = startMaxError + 360;
 
-        return false;
+            if(searchBorder && (currentHeading < startMaxError) )
+            {
+                borderHeading = currentHeading;
+                searchBorder = false;
+            }
 
-    }else{
+            if((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > maxErrorHeading)))
+            {
+                cout << "Horizontal circle done, stopping motor" << endl;
+                // We reached our starting point
+                stopMotor(motorHeading);
+                waitForStop(motorHeading);
+                searchBorder = true;
+                checkClockwise = true;
+                return true;
+            }
 
-        if(searchBorder && (currentHeading < (startHeading - maxErrorHeading)) )
-        {
-            borderHeading = currentHeading;
-            searchBorder = false;
-        }
 
-        if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > maxErrorHeading))
-        {
-            cout << "Horizontal circle done, stopping motor" << endl;
-            // We reached our starting point
-            stopMotor(motorHeading);
-            waitForStop(motorHeading);
-            return true;
+        } else{
+
+            if(searchBorder && (currentHeading < startMaxError) )
+            {
+                borderHeading = currentHeading;
+                searchBorder = false;
+            }
+
+            if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > maxErrorHeading))
+            {
+                cout << "Horizontal circle done, stopping motor" << endl;
+                // We reached our starting point
+                stopMotor(motorHeading);
+                waitForStop(motorHeading);
+                searchBorder = true;
+                checkClockwise = true;
+                return true;
+            }
+
         }
 
     }
+
+    return false;
 
 }
 

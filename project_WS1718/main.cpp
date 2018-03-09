@@ -35,38 +35,38 @@ int main(int argc, char **argv) {
 //    }
 
     // For now, just one circle
-//    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+      merlin.startHorizontalCircle(Merlin::CLOCKWISE);
 
-    //while(!merlin.checkHorizontalCircleFull()) {
-//    for(int i = 0; i < 10; ++i) {
-//        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
-//        merlin.moveMotor(merlin.motorHeading, dir, Merlin::FAST);
+    while(!merlin.checkHorizontalCircleFull()) {
+    for(int i = 0; i < 10; ++i) {
+        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+        merlin.moveMotor(merlin.motorHeading, dir, Merlin::FAST);
+
+        for(int j = 0; j < 10; ++j) {
+            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+            merlin.moveMotor(merlin.motorPitch, dir2, Merlin::FAST);
+
+            for(int k = 0; k < 100; ++k) {
+                // Take measurement with Lidar
+                const unsigned int distance = lidar.measureDistance();
+                const float heading = merlin.gyro.getHeading();
+                const float pitch = merlin.gyro.getPitch();
+                cout << "distance: " << distance << " cm, "
+                     << "Heading: " << heading << ", "
+                     << "Pitch: " << pitch
+                     << endl;
+                measurements.emplace_back(Measurement(heading, pitch, distance));
+
+                usleep(500000);
+            }
+
+            merlin.stopMotor(merlin.motorPitch);
+            merlin.waitForStop(merlin.motorPitch);
+        }
 //
-//        for(int j = 0; j < 10; ++j) {
-//            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
-//            merlin.moveMotor(merlin.motorPitch, dir2, Merlin::FAST);
-//
-//            for(int k = 0; k < 100; ++k) {
-//                // Take measurement with Lidar
-//                const unsigned int distance = lidar.measureDistance();
-//                const float heading = merlin.gyro.getHeading();
-//                const float pitch = merlin.gyro.getPitch();
-//                cout << "distance: " << distance << " cm, "
-//                     << "Heading: " << heading << ", "
-//                     << "Pitch: " << pitch
-//                     << endl;
-//                measurements.emplace_back(Measurement(heading, pitch, distance));
-//
-//                usleep(500000);
-//            }
-//
-//            merlin.stopMotor(merlin.motorPitch);
-//            merlin.waitForStop(merlin.motorPitch);
-//        }
-//
-//        merlin.stopMotor(merlin.motorHeading);
-//        merlin.waitForStop(merlin.motorHeading);
-//    }
+        merlin.stopMotor(merlin.motorHeading);
+        merlin.waitForStop(merlin.motorHeading);
+    }
 //    // Test
 //    merlin.stopMotor(merlin.motorHeading);
 //    merlin.waitForStop(merlin.motorHeading);
@@ -81,12 +81,13 @@ int main(int argc, char **argv) {
 
 
     // Winkel um den Motor 2 nach jedem Durchlauf erhöht werden soll
-    const int ANGLE_UP = 10;
+//    const int ANGLE_UP = 10;
 
     // Winkel um den sich Motor 1 drehen soll, bevor sich Motor 2 bewegt - Für den Produkttivbetrieb 360
-    const int ANGLE_SIDE = 360;
+//    const int ANGLE_SIDE = 360;
 
-    // Basically a direct port from MerlinHalfSphere
+    /*
+    // / Basically a direct port from MerlinHalfSphere
     const int step = 5;
     for (int i = 0; i < 90 / step; i++) {
         if (i % 2 == 0) {
@@ -98,6 +99,7 @@ int main(int argc, char **argv) {
         merlin.doSequenceStep(ANGLE_UP * (i + 1), merlin.motorPitch);
     }
 
+     */
     // Convert measurements into 3D coordinates
     for(const Measurement &m : measurements){
         // Note that we need to switch heading and pitch here - TODO make use of heading/pitch consistent
