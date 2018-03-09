@@ -101,7 +101,6 @@ void Merlin::moveMotorPitch(double degrees, Direction dir) {
 
 bool Merlin::checkHorizontalCircleFull() {
     const float currentHeading = gyro.getHeading();
-    float deltaHeading;
     float startMaxError; //maxError relativ zum Startpunkt
 
     if(checkClockwise)
