@@ -442,7 +442,7 @@ void Merlin::goToDegree(std::string motor, int degree) {
     addCommand("G" + motor + "00");
     // Set speed
     addCommand("I" + motor + positionToString(Speed::FAST));
-    // start motor
+    // Set position
     addCommand("S" + motor + posString);
 }
 

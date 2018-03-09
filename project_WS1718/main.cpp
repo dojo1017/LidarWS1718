@@ -111,15 +111,24 @@ int main(int argc, char **argv) {
 
         // Drive the upper motor up a bit
         merlin.doSequenceStep(VERTICAL_STEP * (i + 1), merlin.MOTOR_PITCH);
+
+
+        // For debugging: write a file after each circle
+        for(const Measurement &m : measurements){
+            measurements_3D.emplace_back(Calculation::get3DCoordinates(m));
+        }
+        utils::writeBinaryPLY("3dPoints" + std::to_string(i), measurements_3D);
+        measurements.clear();
+        measurements_3D.clear();
     }
 
-    // Convert measurements into 3D coordinates
-    for(const Measurement &m : measurements){
-        measurements_3D.emplace_back(Calculation::get3DCoordinates(m));
-    }
-
-    // Write to file
-    utils::writeBinaryPLY("3dPoints", measurements_3D);
+//    // Convert measurements into 3D coordinates
+//    for(const Measurement &m : measurements){
+//        measurements_3D.emplace_back(Calculation::get3DCoordinates(m));
+//    }
+//
+//    // Write to file
+//    utils::writeBinaryPLY("3dPoints", measurements_3D);
 
     cout << "Done." << endl;
     return 0;
