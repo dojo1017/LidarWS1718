@@ -45,10 +45,10 @@ void Merlin::init() {
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle(Direction dir) {
 	startCheckHeading = false;
-	BNO055::millis();
+	long starttime = BNO055::_millis();
 	while (true) {
 		lastHeading = startHeading = gyro.getHeading();
-		cout << "INIT HEADING - Start Heading: " << startHeading << endl;
+		cout << "INIT HEADING - Start Heading: " << startHeading << "time: " << (BNO055::_millis() - starttime) << " ms" <<  endl;
 	}
 
 	horizCircleDir = dir;

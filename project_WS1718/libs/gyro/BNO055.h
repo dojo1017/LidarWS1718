@@ -460,7 +460,7 @@ public:
 
 	bool isMagCalibrated();
 
-	long _millis();
+	static long _millis();
 };
 
 
