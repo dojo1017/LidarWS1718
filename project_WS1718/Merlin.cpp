@@ -121,6 +121,8 @@ bool Merlin::checkHorizontalCircleFull() {
 		isFull = true;
 	}
 
+
+    cout << "Heading Diff: " << headingDiff(currentHeading, startHeading) << endl;
     lastHeading = currentHeading;
     return isFull;
 

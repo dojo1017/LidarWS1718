@@ -47,6 +47,8 @@ int main(int argc, char **argv) {
 
         usleep(100000);
     }
+    merlin.stopMotor(merlin.MOTOR_HEADING);
+    merlin.waitForStop(merlin.MOTOR_HEADING);
 
     /*
     while(!merlin.checkHorizontalCircleFull()) {
