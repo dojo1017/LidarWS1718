@@ -6,10 +6,14 @@
 #include "Lidar.h"
 #include "libs/lidar/lidarLite.h"  // For the status codes
 
+//#define DEBUG_OUTPUT
+
 // The returned distance is in cm
 unsigned int Lidar::measureDistance() {
-    unsigned int distance = lib.getDistance();
-    unsigned char status = lib.getStatus();
+    const unsigned int distance = lib.getDistance();
+
+#ifdef DEBUG_OUTPUT
+    const unsigned char status = lib.getStatus();
 
     if(status) {
         printf("Status Byte: 0x%x\n", status);
@@ -22,6 +26,7 @@ unsigned int Lidar::measureDistance() {
         if (status & STAT_INVALID) printf("no signal\n");
         if (status & STAT_EYE) printf("eye safety\n");
     }
+#endif
 
     return distance;
 }
