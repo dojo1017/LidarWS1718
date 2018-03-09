@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
         time_t remaining = (totalCircles - (i + 1)) * elapsed;
         cout << "Remaining time estimate: " << remaining << " seconds ";
         if(remaining > 60) {
-            cout << "(" << remaining / 60 << " minutes" << endl;
+            cout << "(" << remaining / 60 << " minutes)" << endl;
         } else {
             cout << endl;
         }
