@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
     const int VERTICAL_STEP = 5;
     // The angle that is covered by the scan vertically.
     // 180 would result in a full sphere being scanned.
-    const int VERTICAL_RANGE = 90;
+    const int VERTICAL_RANGE = 120;
     // How much time to sleep between taking measurements, in milliseconds.
     // Lower values make the scan more precise.
     const int MEASURE_INTERVAL_MS = 20;
