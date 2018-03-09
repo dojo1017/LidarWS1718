@@ -33,21 +33,21 @@ int main(int argc, char **argv) {
 
     // For now, just one circle
     // TODO: currently does not work (checkCircleFull immediately returns true)
-//    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
-//	  usleep(1000000);
-//    while(!merlin.checkHorizontalCircleFull()){
-//        // Take measurement with Lidar
-//        const unsigned int distance = lidar.measureDistance();
-//        const float heading = merlin.getGyro().getHeading();
-//        const float pitch = merlin.getGyro().getPitch();
-//        cout << "distance: " << distance << " cm, "
-//             << "Heading: " << heading << ", "
-//             << "Pitch: " << pitch
-//             << endl;
-//        measurements.emplace_back(Measurement(heading, pitch, distance));
-//
-//        usleep(100000);
-//    }
+    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+	  usleep(1000000);
+    while(!merlin.checkHorizontalCircleFull()){
+        // Take measurement with Lidar
+        const unsigned int distance = lidar.measureDistance();
+        const float heading = merlin.getGyro().getHeading();
+        const float pitch = merlin.getGyro().getPitch();
+        cout << "distance: " << distance << " cm, "
+             << "Heading: " << heading << ", "
+             << "Pitch: " << pitch
+             << endl;
+        measurements.emplace_back(Measurement(heading, pitch, distance));
+
+        usleep(100000);
+    }
 
 
     // First, drive to 0 degrees
@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 //
 //    merlin.doSequenceStep(0, merlin.MOTOR_PITCH);
 //    merlin.waitForStop(merlin.MOTOR_PITCH);
-
+/*
 
     // The angle (in degrees) used to increment the upper motor (pitch) after each circle.
     // Lower values make the scan more precise.
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
         } else {
             cout << endl;
         }
-    }
+    } */
 
 //    // Convert measurements into 3D coordinates
 //    for(const Measurement &m : measurements){
