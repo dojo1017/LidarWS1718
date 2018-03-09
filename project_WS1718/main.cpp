@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 
     // The angle (in degrees) used to increment the upper motor (pitch) after each circle.
     // Lower values make the scan more precise.
-    const int VERTICAL_STEP = 5;
+    const int VERTICAL_STEP = 2;
     // The angle that is covered by the scan vertically.
     // 180 would result in a full sphere being scanned.
     const int VERTICAL_RANGE = 120;
