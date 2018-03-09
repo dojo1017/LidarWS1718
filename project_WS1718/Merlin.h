@@ -85,6 +85,11 @@ private:
     int openUART();
     void communicate();
     void printBuffer(std::string buffer);
+
+    double lastHeading;
+    bool startCheckHeading;
+
+    double headingDiff(const double heading1, const double heading2);
 };
 
 

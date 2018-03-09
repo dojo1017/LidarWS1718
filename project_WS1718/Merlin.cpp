@@ -44,7 +44,9 @@ void Merlin::init(){
 // You have to check regularly if the circle was completed
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle(Direction dir) {
-    startHeading = gyro.getHeading();
+    lastHeading = startHeading = gyro.getHeading();
+    startCheckHeading = false;
+
     horizCircleDir = dir;
     // TODO: find out if direction 0 or 1 is needed to increase the heading
     // Direction::CLOCKWISE increases the heading
@@ -99,7 +101,33 @@ void Merlin::moveMotorPitch(double degrees, Direction dir) {
 
 */
 
+double Merlin::headingDiff(const double heading1, const double heading2) {
+	const double absDiff = heading2 > heading1 ? heading2 - heading1 : heading1 - heading2;
+
+	return absDiff > 180 ? 360 - absDiff : absDiff;
+}
+
 bool Merlin::checkHorizontalCircleFull() {
+    const float currentHeading = gyro.getHeading();
+    bool isFull = false;
+    const float HEADING_TOLERANCE = 10.0f;
+	const float CIRCLE_OVERLAP = 10.0f;
+
+    if(!startCheckHeading && headingDiff(currentHeading, startHeading) > HEADING_TOLERANCE) {
+		startCheckHeading = true;
+    }
+
+	if(startCheckHeading && headingDiff(currentHeading, startHeading) < HEADING_TOLERANCE) {
+		isFull = true;
+	}
+
+    lastHeading = currentHeading;
+    return isFull;
+
+}
+ /*
+
+
     const float currentHeading = gyro.getHeading();
     float startMaxError; //maxError relativ zum Startpunkt
 
@@ -226,7 +254,7 @@ bool Merlin::checkHorizontalCircleFull() {
     return false;
 
 }
-
+*/
 //void Merlin::startVerticalCircle(Direction dir) {
 //    startPitch = gyro.getPitch();
 //    vertCircleDir = dir;

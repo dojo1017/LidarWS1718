@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
     // For now, just one circle
     merlin.startHorizontalCircle(Merlin::CLOCKWISE);
-	usleep(1000000);
+
     while(!merlin.checkHorizontalCircleFull()){
         // Take measurement with Lidar
         const unsigned int distance = lidar.measureDistance();
