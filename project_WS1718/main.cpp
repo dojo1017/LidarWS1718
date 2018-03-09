@@ -103,9 +103,16 @@ int main(int argc, char **argv) {
         measurements_3D.clear();
         cout << "3D data written" << endl;
 
+        // Show information about the scan time
         time_t elapsed = time(nullptr) - start;
         cout << "Circle done in " << elapsed << " seconds" << endl;
-        cout << "Remaining time estimate: " << (totalCircles - (i + 1)) * elapsed << endl;
+        time_t remaining = (totalCircles - (i + 1)) * elapsed;
+        cout << "Remaining time estimate: " << remaining << " seconds ";
+        if(remaining > 60) {
+            cout << "(" << remaining / 60 << " minutes" << endl;
+        } else {
+            cout << endl;
+        }
     }
 
 //    // Convert measurements into 3D coordinates
