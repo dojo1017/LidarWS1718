@@ -101,6 +101,9 @@ int main(int argc, char **argv) {
     merlin.doSequenceStep(0, merlin.MOTOR_HEADING);
     merlin.waitForStop(merlin.MOTOR_HEADING);
 
+    merlin.doSequenceStep(0, merlin.MOTOR_PITCH);
+    merlin.waitForStop(merlin.MOTOR_PITCH);
+
     // TODO: Scan more than 90 degrees vertical
     for (int i = 0; i < 90 / VERTICAL_STEP; i++) {
         if (i % 2 == 0) {
