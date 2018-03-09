@@ -29,10 +29,6 @@ namespace utils {
     // The extension ".ply" is appended to the filename.
     void writeBinaryPLY(const std::string &filename, const std::vector<Measurement_3D> &measurements_3D);
 
-    // Functions used internally by PLY output
-    void writeAsBinary(std::ofstream &fileout, const float value);
-    void writePLYHeader(std::ofstream &fileout, const std::string &format, size_t vertexCount);
-
 } // namespace utils
 
 #endif //PROJECT_WS1718_UTILS_H
