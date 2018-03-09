@@ -569,9 +569,7 @@ void Merlin::goToDegree(std::string motor, int degree) {
     const int targetAngle = PIVOT_ANGLE + relativeAngle;
     const string posString = positionToString(targetAngle);
 
-    addCommand("G" + motor + "40");
-    // Set speed
-    addCommand("I" + motor + positionToString(Speed::FAST));
+    addCommand("G" + motor + "17");
     // Set position
     addCommand("S" + motor + posString);
 }
