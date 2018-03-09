@@ -32,24 +32,84 @@ int main(int argc, char **argv) {
     vector<Measurement_3D> measurements_3D;
 
     // For now, just one circle
-    // TODO: currently does not work (checkCircleFull immediately returns true)
-//    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
-//	  usleep(1000000);
-//    while(!merlin.checkHorizontalCircleFull()){
-//        // Take measurement with Lidar
-//        const unsigned int distance = lidar.measureDistance();
-//        const float heading = merlin.getGyro().getHeading();
-//        const float pitch = merlin.getGyro().getPitch();
-//        cout << "distance: " << distance << " cm, "
-//             << "Heading: " << heading << ", "
-//             << "Pitch: " << pitch
-//             << endl;
-//        measurements.emplace_back(Measurement(heading, pitch, distance));
+    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+
+    while(!merlin.checkHorizontalCircleFull()){
+        // Take measurement with Lidar
+        const unsigned int distance = lidar.measureDistance();
+        const float heading = merlin.getGyro().getHeading();
+        const float pitch = merlin.getGyro().getPitch();
+        cout << "distance: " << distance << " cm, "
+             << "Heading: " << heading << ", "
+             << "Pitch: " << pitch
+             << endl;
+        measurements.emplace_back(Measurement(heading, pitch, distance));
+
+        usleep(100000);
+    }
+
+    /*
+    while(!merlin.checkHorizontalCircleFull()) {
+    for(int i = 0; i < 10; ++i) {
+        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+        merlin.moveMotor(merlin.motorHeading, dir, Merlin::FAST);
+
+        for(int j = 0; j < 10; ++j) {
+            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+            merlin.moveMotor(merlin.motorPitch, dir2, Merlin::FAST);
+
+            for(int k = 0; k < 100; ++k) {
+                // Take measurement with Lidar
+                const unsigned int distance = lidar.measureDistance();
+                const float heading = merlin.gyro.getHeading();
+                const float pitch = merlin.gyro.getPitch();
+                cout << "distance: " << distance << " cm, "
+                     << "Heading: " << heading << ", "
+                     << "Pitch: " << pitch
+                     << endl;
+                measurements.emplace_back(Measurement(heading, pitch, distance));
+
+                usleep(500000);
+            }
+
+            merlin.stopMotor(merlin.motorPitch);
+            merlin.waitForStop(merlin.motorPitch);
+        }*/
+    //while(!merlin.checkHorizontalCircleFull()) {
+//    for(int i = 0; i < 10; ++i) {
+//        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+//        merlin.moveMotor(merlin.MOTOR_HEADING, dir, Merlin::FAST);
 //
-//        usleep(100000);
+//        for(int j = 0; j < 10; ++j) {
+//            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
+//            merlin.moveMotor(merlin.MOTOR_PITCH, dir2, Merlin::FAST);
+//
+//            for(int k = 0; k < 100; ++k) {
+//                // Take measurement with Lidar
+//                const unsigned int distance = lidar.measureDistance();
+//                const float heading = merlin.gyro.getHeading();
+//                const float pitch = merlin.gyro.getPitch();
+//                cout << "distance: " << distance << " cm, "
+//                     << "Heading: " << heading << ", "
+//                     << "Pitch: " << pitch
+//                     << endl;
+//                measurements.emplace_back(Measurement(heading, pitch, distance));
+//
+//                usleep(500000);
+//            }
+//
+//            merlin.stopMotor(merlin.MOTOR_PITCH);
+//            merlin.waitForStop(merlin.MOTOR_PITCH);
+//        }
+//
+//        merlin.stopMotor(merlin.MOTOR_HEADING);
+//        merlin.waitForStop(merlin.MOTOR_HEADING);
 //    }
+//    // Test
+//    merlin.stopMotor(merlin.MOTOR_HEADING);
+//    merlin.waitForStop(merlin.MOTOR_HEADING);
 
-
+/*
     // First, drive to 0 degrees
     // TODO: doesn't work
 //    merlin.doSequenceStep(0, merlin.MOTOR_HEADING);
