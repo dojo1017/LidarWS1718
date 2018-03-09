@@ -146,8 +146,8 @@ bool Merlin::checkHorizontalCircleFull() {
             {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
-                stopMotor(motorHeading);
-                waitForStop(motorHeading);
+                stopMotor(MOTOR_HEADING);
+                waitForStop(MOTOR_HEADING);
                 searchBorder = true;
                 checkClockwise = true;
                 return true;
@@ -165,8 +165,8 @@ bool Merlin::checkHorizontalCircleFull() {
             {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
-                stopMotor(motorHeading);
-                waitForStop(motorHeading);
+                stopMotor(MOTOR_HEADING);
+                waitForStop(MOTOR_HEADING);
                 searchBorder = true;
                 checkClockwise = true;
                 return true;
@@ -193,8 +193,8 @@ bool Merlin::checkHorizontalCircleFull() {
             {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
-                stopMotor(motorHeading);
-                waitForStop(motorHeading);
+                stopMotor(MOTOR_HEADING);
+                waitForStop(MOTOR_HEADING);
                 searchBorder = true;
                 checkClockwise = true;
                 return true;
@@ -213,8 +213,8 @@ bool Merlin::checkHorizontalCircleFull() {
             {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
-                stopMotor(motorHeading);
-                waitForStop(motorHeading);
+                stopMotor(MOTOR_HEADING);
+                waitForStop(MOTOR_HEADING);
                 searchBorder = true;
                 checkClockwise = true;
                 return true;

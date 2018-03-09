@@ -53,8 +53,8 @@ int main(int argc, char **argv) {
     while(!merlin.checkHorizontalCircleFull()){
         // Take measurement with Lidar
         const unsigned int distance = lidar.measureDistance();
-        const float heading = merlin.gyro.getHeading();
-        const float pitch = merlin.gyro.getPitch();
+        const float heading = merlin.getGyro().getHeading();
+        const float pitch = merlin.getGyro().getPitch();
         cout << "distance: " << distance << " cm, "
              << "Heading: " << heading << ", "
              << "Pitch: " << pitch
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
         measurements.emplace_back(Measurement(heading, pitch, distance));
 
         usleep(100000);
-    };
+    }
 
     /*
     while(!merlin.checkHorizontalCircleFull()) {
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
             merlin.stopMotor(merlin.motorPitch);
             merlin.waitForStop(merlin.motorPitch);
-        }
+        }*/
     //while(!merlin.checkHorizontalCircleFull()) {
 //    for(int i = 0; i < 10; ++i) {
 //        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
 //    }
 
     // Winkel um den Motor 2 nach jedem Durchlauf erhöht werden soll
-    const int VERTICAL_STEP = 5;
+    /*const int VERTICAL_STEP = 5;
     // How much time to sleep between taking measurements, in milliseconds
     const int MEASURE_INTERVAL_MS = 50;
 
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
         utils::writeBinaryPLY("3dPoints" + std::to_string(i), measurements_3D);
         measurements.clear();
         measurements_3D.clear();
-    }
+    }*/
 
 //    // Convert measurements into 3D coordinates
 //    for(const Measurement &m : measurements){
