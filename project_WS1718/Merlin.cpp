@@ -4,6 +4,8 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <cmath>
+#include <cerrno>
+#include <cstring>
 
 #include "Merlin.h"
 #include "Utils.h"
@@ -357,7 +359,8 @@ void Merlin::communicate() {
                 unsigned char tempRecvBuffer[1];
                 ssize_t readBytes;
                 if((readBytes = read(filestream, tempRecvBuffer, sizeof(char))) != sizeof(char)) {
-                    cout << "ERROR during read(): got " << readBytes << " instead of " << sizeof(char) << endl;
+//                    cout << "ERROR during read(): got " << readBytes << " instead of " << sizeof(char) << endl;
+                    cout << "ERROR during read()" << std::strerror(errno) << endl;
                     recvErrors++;
                     // Do not add this char to the receive buffer, it is random
                     if(recvErrors >= maxRecvErrors) {
