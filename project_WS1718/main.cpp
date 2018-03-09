@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     const int VERTICAL_RANGE = 90;
     // How much time to sleep between taking measurements, in milliseconds.
     // Lower values make the scan more precise.
-    const int MEASURE_INTERVAL_MS = 50;
+    const int MEASURE_INTERVAL_MS = 20;
 
     // Show some info about the scan settings
     const string date = utils::getTimeAsString();
