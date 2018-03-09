@@ -3,6 +3,8 @@
 //
 
 #include "Utils.h"
+#include <sstream>
+#include <iomanip>
 using std::ofstream;
 using std::string;
 using std::vector;
@@ -23,6 +25,23 @@ double utils::pitchAngleDelta(double angle1, double angle2) {
 
 // Roll is in range -90..90
 // If we need it we have to add an extra function for it
+
+string utils::getTimeAsString() {
+    time_t t = time(0);
+    struct tm* now = localtime(&t);
+
+    std::stringstream full_text;
+    full_text
+            << std::setfill('0') << std::setw(2) << now->tm_mday << "."
+            << std::setfill('0') << std::setw(2) << now->tm_mon + 1 << "."
+            << " "
+            << std::setfill('0') << std::setw(2) << now->tm_hour
+            << ":"
+            << std::setfill('0') << std::setw(2) << now->tm_min
+            << ":"
+            << std::setfill('0') << std::setw(2) << now->tm_sec;
+    return full_text.str();
+}
 
 // ---------------
 // PLY file output

@@ -18,6 +18,8 @@ namespace utils {
     // Roll is in range -90..90
     // If we need it we have to add an extra function for it
 
+    std::string getTimeAsString();
+
     // ---------------
     // PLY file output
 

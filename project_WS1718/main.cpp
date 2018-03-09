@@ -25,125 +25,39 @@ int main(int argc, char **argv) {
 
     vector<Measurement> measurements;
     vector<Measurement_3D> measurements_3D;
-//    const float HORIZONTAL_STEP = 5.f;
-
-//    merlin.aimAt(0,0); //an Start
-//
-//    // Step through pitch from 0° (equator) to 90° (north pole)
-//    for(float pitch = 0.f; pitch < 90.f; pitch += HORIZONTAL_STEP) {
-//        // Step through heading, describing a circle
-//        for (float heading = 0.f; heading < 360.f; heading += HORIZONTAL_STEP) {
-//            printf("heading: %.2f pitch: %.2f\n", heading, pitch);
-//
-//            // Tell Merlin to drive to the current lat/long coordinates
-//            // (Merlin controller class internally checks these with the gyro)
-//            // (this method blocks until the coordinates are reached)
-//            merlin.aimAt(heading, pitch);
-//
-//            // Take measurement with Lidar
-//            unsigned int distance = lidar.measureDistance();
-//            cout << "distance: " << distance << " cm" << endl;
-//            measurements.push_back(Measurement(heading, pitch, distance));
-//        }
-//    }
 
     // For now, just one circle
-    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
-	usleep(1000000);
-    while(!merlin.checkHorizontalCircleFull()){
-        // Take measurement with Lidar
-        const unsigned int distance = lidar.measureDistance();
-        const float heading = merlin.getGyro().getHeading();
-        const float pitch = merlin.getGyro().getPitch();
-        cout << "distance: " << distance << " cm, "
-             << "Heading: " << heading << ", "
-             << "Pitch: " << pitch
-             << endl;
-        measurements.emplace_back(Measurement(heading, pitch, distance));
-
-        usleep(100000);
-    }
-
-    /*
-    while(!merlin.checkHorizontalCircleFull()) {
-    for(int i = 0; i < 10; ++i) {
-        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
-        merlin.moveMotor(merlin.motorHeading, dir, Merlin::FAST);
-
-        for(int j = 0; j < 10; ++j) {
-            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
-            merlin.moveMotor(merlin.motorPitch, dir2, Merlin::FAST);
-
-            for(int k = 0; k < 100; ++k) {
-                // Take measurement with Lidar
-                const unsigned int distance = lidar.measureDistance();
-                const float heading = merlin.gyro.getHeading();
-                const float pitch = merlin.gyro.getPitch();
-                cout << "distance: " << distance << " cm, "
-                     << "Heading: " << heading << ", "
-                     << "Pitch: " << pitch
-                     << endl;
-                measurements.emplace_back(Measurement(heading, pitch, distance));
-
-                usleep(500000);
-            }
-
-            merlin.stopMotor(merlin.motorPitch);
-            merlin.waitForStop(merlin.motorPitch);
-        }*/
-    //while(!merlin.checkHorizontalCircleFull()) {
-//    for(int i = 0; i < 10; ++i) {
-//        Merlin::Direction dir = (i % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
-//        merlin.moveMotor(merlin.MOTOR_HEADING, dir, Merlin::FAST);
+    // TODO: currently does not work (checkCircleFull immediately returns true)
+//    merlin.startHorizontalCircle(Merlin::CLOCKWISE);
+//	  usleep(1000000);
+//    while(!merlin.checkHorizontalCircleFull()){
+//        // Take measurement with Lidar
+//        const unsigned int distance = lidar.measureDistance();
+//        const float heading = merlin.getGyro().getHeading();
+//        const float pitch = merlin.getGyro().getPitch();
+//        cout << "distance: " << distance << " cm, "
+//             << "Heading: " << heading << ", "
+//             << "Pitch: " << pitch
+//             << endl;
+//        measurements.emplace_back(Measurement(heading, pitch, distance));
 //
-//        for(int j = 0; j < 10; ++j) {
-//            Merlin::Direction dir2 = (j % 2 == 0) ? Merlin::CLOCKWISE : Merlin::COUNTERCLOCKWISE;
-//            merlin.moveMotor(merlin.MOTOR_PITCH, dir2, Merlin::FAST);
-//
-//            for(int k = 0; k < 100; ++k) {
-//                // Take measurement with Lidar
-//                const unsigned int distance = lidar.measureDistance();
-//                const float heading = merlin.gyro.getHeading();
-//                const float pitch = merlin.gyro.getPitch();
-//                cout << "distance: " << distance << " cm, "
-//                     << "Heading: " << heading << ", "
-//                     << "Pitch: " << pitch
-//                     << endl;
-//                measurements.emplace_back(Measurement(heading, pitch, distance));
-//
-//                usleep(500000);
-//            }
-//
-//            merlin.stopMotor(merlin.MOTOR_PITCH);
-//            merlin.waitForStop(merlin.MOTOR_PITCH);
-//        }
-//
-//        merlin.stopMotor(merlin.MOTOR_HEADING);
-//        merlin.waitForStop(merlin.MOTOR_HEADING);
-//    }
-//    // Test
-//    merlin.stopMotor(merlin.MOTOR_HEADING);
-//    merlin.waitForStop(merlin.MOTOR_HEADING);
-
-    // Measurement test code
-//    for(int pitch = 0; pitch < 90; pitch += 5) {
-//        // Describe a horizontal circle
-//        for (int heading = 0; heading < 360; heading += 10) {
-//            measurements.emplace_back(Measurement(heading, pitch, 2));
-//        }
+//        usleep(100000);
 //    }
 
     // Winkel um den Motor 2 nach jedem Durchlauf erhöht werden soll
-    /*const int VERTICAL_STEP = 5;
+    const int VERTICAL_STEP = 5;
     // How much time to sleep between taking measurements, in milliseconds
     const int MEASURE_INTERVAL_MS = 50;
 
     // First, drive to 0 degrees
-    merlin.doSequenceStep(0, merlin.MOTOR_HEADING);
-    merlin.waitForStop(merlin.MOTOR_HEADING);
+    // TODO: doesn't work
+//    merlin.doSequenceStep(0, merlin.MOTOR_HEADING);
+//    merlin.waitForStop(merlin.MOTOR_HEADING);
+//
+//    merlin.doSequenceStep(0, merlin.MOTOR_PITCH);
+//    merlin.waitForStop(merlin.MOTOR_PITCH);
 
-    merlin.doSequenceStep(0, merlin.MOTOR_PITCH);
-    merlin.waitForStop(merlin.MOTOR_PITCH);
+    const string date = utils::getTimeAsString();
 
     // TODO: Scan more than 90 degrees vertical
     for (int i = 0; i < 90 / VERTICAL_STEP; i++) {
@@ -165,10 +79,10 @@ int main(int argc, char **argv) {
         for(const Measurement &m : measurements){
             measurements_3D.emplace_back(Calculation::get3DCoordinates(m));
         }
-        utils::writeBinaryPLY("3dPoints" + std::to_string(i), measurements_3D);
+        utils::writeBinaryPLY("3dPoints_" + date + "_" + std::to_string(i), measurements_3D);
         measurements.clear();
         measurements_3D.clear();
-    }*/
+    }
 
 //    // Convert measurements into 3D coordinates
 //    for(const Measurement &m : measurements){
