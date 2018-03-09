@@ -1240,3 +1240,11 @@ double BNO055::getQuaternionW(){
     return (quatW * scale);
 
 }
+
+bool BNO055::isMagCalibrated() {
+	uint8_t system, gyro, accel, mag;
+	getCalibration(&system, &gyro, &accel, &mag);
+	if (mag < 3)
+		return false;
+	return true;
+}

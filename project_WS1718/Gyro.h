@@ -18,6 +18,8 @@ public:
 
 	void calibrate(const char* calibrationDataFile);
 
+	void calibrateGyroOnly();
+
 private:
     BNO055 lib;
 

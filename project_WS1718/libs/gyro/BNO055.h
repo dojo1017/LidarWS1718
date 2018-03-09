@@ -457,6 +457,8 @@ public:
 	void getSensor(sensor_t *sensor);
 
 	bool getEvent(sensors_event_t *event);
+
+	bool isMagCalibrated();
 };
 
 

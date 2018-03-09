@@ -289,3 +289,26 @@ double Gyro::getHeading() {
 double Gyro::getPitch() {
 	return lib.getEulerPitch();
 }
+
+void Gyro::calibrateGyroOnly() {
+	sensors_event_t event;
+	printf("Please Calibrate Sensor:\n");
+	while (!lib.isMagCalibrated())
+	{
+		lib.getEvent(&event);
+
+		printf("X: %.3f\tY: %.3f\tZ: %.3f",
+			   event.orientation.x,
+			   event.orientation.y,
+			   event.orientation.z);
+
+		/* Optional: Display calibration status */
+		displayCalStatus();
+
+		/* New line for the next sample */
+		printf("\r");
+
+		/* Wait the specified delay before requesting new data */
+		sleep(0.001 * BNO055_SAMPLERATE_DELAY_MS);
+	}
+}
