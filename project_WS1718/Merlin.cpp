@@ -25,18 +25,18 @@ using std::string;
 
 
 Merlin::Merlin() : gyro() {
-    gyro.calibrateGyroOnly();
-    init();
+	gyro.calibrateGyroOnly();
+	init();
 }
 
-void Merlin::init(){
-    addCommand("F" + MOTOR_HEADING);
-    addCommand("a" + MOTOR_HEADING);
-    addCommand("D" + MOTOR_HEADING);
+void Merlin::init() {
+	addCommand("F" + MOTOR_HEADING);
+	addCommand("a" + MOTOR_HEADING);
+	addCommand("D" + MOTOR_HEADING);
 
-    addCommand("F" + MOTOR_PITCH);
-    addCommand("a" + MOTOR_PITCH);
-    addCommand("D" + MOTOR_PITCH);
+	addCommand("F" + MOTOR_PITCH);
+	addCommand("a" + MOTOR_PITCH);
+	addCommand("D" + MOTOR_PITCH);
 }
 
 // Start to move the lower motor (heading) in a full circle.
@@ -44,16 +44,20 @@ void Merlin::init(){
 // You have to check regularly if the circle was completed
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle(Direction dir) {
-    lastHeading = startHeading = gyro.getHeading();
-    startCheckHeading = false;
+	startCheckHeading = false;
+	BNO055::millis();
+	while (true) {
+		lastHeading = startHeading = gyro.getHeading();
+		cout << "INIT HEADING - Start Heading: " << startHeading << endl;
+	}
 
-	cout << "INIT HEADING - Start Heading: " << startHeading << endl;
-
-    horizCircleDir = dir;
-    // TODO: find out if direction 0 or 1 is needed to increase the heading
-    // Direction::CLOCKWISE increases the heading
-    moveMotor(MOTOR_HEADING, dir, Speed::FAST);
+	horizCircleDir = dir;
+// TODO: find out if direction 0 or 1 is needed to increase the heading
+// Direction::CLOCKWISE increases the heading
+	moveMotor(MOTOR_HEADING, dir, Speed::FAST
+	);
 }
+
 /*
 bool Merlin::checkHorizontalCircleFull() {
     const double currentHeading = gyro.getHeading();
@@ -110,154 +114,154 @@ double Merlin::headingDiff(const double heading1, const double heading2) {
 }
 
 bool Merlin::checkHorizontalCircleFull() {
-    const float currentHeading = gyro.getHeading();
-    bool isFull = false;
-    const float HEADING_TOLERANCE = 10.0f;
+	const float currentHeading = gyro.getHeading();
+	bool isFull = false;
+	const float HEADING_TOLERANCE = 10.0f;
 	const float CIRCLE_OVERLAP = 10.0f;
 
 	cout << "Start Heading: " << startHeading << "   |   Current Heading: " << currentHeading << endl;
 
-    if(!startCheckHeading && headingDiff(currentHeading, startHeading) > HEADING_TOLERANCE) {
+	if (!startCheckHeading && headingDiff(currentHeading, startHeading) > HEADING_TOLERANCE) {
 		startCheckHeading = true;
-    }
+	}
 
-	if(startCheckHeading && headingDiff(currentHeading, startHeading) < HEADING_TOLERANCE) {
+	if (startCheckHeading && headingDiff(currentHeading, startHeading) < HEADING_TOLERANCE) {
 		isFull = true;
 	}
 
 
-    cout << "Heading Diff: " << headingDiff(currentHeading, startHeading) << endl;
-    lastHeading = currentHeading;
-    return isFull;
+	cout << "Heading Diff: " << headingDiff(currentHeading, startHeading) << endl;
+	lastHeading = currentHeading;
+	return isFull;
 
 }
- /*
+/*
 
 
-    const float currentHeading = gyro.getHeading();
-    float startMaxError; //maxError relativ zum Startpunkt
+   const float currentHeading = gyro.getHeading();
+   float startMaxError; //maxError relativ zum Startpunkt
 
-    if(checkClockwise)
-    {
-        if(currentHeading > startHeading)
-        {
-            if(currentHeading > (startHeading + 180))
-            {
-                clockwise = false;
-            }else{
-                clockwise = true;
-            }
-        }
+   if(checkClockwise)
+   {
+	   if(currentHeading > startHeading)
+	   {
+		   if(currentHeading > (startHeading + 180))
+		   {
+			   clockwise = false;
+		   }else{
+			   clockwise = true;
+		   }
+	   }
 
-        if(currentHeading < startHeading)
-        {
-            if(currentHeading < (startHeading - 180))
-            {
-                clockwise = true;
-            }else{
-                clockwise = false;
-            }
-        }
+	   if(currentHeading < startHeading)
+	   {
+		   if(currentHeading < (startHeading - 180))
+		   {
+			   clockwise = true;
+		   }else{
+			   clockwise = false;
+		   }
+	   }
 
-        checkClockwise = false;
-    }
+	   checkClockwise = false;
+   }
 
-    if(clockwise) {
+   if(clockwise) {
 
-        startMaxError = startHeading + maxErrorHeading;
+	   startMaxError = startHeading + maxErrorHeading;
 
-        if(startMaxError >= 360) //falls der Nullpunkt zwischen start und startMaxError liegt
-        {
-            startMaxError = startMaxError - 360;
+	   if(startMaxError >= 360) //falls der Nullpunkt zwischen start und startMaxError liegt
+	   {
+		   startMaxError = startMaxError - 360;
 
-            if(searchBorder && (currentHeading > startMaxError) )
-            {
-                borderHeading = currentHeading;
-            }
+		   if(searchBorder && (currentHeading > startMaxError) )
+		   {
+			   borderHeading = currentHeading;
+		   }
 
-            if((!searchBorder) && ((currentHeading > startHeading) || (currentHeading < borderHeading)))
-            {
-                cout << "Horizontal circle done, stopping motor" << endl;
-                // We reached our starting point
-                stopMotor(MOTOR_HEADING);
-                waitForStop(MOTOR_HEADING);
-                searchBorder = true;
-                checkClockwise = true;
-                return true;
-            }
+		   if((!searchBorder) && ((currentHeading > startHeading) || (currentHeading < borderHeading)))
+		   {
+			   cout << "Horizontal circle done, stopping motor" << endl;
+			   // We reached our starting point
+			   stopMotor(MOTOR_HEADING);
+			   waitForStop(MOTOR_HEADING);
+			   searchBorder = true;
+			   checkClockwise = true;
+			   return true;
+		   }
 
-        }else{
+	   }else{
 
-            if(searchBorder && (currentHeading > startMaxError) )
-            {
-                borderHeading = currentHeading;
-                searchBorder = false;
-            }
+		   if(searchBorder && (currentHeading > startMaxError) )
+		   {
+			   borderHeading = currentHeading;
+			   searchBorder = false;
+		   }
 
-            if((!searchBorder) && (currentHeading > startHeading) && (currentHeading <= borderHeading))
-            {
-                cout << "Horizontal circle done, stopping motor" << endl;
-                // We reached our starting point
-                stopMotor(MOTOR_HEADING);
-                waitForStop(MOTOR_HEADING);
-                searchBorder = true;
-                checkClockwise = true;
-                return true;
-            }
+		   if((!searchBorder) && (currentHeading > startHeading) && (currentHeading <= borderHeading))
+		   {
+			   cout << "Horizontal circle done, stopping motor" << endl;
+			   // We reached our starting point
+			   stopMotor(MOTOR_HEADING);
+			   waitForStop(MOTOR_HEADING);
+			   searchBorder = true;
+			   checkClockwise = true;
+			   return true;
+		   }
 
-        }
-
-
-    }else{ //counterclockwise
-
-        startMaxError = startHeading - maxErrorHeading;
-
-        if(startMaxError < 0) //falls der Nullpunkt  zwischen start und startMaxError liegt
-        {
-            startMaxError = startMaxError + 360;
-
-            if(searchBorder && (currentHeading < startMaxError) )
-            {
-                borderHeading = currentHeading;
-                searchBorder = false;
-            }
-
-            if((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > borderHeading)))
-            {
-                cout << "Horizontal circle done, stopping motor" << endl;
-                // We reached our starting point
-                stopMotor(MOTOR_HEADING);
-                waitForStop(MOTOR_HEADING);
-                searchBorder = true;
-                checkClockwise = true;
-                return true;
-            }
+	   }
 
 
-        } else{
+   }else{ //counterclockwise
 
-            if(searchBorder && (currentHeading < startMaxError) )
-            {
-                borderHeading = currentHeading;
-                searchBorder = false;
-            }
+	   startMaxError = startHeading - maxErrorHeading;
 
-            if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > borderHeading))
-            {
-                cout << "Horizontal circle done, stopping motor" << endl;
-                // We reached our starting point
-                stopMotor(MOTOR_HEADING);
-                waitForStop(MOTOR_HEADING);
-                searchBorder = true;
-                checkClockwise = true;
-                return true;
-            }
+	   if(startMaxError < 0) //falls der Nullpunkt  zwischen start und startMaxError liegt
+	   {
+		   startMaxError = startMaxError + 360;
 
-        }
+		   if(searchBorder && (currentHeading < startMaxError) )
+		   {
+			   borderHeading = currentHeading;
+			   searchBorder = false;
+		   }
 
-    }
+		   if((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > borderHeading)))
+		   {
+			   cout << "Horizontal circle done, stopping motor" << endl;
+			   // We reached our starting point
+			   stopMotor(MOTOR_HEADING);
+			   waitForStop(MOTOR_HEADING);
+			   searchBorder = true;
+			   checkClockwise = true;
+			   return true;
+		   }
 
-    return false;
+
+	   } else{
+
+		   if(searchBorder && (currentHeading < startMaxError) )
+		   {
+			   borderHeading = currentHeading;
+			   searchBorder = false;
+		   }
+
+		   if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > borderHeading))
+		   {
+			   cout << "Horizontal circle done, stopping motor" << endl;
+			   // We reached our starting point
+			   stopMotor(MOTOR_HEADING);
+			   waitForStop(MOTOR_HEADING);
+			   searchBorder = true;
+			   checkClockwise = true;
+			   return true;
+		   }
+
+	   }
+
+   }
+
+   return false;
 
 }
 */
@@ -292,43 +296,42 @@ bool Merlin::checkHorizontalCircleFull() {
 // This is a blocking method (blocks until the new position is reached)
 void Merlin::aimAt(float targetHeading, float targetPitch) {
 //    printf("Merlin: aiming at heading %.2f pitch %.2f\n", heading, pitch);
-    float deltaHeading;
-    float deltaPitch;
-    bool headingTargetReached = false;
-    bool pitchTargetReached = false;
-    bool targetReached = false;
-    double currHeading = gyro.getHeading();
-    double currPitch = gyro.getPitch();
-    printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
+	float deltaHeading;
+	float deltaPitch;
+	bool headingTargetReached = false;
+	bool pitchTargetReached = false;
+	bool targetReached = false;
+	double currHeading = gyro.getHeading();
+	double currPitch = gyro.getPitch();
+	printf("Merlin: current heading %.2f pitch %.2f\n", currHeading, currPitch);
 
-    while(!targetReached){
-        // TODO
+	while (!targetReached) {
+		// TODO
 //        const bool headingMoving = waitForStop(MOTOR_HEADING);
 //        const bool pitchMoving = waitForStop(MOTOR_PITCH);
-        bool headingMoving = false;
-        bool pitchMoving = false;
+		bool headingMoving = false;
+		bool pitchMoving = false;
 
-        cout << "heading moving: " << headingMoving;
-        cout << " pitch moving: " << pitchMoving << endl;
+		cout << "heading moving: " << headingMoving;
+		cout << " pitch moving: " << pitchMoving << endl;
 
-        if(headingMoving || pitchMoving) {
-            cout << "heading or pitch moving" << endl;
-        } else {
-            deltaHeading = targetHeading - currHeading;
-            deltaPitch = targetPitch - currPitch;
+		if (headingMoving || pitchMoving) {
+			cout << "heading or pitch moving" << endl;
+		} else {
+			deltaHeading = targetHeading - currHeading;
+			deltaPitch = targetPitch - currPitch;
 
-            cout << "deltaHeading: " << deltaHeading;
-            cout << "deltaPitch: " << deltaPitch << endl;
+			cout << "deltaHeading: " << deltaHeading;
+			cout << "deltaPitch: " << deltaPitch << endl;
 
 
-            //Heading-Motor an Zielposition annaehern
-            if(fabsf(deltaHeading) > maxErrorHeading)
-            {
-                cout << "turn right" << endl;
-                //Heading-Motor dreht sich solange nach rechts bis er die Zeilposition erreicht
+			//Heading-Motor an Zielposition annaehern
+			if (fabsf(deltaHeading) > maxErrorHeading) {
+				cout << "turn right" << endl;
+				//Heading-Motor dreht sich solange nach rechts bis er die Zeilposition erreicht
 //                startMoving(MOTOR_HEADING, right_up_direction);
-                moveMotor(MOTOR_HEADING, right_up_direction, Speed::FAST);
-                communicate();
+				moveMotor(MOTOR_HEADING, right_up_direction, Speed::FAST);
+				communicate();
 
 //                if(targetHeading > currHeading) //Ziel befindet sich weiter "rechts" im Uhrzeigersinn
 //                {
@@ -358,122 +361,121 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 //                        communicate();
 //                    }
 //                }
-            } else {
-                cout << "target reached (heading)" << endl;
-                headingTargetReached = true;
-            }
+			} else {
+				cout << "target reached (heading)" << endl;
+				headingTargetReached = true;
+			}
 
-            //Pitch-Motor an Zielposition annaehern
-            if(fabsf(deltaPitch) > maxErrorPitch) {
-                cout << "move pitch" << endl;
-                //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
-                moveMotor(MOTOR_PITCH, right_up_direction, Speed::FAST);
-                communicate();
-            } else {
-                pitchTargetReached = true;
-            }
+			//Pitch-Motor an Zielposition annaehern
+			if (fabsf(deltaPitch) > maxErrorPitch) {
+				cout << "move pitch" << endl;
+				//Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
+				moveMotor(MOTOR_PITCH, right_up_direction, Speed::FAST);
+				communicate();
+			} else {
+				pitchTargetReached = true;
+			}
 
-            if(headingTargetReached && pitchTargetReached) {
-                targetReached = true;
-            }
-        }
-    }
+			if (headingTargetReached && pitchTargetReached) {
+				targetReached = true;
+			}
+		}
+	}
 }
 
 void Merlin::startMotor(string motor) {
-    addCommand("J" + motor);
+	addCommand("J" + motor);
 }
 
 void Merlin::stopMotor(string motor) {
-    addCommand("L" + motor);
+	addCommand("L" + motor);
 }
 
 void Merlin::moveHeadingTo(float degrees) {
-    // The magic number 8388608 is from the Chronomotion code
-    long pos = degrees * stepsHeading / 360.f + 8388608;
-    string posString = positionToString(pos);
+	// The magic number 8388608 is from the Chronomotion code
+	long pos = degrees * stepsHeading / 360.f + 8388608;
+	string posString = positionToString(pos);
 
-    stopMotor(MOTOR_HEADING);
-    addCommand("G" + MOTOR_HEADING + "40");
-    addCommand("S" + MOTOR_HEADING + posString);
-    startMotor(MOTOR_HEADING);
+	stopMotor(MOTOR_HEADING);
+	addCommand("G" + MOTOR_HEADING + "40");
+	addCommand("S" + MOTOR_HEADING + posString);
+	startMotor(MOTOR_HEADING);
 }
 
 string Merlin::positionToString(int pos) {
-    std::stringstream stream;
-    stream << std::setfill('0') << std::setw(6)
-           << std::uppercase
-           << std::hex << pos;
-    string temp(stream.str());
+	std::stringstream stream;
+	stream << std::setfill('0') << std::setw(6)
+		   << std::uppercase
+		   << std::hex << pos;
+	string temp(stream.str());
 
-    string result = temp;
-    result[0] = temp[4];
-    result[1] = temp[5];
-    result[2] = temp[2];
-    result[3] = temp[3];
-    result[4] = temp[0];
-    result[5] = temp[1];
+	string result = temp;
+	result[0] = temp[4];
+	result[1] = temp[5];
+	result[2] = temp[2];
+	result[3] = temp[3];
+	result[4] = temp[0];
+	result[5] = temp[1];
 
-    return result;
+	return result;
 }
 
 bool Merlin::hasMotorStopped(const string &motor) {
-    addCommand("f" + motor);
-    communicate();
-    return recvBuffer[recvBuffer.size() - 2] == '0';
+	addCommand("f" + motor);
+	communicate();
+	return recvBuffer[recvBuffer.size() - 2] == '0';
 }
 
-void Merlin::waitForStop(const string &motor)
-{
-    cout << "enter waitForStop(" << motor << ")" << endl;
+void Merlin::waitForStop(const string &motor) {
+	cout << "enter waitForStop(" << motor << ")" << endl;
 
-    int i = 0;  // debug counter
-    do {
-        cout << "waitForStop loop " << i++ << endl;
-        // For some reason we need to stop the motor, otherwise we don't get a response to "f"
+	int i = 0;  // debug counter
+	do {
+		cout << "waitForStop loop " << i++ << endl;
+		// For some reason we need to stop the motor, otherwise we don't get a response to "f"
 //        stopMotor(motor);
-        addCommand("f" + motor);
-        communicate();
+		addCommand("f" + motor);
+		communicate();
 
-        // debug
+		// debug
 //        printBuffer(recvBuffer);
 
-        // The end of recvBuffer contains: "X0X" or "X1X" (X are numbers we don't care for)
-    } while(recvBuffer[recvBuffer.size() - 2] != '0');
+		// The end of recvBuffer contains: "X0X" or "X1X" (X are numbers we don't care for)
+	} while (recvBuffer[recvBuffer.size() - 2] != '0');
 }
 
 void Merlin::moveMotor(std::string motor, int direction, int speed) {
-    stopMotor(motor);
-    communicate();
+	stopMotor(motor);
+	communicate();
 
-    const string directionStr = direction ? "31" : "30";
-    addCommand("G" + motor + directionStr);
-    communicate();
+	const string directionStr = direction ? "31" : "30";
+	addCommand("G" + motor + directionStr);
+	communicate();
 
-    addCommand("I" + motor + positionToString(speed));
-    communicate();
+	addCommand("I" + motor + positionToString(speed));
+	communicate();
 
-    startMotor(motor);
-    communicate();
+	startMotor(motor);
+	communicate();
 }
 
 int Merlin::openUART() {
-    int uart0_filestream = -1;
-    uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
-    if (uart0_filestream == -1) {
-        cout << "[ERROR] UART0 open() failed" << endl;
-        return -1;
-    }
+	int uart0_filestream = -1;
+	uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+	if (uart0_filestream == -1) {
+		cout << "[ERROR] UART0 open() failed" << endl;
+		return -1;
+	}
 
-    struct termios options;
-    tcgetattr(uart0_filestream, &options);
-    options.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
-    options.c_iflag = IGNPAR;
-    options.c_oflag = 0;
-    options.c_lflag = 0;
-    tcflush(uart0_filestream, TCIFLUSH);
-    tcsetattr(uart0_filestream, TCSANOW, &options);
-    return uart0_filestream;
+	struct termios options;
+	tcgetattr(uart0_filestream, &options);
+	options.c_cflag = B9600 | CS8 | CLOCAL | CREAD;
+	options.c_iflag = IGNPAR;
+	options.c_oflag = 0;
+	options.c_lflag = 0;
+	tcflush(uart0_filestream, TCIFLUSH);
+	tcsetattr(uart0_filestream, TCSANOW, &options);
+	return uart0_filestream;
 }
 
 // Sends the queued commands to the Merlin and reads the responses into recvBuffer.
@@ -487,135 +489,135 @@ int Merlin::openUART() {
 //      \r signals the end of a command or response
 //      ! signals an invalid command syntax (! can be in the response from the head)
 void Merlin::communicate() {
-    int filestream = openUART();
-    if(filestream == -1) {
-        return;
-    }
+	int filestream = openUART();
+	if (filestream == -1) {
+		return;
+	}
 
-    // Throw away old responses
-    recvBuffer.clear();
+	// Throw away old responses
+	recvBuffer.clear();
 
-    const char *sendBufferPtr = commands.c_str();
+	const char *sendBufferPtr = commands.c_str();
 
-    for(int i = 0; i < commands.size(); ++i) {
-        const char charToSend = sendBufferPtr[0];
-        if(write(filestream, sendBufferPtr++, sizeof(char)) != sizeof(char)) {
-            cout << "ERROR during write()" << endl;
-        }
-        usleep(delay);
+	for (int i = 0; i < commands.size(); ++i) {
+		const char charToSend = sendBufferPtr[0];
+		if (write(filestream, sendBufferPtr++, sizeof(char)) != sizeof(char)) {
+			cout << "ERROR during write()" << endl;
+		}
+		usleep(delay);
 
-        if(charToSend == '\r') {
-            // Trial and error result, not sure if needed
-            usleep(delay);
+		if (charToSend == '\r') {
+			// Trial and error result, not sure if needed
+			usleep(delay);
 
-            // We finished a command, read the response.
-            // First we read an echo of our own command, then the actual response.
-            bool gotEchoStart = false;
-            bool gotEchoEnd = false;
-            bool gotResponseStart = false;
-            bool endResponseEnd = false;
+			// We finished a command, read the response.
+			// First we read an echo of our own command, then the actual response.
+			bool gotEchoStart = false;
+			bool gotEchoEnd = false;
+			bool gotResponseStart = false;
+			bool endResponseEnd = false;
 
-            const int maxRecvErrors = 5;
-            int recvErrors = 0;
+			const int maxRecvErrors = 5;
+			int recvErrors = 0;
 
-            do {
-                // Read one char
-                unsigned char tempRecvBuffer[1];
-                ssize_t readBytes;
-                if((readBytes = read(filestream, tempRecvBuffer, sizeof(char))) != sizeof(char)) {
+			do {
+				// Read one char
+				unsigned char tempRecvBuffer[1];
+				ssize_t readBytes;
+				if ((readBytes = read(filestream, tempRecvBuffer, sizeof(char))) != sizeof(char)) {
 //                    cout << "ERROR during read(): got " << readBytes << " instead of " << sizeof(char) << endl;
-                    cout << "ERROR during read()" << std::strerror(errno) << endl;
-                    recvErrors++;
-                    // Do not add this char to the receive buffer, it is random
-                    if(recvErrors >= maxRecvErrors) {
-                        // Prevent an endless loop if we fail to read the '\r'
-                        break;
-                    } else {
-                        continue;
-                    }
-                }
+					cout << "ERROR during read()" << std::strerror(errno) << endl;
+					recvErrors++;
+					// Do not add this char to the receive buffer, it is random
+					if (recvErrors >= maxRecvErrors) {
+						// Prevent an endless loop if we fail to read the '\r'
+						break;
+					} else {
+						continue;
+					}
+				}
 
-                char received = tempRecvBuffer[0];
+				char received = tempRecvBuffer[0];
 
-                if(received == ':') {
-                    gotEchoStart = true;
-                } else if(gotEchoStart && received == '\r') {
-                    gotEchoEnd = true;
-                }
+				if (received == ':') {
+					gotEchoStart = true;
+				} else if (gotEchoStart && received == '\r') {
+					gotEchoEnd = true;
+				}
 
-                if(gotEchoEnd) {
-                    if (received == '=') {
-                        gotResponseStart = true;
-                    } else if (gotResponseStart && received == '\r') {
-                        endResponseEnd = true;
-                    } else {
-                        // Only add all characters that are not control characters to receive buffer
-                        recvBuffer.push_back(received);
-                    }
-                }
+				if (gotEchoEnd) {
+					if (received == '=') {
+						gotResponseStart = true;
+					} else if (gotResponseStart && received == '\r') {
+						endResponseEnd = true;
+					} else {
+						// Only add all characters that are not control characters to receive buffer
+						recvBuffer.push_back(received);
+					}
+				}
 
-                // Debug output
+				// Debug output
 //                const char recvChar = received;
 //                string debugOutput(1, recvChar);
 //                if(recvChar == '\r') {
 //                    debugOutput = "\\r";
 //                }
 //                cout << "> Recv: " << debugOutput << endl;
-            } while(!endResponseEnd);
+			} while (!endResponseEnd);
 
-            // Trial and error result, not sure if needed
-            usleep(delay);
-        }
-    }
+			// Trial and error result, not sure if needed
+			usleep(delay);
+		}
+	}
 
-    close(filestream);
+	close(filestream);
 
-    // Throw away the commands we sent
-    commands.clear();
+	// Throw away the commands we sent
+	commands.clear();
 }
 
 
 void Merlin::addCommand(string command, bool lineEnd) {
-    commands += ":" + command;
-    if(lineEnd) {
-        commands += "\r";
-    }
+	commands += ":" + command;
+	if (lineEnd) {
+		commands += "\r";
+	}
 }
 
 // For debugging
 void Merlin::printBuffer(std::string buffer) {
-    for(const char c : buffer) {
-        if(c == '\r') {
-            cout << "\\r\n";
-        } else {
-            cout << c;
-        }
-    }
-    cout << endl;
+	for (const char c : buffer) {
+		if (c == '\r') {
+			cout << "\\r\n";
+		} else {
+			cout << c;
+		}
+	}
+	cout << endl;
 }
 
 // Basically a direct port from MerlinHalfSphere
 void Merlin::goToDegree(std::string motor, int degree) {
-    const int SINGLE_DEGREE = 0xA00;
-    const int PIVOT_ANGLE = 0x800000;
+	const int SINGLE_DEGREE = 0xA00;
+	const int PIVOT_ANGLE = 0x800000;
 
-    const int relativeAngle = degree * SINGLE_DEGREE;
-    const int targetAngle = PIVOT_ANGLE + relativeAngle;
-    const string posString = positionToString(targetAngle);
+	const int relativeAngle = degree * SINGLE_DEGREE;
+	const int targetAngle = PIVOT_ANGLE + relativeAngle;
+	const string posString = positionToString(targetAngle);
 
-    addCommand("G" + motor + "00");
-    // Set position
-    addCommand("S" + motor + posString);
+	addCommand("G" + motor + "00");
+	// Set position
+	addCommand("S" + motor + posString);
 }
 
 // Basically a direct port from MerlinHalfSphere
 void Merlin::doSequenceStep(int angle, string motor) {
-    stopMotor(motor);
-    goToDegree(motor, angle);
-    startMotor(motor);
-    communicate();
+	stopMotor(motor);
+	goToDegree(motor, angle);
+	startMotor(motor);
+	communicate();
 }
 
-Gyro& Merlin::getGyro() {
-    return gyro;
+Gyro &Merlin::getGyro() {
+	return gyro;
 }

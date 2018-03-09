@@ -459,6 +459,8 @@ public:
 	bool getEvent(sensors_event_t *event);
 
 	bool isMagCalibrated();
+
+	long _millis();
 };
 
 
