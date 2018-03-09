@@ -49,10 +49,6 @@ int main(int argc, char **argv) {
 //        usleep(100000);
 //    }
 
-    // Winkel um den Motor 2 nach jedem Durchlauf erhöht werden soll
-    const int VERTICAL_STEP = 5;
-    // How much time to sleep between taking measurements, in milliseconds
-    const int MEASURE_INTERVAL_MS = 50;
 
     // First, drive to 0 degrees
     // TODO: doesn't work
@@ -62,12 +58,24 @@ int main(int argc, char **argv) {
 //    merlin.doSequenceStep(0, merlin.MOTOR_PITCH);
 //    merlin.waitForStop(merlin.MOTOR_PITCH);
 
+
+    // The angle (in degrees) used to increment the upper motor (pitch) after each circle.
+    // Lower values make the scan more precise.
+    const int VERTICAL_STEP = 5;
+    // The angle that is covered by the scan vertically.
+    // 180 would result in a full sphere being scanned.
+    const int VERTICAL_RANGE = 90;
+    // How much time to sleep between taking measurements, in milliseconds.
+    // Lower values make the scan more precise.
+    const int MEASURE_INTERVAL_MS = 50;
+
+    // Show some info about the scan settings
     const string date = utils::getTimeAsString();
     cout << "Scan started at " << date << endl;
     cout << "Vertical step " << VERTICAL_STEP
          << ", measure interval " << MEASURE_INTERVAL_MS << " ms" << endl;
 
-    int totalCircles = 90 / VERTICAL_STEP;
+    int totalCircles = VERTICAL_RANGE / VERTICAL_STEP;
 
     // TODO: Scan more than 90 degrees vertical
     for (int i = 0; i < totalCircles; i++) {
