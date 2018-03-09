@@ -47,6 +47,8 @@ void Merlin::startHorizontalCircle(Direction dir) {
     lastHeading = startHeading = gyro.getHeading();
     startCheckHeading = false;
 
+	cout << "INIT HEADING - Start Heading: " << startHeading << endl;
+
     horizCircleDir = dir;
     // TODO: find out if direction 0 or 1 is needed to increase the heading
     // Direction::CLOCKWISE increases the heading
@@ -112,6 +114,8 @@ bool Merlin::checkHorizontalCircleFull() {
     bool isFull = false;
     const float HEADING_TOLERANCE = 10.0f;
 	const float CIRCLE_OVERLAP = 10.0f;
+
+	cout << "Start Heading: " << startHeading << "   |   Current Heading: " << currentHeading << endl;
 
     if(!startCheckHeading && headingDiff(currentHeading, startHeading) > HEADING_TOLERANCE) {
 		startCheckHeading = true;
