@@ -189,7 +189,7 @@ bool Merlin::checkHorizontalCircleFull() {
                 searchBorder = false;
             }
 
-            if((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > maxErrorHeading)))
+            if((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > borderHeading)))
             {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
@@ -209,7 +209,7 @@ bool Merlin::checkHorizontalCircleFull() {
                 searchBorder = false;
             }
 
-            if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > maxErrorHeading))
+            if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > borderHeading))
             {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point

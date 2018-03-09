@@ -53,7 +53,7 @@ private:
     bool checkClockwise = true; //check clockwise
     bool clockwise;
     bool searchBorder = true;
-    double borderHeading;
+    double borderHeading = -1.0;
     double startHeading;
     Direction horizCircleDir;
     double startPitch;
