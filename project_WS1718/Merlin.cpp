@@ -103,6 +103,8 @@ bool Merlin::checkHorizontalCircleFull() {
     const float currentHeading = gyro.getHeading();
     float startMaxError; //maxError relativ zum Startpunkt
 
+    cout << "Start Heading: " << startHeading << "   |   Current Heading: " << currentHeading << endl;
+
 if(currentHeading > 0 && currentHeading < 360) {
     if (checkClockwise) {
         if (currentHeading > startHeading) {
