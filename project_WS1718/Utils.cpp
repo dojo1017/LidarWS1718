@@ -27,11 +27,13 @@ double utils::pitchAngleDelta(double angle1, double angle2) {
 // ---------------
 // PLY file output
 
-void utils::writeAsBinary(ofstream &fileout, const float value) {
+// Function used internally by PLY output
+void writeAsBinary(ofstream &fileout, const float value) {
     fileout.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 
-void utils::writePLYHeader(ofstream &fileout, const string &format, size_t vertexCount) {
+// Function used internally by PLY output
+void writePLYHeader(ofstream &fileout, const string &format, size_t vertexCount) {
     fileout << "ply\n";
     fileout << "format " << format << " 1.0\n";
     fileout << "element vertex " << vertexCount << "\n";

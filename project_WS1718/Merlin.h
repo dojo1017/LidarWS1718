@@ -19,7 +19,7 @@ public:
         SLOW = 170,
     } Speed;
 
-    // direction of motor rotation as seen from above (motorHeading) or ?? (motorPitch)
+    // direction of motor rotation as seen from above (MOTOR_HEADING) or ?? (MOTOR_PITCH)
     typedef enum {
         CLOCKWISE = 0,
         COUNTERCLOCKWISE = 1,
@@ -37,13 +37,18 @@ public:
 
     void stopMotor(std::string motor);
     void waitForStop(const std::string &motor);
+    bool hasMotorStopped(const std::string &motor);
 
     void goToDegree(std::string motor, int degree);
     void doSequenceStep(int angle, std::string motor);
 
-    Gyro gyro;
+    const std::string MOTOR_HEADING = "1";
+    const std::string MOTOR_PITCH = "2";
 
-//private:
+    Gyro& getGyro();
+
+private:
+    Gyro gyro;
     // For the circle
     bool checkClockwise = true; //check clockwise
     bool clockwise;
@@ -59,8 +64,6 @@ public:
     const float maxErrorHeading = 30.f;
     const float maxErrorPitch = 2.f;
 
-    const std::string motorHeading = "1";
-    const std::string motorPitch = "2";
     const int right_up_direction = 0;
     const int left_down_direction = 1;
     const float stepsHeading = 1.f; // TODO

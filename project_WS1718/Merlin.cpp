@@ -4,6 +4,8 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <cmath>
+#include <cerrno>
+#include <cstring>
 
 #include "Merlin.h"
 #include "Utils.h"
@@ -16,10 +18,10 @@ using std::string;
 
 // How to move a motor:
 //
-// moveMotor(motorHeading, 0, Speed::FAST);
+// moveMotor(MOTOR_HEADING, 0, Speed::FAST);
 // usleep(5000000);  // wait 5 seconds, during this time the motor drives
-// stopMotor(motorHeading);
-// waitForStop(motorHeading);
+// stopMotor(MOTOR_HEADING);
+// waitForStop(MOTOR_HEADING);
 
 
 Merlin::Merlin() : gyro() {
@@ -28,13 +30,13 @@ Merlin::Merlin() : gyro() {
 }
 
 void Merlin::init(){
-    addCommand("F" + motorHeading);
-    addCommand("a" + motorHeading);
-    addCommand("D" + motorHeading);
+    addCommand("F" + MOTOR_HEADING);
+    addCommand("a" + MOTOR_HEADING);
+    addCommand("D" + MOTOR_HEADING);
 
-    addCommand("F" + motorPitch);
-    addCommand("a" + motorPitch);
-    addCommand("D" + motorPitch);
+    addCommand("F" + MOTOR_PITCH);
+    addCommand("a" + MOTOR_PITCH);
+    addCommand("D" + MOTOR_PITCH);
 }
 
 // Start to move the lower motor (heading) in a full circle.
@@ -46,7 +48,7 @@ void Merlin::startHorizontalCircle(Direction dir) {
     horizCircleDir = dir;
     // TODO: find out if direction 0 or 1 is needed to increase the heading
     // Direction::CLOCKWISE increases the heading
-    moveMotor(motorHeading, dir, Speed::FAST);
+    moveMotor(MOTOR_HEADING, dir, Speed::FAST);
 }
 /*
 bool Merlin::checkHorizontalCircleFull() {
@@ -67,8 +69,8 @@ bool Merlin::checkHorizontalCircleFull() {
     if(deltaHeading < 0.0 && deltaHeading > -maxErrorHeading) {
         cout << "Horizontal circle done, stopping motor" << endl;
         // We reached our starting point
-        stopMotor(motorHeading);
-        waitForStop(motorHeading);
+        stopMotor(MOTOR_HEADING);
+        waitForStop(MOTOR_HEADING);
         return true;
     }
     return false;
@@ -77,7 +79,7 @@ bool Merlin::checkHorizontalCircleFull() {
 // This is a blocking method
 void Merlin::moveMotorPitch(double degrees, Direction dir) {
     const double startPitch = gyro.getPitch();
-    moveMotor(motorPitch, dir, Speed::NORMAL);
+    moveMotor(MOTOR_PITCH, dir, Speed::NORMAL);
 
     double currPitch;
     do {
@@ -91,8 +93,8 @@ void Merlin::moveMotorPitch(double degrees, Direction dir) {
     } while(currPitch < degrees);
 
     // currPitch > degrees, we are done
-    stopMotor(motorPitch);
-    waitForStop(motorPitch);
+    stopMotor(MOTOR_PITCH);
+    waitForStop(MOTOR_PITCH);
 }
 
 */
@@ -229,7 +231,7 @@ bool Merlin::checkHorizontalCircleFull() {
 //void Merlin::startVerticalCircle(Direction dir) {
 //    startPitch = gyro.getPitch();
 //    vertCircleDir = dir;
-//    moveMotor(motorPitch, dir, Speed::FAST);
+//    moveMotor(MOTOR_PITCH, dir, Speed::FAST);
 //}
 //
 //bool Merlin::checkVerticalCircleFull() {
@@ -247,8 +249,8 @@ bool Merlin::checkHorizontalCircleFull() {
 //    if(deltaPitch < 0.0 && deltaPitch > -maxErrorHeading) {
 //        cout << "Vertical circle done, stopping motor" << endl;
 //        // We reached our starting point
-//        stopMotor(motorPitch);
-//        waitForStop(motorPitch);
+//        stopMotor(MOTOR_PITCH);
+//        waitForStop(MOTOR_PITCH);
 //        return true;
 //    }
 //    return false;
@@ -268,8 +270,8 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 
     while(!targetReached){
         // TODO
-//        const bool headingMoving = waitForStop(motorHeading);
-//        const bool pitchMoving = waitForStop(motorPitch);
+//        const bool headingMoving = waitForStop(MOTOR_HEADING);
+//        const bool pitchMoving = waitForStop(MOTOR_PITCH);
         bool headingMoving = false;
         bool pitchMoving = false;
 
@@ -291,8 +293,8 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
             {
                 cout << "turn right" << endl;
                 //Heading-Motor dreht sich solange nach rechts bis er die Zeilposition erreicht
-//                startMoving(motorHeading, right_up_direction);
-                moveMotor(motorHeading, right_up_direction, Speed::FAST);
+//                startMoving(MOTOR_HEADING, right_up_direction);
+                moveMotor(MOTOR_HEADING, right_up_direction, Speed::FAST);
                 communicate();
 
 //                if(targetHeading > currHeading) //Ziel befindet sich weiter "rechts" im Uhrzeigersinn
@@ -300,12 +302,12 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 //                    if( fabsf(deltaHeading) > 180)
 //                    {
 //                        //kuerzerer Weg bei Bewegung nach links
-//                        startMoving(motorHeading,left_down_direction); //nach links bewegen
+//                        startMoving(MOTOR_HEADING,left_down_direction); //nach links bewegen
 //                        communicate();
 //                    }else
 //                    {
 //                        //kuerzerer Weg bei Bewegung nach rechts
-//                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
+//                        startMoving(MOTOR_HEADING,right_up_direction); //nach rechts bewegen
 //                        communicate();
 //                    }
 //
@@ -314,12 +316,12 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
 //                    if( fabsf(deltaHeading) > 180)
 //                    {
 //                        //kuerzerer Weg bei Bewegung nach rechts
-//                        startMoving(motorHeading,right_up_direction); //nach rechts bewegen
+//                        startMoving(MOTOR_HEADING,right_up_direction); //nach rechts bewegen
 //                        communicate();
 //                    }else
 //                    {
 //                        //kuerzerer Weg bei Bewegung nach links
-//                        startMoving(motorHeading,left_down_direction); //nach links bewegen
+//                        startMoving(MOTOR_HEADING,left_down_direction); //nach links bewegen
 //                        communicate();
 //                    }
 //                }
@@ -332,7 +334,7 @@ void Merlin::aimAt(float targetHeading, float targetPitch) {
             if(fabsf(deltaPitch) > maxErrorPitch) {
                 cout << "move pitch" << endl;
                 //Pitch-Motor dreht sich solange nach "oben" bis er die Zeilposition erreicht
-                moveMotor(motorPitch, right_up_direction, Speed::FAST);
+                moveMotor(MOTOR_PITCH, right_up_direction, Speed::FAST);
                 communicate();
             } else {
                 pitchTargetReached = true;
@@ -358,10 +360,10 @@ void Merlin::moveHeadingTo(float degrees) {
     long pos = degrees * stepsHeading / 360.f + 8388608;
     string posString = positionToString(pos);
 
-    stopMotor(motorHeading);
-    addCommand("G" + motorHeading + "40");
-    addCommand("S" + motorHeading + posString);
-    startMotor(motorHeading);
+    stopMotor(MOTOR_HEADING);
+    addCommand("G" + MOTOR_HEADING + "40");
+    addCommand("S" + MOTOR_HEADING + posString);
+    startMotor(MOTOR_HEADING);
 }
 
 string Merlin::positionToString(int pos) {
@@ -380,6 +382,12 @@ string Merlin::positionToString(int pos) {
     result[5] = temp[1];
 
     return result;
+}
+
+bool Merlin::hasMotorStopped(const string &motor) {
+    addCommand("f" + motor);
+    communicate();
+    return recvBuffer[recvBuffer.size() - 2] == '0';
 }
 
 void Merlin::waitForStop(const string &motor)
@@ -482,7 +490,8 @@ void Merlin::communicate() {
                 unsigned char tempRecvBuffer[1];
                 ssize_t readBytes;
                 if((readBytes = read(filestream, tempRecvBuffer, sizeof(char))) != sizeof(char)) {
-                    cout << "ERROR during read(): got " << readBytes << " instead of " << sizeof(char) << endl;
+//                    cout << "ERROR during read(): got " << readBytes << " instead of " << sizeof(char) << endl;
+                    cout << "ERROR during read()" << std::strerror(errno) << endl;
                     recvErrors++;
                     // Do not add this char to the receive buffer, it is random
                     if(recvErrors >= maxRecvErrors) {
@@ -562,20 +571,20 @@ void Merlin::goToDegree(std::string motor, int degree) {
     const string posString = positionToString(targetAngle);
 
     addCommand("G" + motor + "00");
+    // Set speed
+    addCommand("I" + motor + positionToString(Speed::FAST));
+    // Set position
     addCommand("S" + motor + posString);
 }
 
 // Basically a direct port from MerlinHalfSphere
 void Merlin::doSequenceStep(int angle, string motor) {
-    // Size of one step, in degrees
-    const int ANGLE = 5;
-    // Größe eines 1° Winkels - Derzeit empierischer Wert, nicht ganz korrekt.
-    const int SINGLE_DEGREE = 0xA00;
-
     stopMotor(motor);
     goToDegree(motor, angle);
     startMotor(motor);
     communicate();
+}
 
-    waitForStop(motor);
+Gyro& Merlin::getGyro() {
+    return gyro;
 }
