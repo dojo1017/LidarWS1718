@@ -431,16 +431,14 @@ void Merlin::goToDegree(std::string motor, int degree) {
     const string posString = positionToString(targetAngle);
 
     addCommand("G" + motor + "00");
+    // Set speed
+    addCommand("I" + motor + positionToString(Speed::FAST));
+    // start motor
     addCommand("S" + motor + posString);
 }
 
 // Basically a direct port from MerlinHalfSphere
 void Merlin::doSequenceStep(int angle, string motor) {
-    // Size of one step, in degrees
-    const int ANGLE = 5;
-    // Größe eines 1° Winkels - Derzeit empierischer Wert, nicht ganz korrekt.
-    const int SINGLE_DEGREE = 0xA00;
-
     stopMotor(motor);
     goToDegree(motor, angle);
     startMotor(motor);
