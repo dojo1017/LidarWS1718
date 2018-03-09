@@ -97,6 +97,10 @@ int main(int argc, char **argv) {
     // How much time to sleep between taking measurements, in milliseconds
     const int MEASURE_INTERVAL_MS = 50;
 
+    // First, drive to 0 degrees
+    merlin.doSequenceStep(0, merlin.MOTOR_HEADING);
+    merlin.waitForStop(merlin.MOTOR_HEADING);
+
     // TODO: Scan more than 90 degrees vertical
     for (int i = 0; i < 90 / VERTICAL_STEP; i++) {
         if (i % 2 == 0) {
