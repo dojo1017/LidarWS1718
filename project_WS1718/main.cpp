@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
     vector<Measurement> measurements;
     vector<Measurement_3D> measurements_3D;
-
+	merlin.getGyro().getHeading();
 	usleep(100 * 1000); // Wait for gyro to calibrate itself
 
     // For now, just one circle
