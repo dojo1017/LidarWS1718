@@ -45,6 +45,7 @@ void Merlin::init(){
 // by calling Merlin::checkHorizontalCircleFull()
 void Merlin::startHorizontalCircle(Direction dir) {
     startHeading = gyro.getHeading();
+    cout << "INIT HEADING - Start Heading: " << startHeading << endl;
     horizCircleDir = dir;
     // TODO: find out if direction 0 or 1 is needed to increase the heading
     // Direction::CLOCKWISE increases the heading
