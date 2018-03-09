@@ -5,18 +5,19 @@
 #ifndef PROJECT_WS1718_CALCULATION_H
 #define PROJECT_WS1718_CALCULATION_H
 
-// Raw measured data point (heading and pitch from gyro, dist from lidar)
+// Raw measured data point (heading and pitch from gyro, dist in cm from lidar)
 struct Measurement {
-    Measurement(float heading, float pitch, unsigned int dist)
-            : heading(heading), pitch(pitch), distance(dist)
+    Measurement(float heading, float pitch, unsigned int distCentimeters)
+            : heading(heading), pitch(pitch), distanceMeters(distCentimeters / 100.f)
     {}
 
     float heading;
     float pitch;
-    unsigned int distance;
+    // distance in meters (converted from centimeters)
+    float distanceMeters;
 };
 
-// Converted data point in XYZ object coordinates
+// Converted data point in XYZ object coordinates (unit: meters)
 struct Measurement_3D {
     Measurement_3D(float x, float y, float z)
             : x(x), y(y), z(z)
@@ -29,8 +30,7 @@ struct Measurement_3D {
 
 class Calculation{
 public:
-    Calculation(){};
-    static Measurement_3D get3DCoordinates(float pitch_deg, float yaw_deg, unsigned int distance);
+    static Measurement_3D get3DCoordinates(float pitch_deg, float yaw_deg, float distanceCentimeters);
     static Measurement_3D get3DCoordinates(const Measurement &m);
 };
 
