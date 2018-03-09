@@ -103,24 +103,20 @@ bool Merlin::checkHorizontalCircleFull() {
     const float currentHeading = gyro.getHeading();
     float startMaxError; //maxError relativ zum Startpunkt
 
-    if(checkClockwise)
-    {
-        if(currentHeading > startHeading)
-        {
-            if(currentHeading > (startHeading + 180))
-            {
+if(currentHeading > 0 && currentHeading < 360) {
+    if (checkClockwise) {
+        if (currentHeading > startHeading) {
+            if (currentHeading > (startHeading + 180)) {
                 clockwise = false;
-            }else{
+            } else {
                 clockwise = true;
             }
         }
 
-        if(currentHeading < startHeading)
-        {
-            if(currentHeading < (startHeading - 180))
-            {
+        if (currentHeading < startHeading) {
+            if (currentHeading < (startHeading - 180)) {
                 clockwise = true;
-            }else{
+            } else {
                 clockwise = false;
             }
         }
@@ -128,21 +124,20 @@ bool Merlin::checkHorizontalCircleFull() {
         checkClockwise = false;
     }
 
-    if(clockwise) {
+    if (clockwise) {
 
         startMaxError = startHeading + maxErrorHeading;
 
-        if(startMaxError >= 360) //falls der Nullpunkt zwischen start und startMaxError liegt
+        if (startMaxError >= 360) //falls der Nullpunkt zwischen start und startMaxError liegt
         {
             startMaxError = startMaxError - 360;
 
-            if(searchBorder && (currentHeading > startMaxError) )
-            {
+            if (searchBorder && (currentHeading > startMaxError)) {
                 borderHeading = currentHeading;
+                searchBorder = false;
             }
 
-            if((!searchBorder) && ((currentHeading > startHeading) || (currentHeading < borderHeading)))
-            {
+            if ((!searchBorder) && ((currentHeading > startHeading) || (currentHeading < borderHeading))) {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
                 stopMotor(MOTOR_HEADING);
@@ -152,16 +147,14 @@ bool Merlin::checkHorizontalCircleFull() {
                 return true;
             }
 
-        }else{
+        } else {
 
-            if(searchBorder && (currentHeading > startMaxError) )
-            {
+            if (searchBorder && (currentHeading > startMaxError)) {
                 borderHeading = currentHeading;
                 searchBorder = false;
             }
 
-            if((!searchBorder) && (currentHeading > startHeading) && (currentHeading <= borderHeading))
-            {
+            if ((!searchBorder) && (currentHeading > startHeading) && (currentHeading <= borderHeading)) {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
                 stopMotor(MOTOR_HEADING);
@@ -174,22 +167,20 @@ bool Merlin::checkHorizontalCircleFull() {
         }
 
 
-    }else{ //counterclockwise
+    } else { //counterclockwise
 
         startMaxError = startHeading - maxErrorHeading;
 
-        if(startMaxError < 0) //falls der Nullpunkt  zwischen start und startMaxError liegt
+        if (startMaxError < 0) //falls der Nullpunkt  zwischen start und startMaxError liegt
         {
             startMaxError = startMaxError + 360;
 
-            if(searchBorder && (currentHeading < startMaxError) )
-            {
+            if (searchBorder && (currentHeading < startMaxError)) {
                 borderHeading = currentHeading;
                 searchBorder = false;
             }
 
-            if((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > borderHeading)))
-            {
+            if ((!searchBorder) && ((currentHeading < startHeading) || (currentHeading > borderHeading))) {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
                 stopMotor(MOTOR_HEADING);
@@ -200,16 +191,14 @@ bool Merlin::checkHorizontalCircleFull() {
             }
 
 
-        } else{
+        } else {
 
-            if(searchBorder && (currentHeading < startMaxError) )
-            {
+            if (searchBorder && (currentHeading < startMaxError)) {
                 borderHeading = currentHeading;
                 searchBorder = false;
             }
 
-            if((!searchBorder) && (currentHeading < startHeading) && (currentHeading > borderHeading))
-            {
+            if ((!searchBorder) && (currentHeading < startHeading) && (currentHeading > borderHeading)) {
                 cout << "Horizontal circle done, stopping motor" << endl;
                 // We reached our starting point
                 stopMotor(MOTOR_HEADING);
@@ -222,7 +211,7 @@ bool Merlin::checkHorizontalCircleFull() {
         }
 
     }
-
+}
     return false;
 
 }
