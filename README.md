@@ -27,8 +27,8 @@
 
 
 ## Remotes
-Origin Sourceforge: https://iwistudent@git.code.sf.net/p/autosyslab/laserscanner
-Origin Github: https://github.com/dojo1017/LidarWS1718.git
+* Origin Sourceforge: https://iwistudent@git.code.sf.net/p/autosyslab/laserscanner
+* Origin Github: https://github.com/dojo1017/LidarWS1718.git
 
 
 ## Minidoku
